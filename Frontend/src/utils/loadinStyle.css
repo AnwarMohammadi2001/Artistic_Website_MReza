@@ -1,0 +1,246 @@
+/* From Uiverse.io by adamgiebl - Enhanced Color Versions */
+.dots-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  gap: 12px;
+}
+
+/* Base dot styles */
+.dot {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.dot:last-child {
+  margin-right: 0;
+}
+
+/* Animation delays */
+.dot:nth-child(1) {
+  animation-delay: -0.3s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: -0.1s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.1s;
+}
+
+/* Cyan/Teal Theme (Default) */
+.dots-cyan .dot {
+  background-color: #06b6d4;
+}
+
+@keyframes pulse-cyan {
+  0% {
+    transform: scale(0.8);
+    background-color: #a5f3fc;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #06b6d4;
+    box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background-color: #a5f3fc;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+}
+
+/* Purple Theme */
+.dots-purple .dot {
+  background-color: #8b5cf6;
+}
+
+@keyframes pulse-purple {
+  0% {
+    transform: scale(0.8);
+    background-color: #ddd6fe;
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #8b5cf6;
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background-color: #ddd6fe;
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+  }
+}
+
+/* Pink Theme */
+.dots-pink .dot {
+  background-color: #ec4899;
+}
+
+@keyframes pulse-pink {
+  0% {
+    transform: scale(0.8);
+    background-color: #fbcfe8;
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #ec4899;
+    box-shadow: 0 0 0 10px rgba(236, 72, 153, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background-color: #fbcfe8;
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7);
+  }
+}
+
+/* Emerald/Green Theme */
+.dots-emerald .dot {
+  background-color: #10b981;
+}
+
+@keyframes pulse-emerald {
+  0% {
+    transform: scale(0.8);
+    background-color: #a7f3d0;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #10b981;
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background-color: #a7f3d0;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+}
+
+/* Orange Theme */
+.dots-orange .dot {
+  background-color: #f97316;
+}
+
+@keyframes pulse-orange {
+  0% {
+    transform: scale(0.8);
+    background-color: #fed7aa;
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #f97316;
+    box-shadow: 0 0 0 10px rgba(249, 115, 22, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background-color: #fed7aa;
+    box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  }
+}
+
+/* Gradient Theme */
+.dots-gradient .dot {
+  background: linear-gradient(45deg, #06b6d4, #8b5cf6);
+}
+
+@keyframes pulse-gradient {
+  0% {
+    transform: scale(0.8);
+    background: linear-gradient(45deg, #a5f3fc, #ddd6fe);
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.5);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background: linear-gradient(45deg, #06b6d4, #8b5cf6);
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background: linear-gradient(45deg, #a5f3fc, #ddd6fe);
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.5);
+  }
+}
+
+/* Default animation (cyan) */
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    background-color: #a5f3fc;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+
+  50% {
+    transform: scale(1.2);
+    background-color: #06b6d4;
+    box-shadow: 0 0 0 10px rgba(6, 182, 212, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    background-color: #a5f3fc;
+    box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  }
+}
+
+/* Apply specific animations based on theme */
+.dots-cyan .dot {
+  animation-name: pulse-cyan;
+}
+
+.dots-purple .dot {
+  animation-name: pulse-purple;
+}
+
+.dots-pink .dot {
+  animation-name: pulse-pink;
+}
+
+.dots-emerald .dot {
+  animation-name: pulse-emerald;
+}
+
+.dots-orange .dot {
+  animation-name: pulse-orange;
+}
+
+.dots-gradient .dot {
+  animation-name: pulse-gradient;
+}
+
+/* Size variants */
+.dots-sm .dot {
+  height: 12px;
+  width: 12px;
+}
+
+.dots-lg .dot {
+  height: 24px;
+  width: 24px;
+}
+
+.dots-xl .dot {
+  height: 32px;
+  width: 32px;
+}
