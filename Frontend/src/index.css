@@ -10,12 +10,19 @@
   font-family: Roboto;
   src: url("../src/assets/font/Roboto-Regular.ttf");
 }
+/* @font-face {
+  font-family: "kaman";
+  src: url("kaman/kaman-Regular.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+} */
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 @theme {
-  --font-Poppins: Poppins, sans-serif;
+  --font-Poppins: kaman, sans-serif;
   --font-Roboto: Roboto, sans-serif;
   --font-Satisfy: Satisfy, sans-serif;
 }
