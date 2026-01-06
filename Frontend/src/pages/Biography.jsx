@@ -60,20 +60,43 @@ const Biography = () => {
       year: "۱۳۷۰",
       location: "گالری سیحون، تهران",
       title: "نقاشی‌های انتزاعی",
+      img: "b.JPG",
     },
     {
       year: "۱۳۷۵",
       location: "موزه هنرهای معاصر، تهران",
       title: "نقاشی خط معاصر",
+      img: "b.JPG",
     },
-    { year: "۱۳۸۰", location: "گالری ویلا، اصفهان", title: "آثار ترکیبی" },
-    { year: "۱۳۸۵", location: "نگارخانه تهران", title: "مینیاتورهای مدرن" },
-    { year: "۱۳۹۰", location: "پاریس، فرانسه", title: "هنر ایرانی معاصر" },
-    { year: "۱۳۹۵", location: "دبی، امارات", title: "کالیگرافی مدرن" },
+    {
+      year: "۱۳۸۰",
+      location: "گالری ویلا، اصفهان",
+      title: "آثار ترکیبی",
+      img: "b.JPG",
+    },
+    {
+      year: "۱۳۸۵",
+      location: "نگارخانه تهران",
+      title: "مینیاتورهای مدرن",
+      img: "b.JPG",
+    },
+    {
+      year: "۱۳۹۰",
+      location: "پاریس، فرانسه",
+      title: "هنر ایرانی معاصر",
+      img: "b.JPG",
+    },
+    {
+      year: "۱۳۹۵",
+      location: "دبی، امارات",
+      title: "کالیگرافی مدرن",
+      img: "b.JPG",
+    },
     {
       year: "۱۴۰۰",
       location: "گالری طراحان آزاد، تهران",
       title: "چهل سال خلاقیت",
+      img: "b.JPG",
     },
   ];
 
@@ -109,7 +132,7 @@ const Biography = () => {
     <div id="biography" className="bg-gradient-to-b from-gray-50 to-white">
       {/* هدر بخش بیوگرافی */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-900/20 to-purple-900/20 z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-50 to-white z-0"></div>
         <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="flex flex-col lg:flex-row items-center">
             {/* تصویر هنرمند */}
@@ -117,25 +140,27 @@ const Biography = () => {
               <div className="relative">
                 <div className="w-64 h-80 md:w-80  mx-auto ">
                   <div className="w-full h-full flex items-center justify-center">
-                    <img src="bio.jpg" alt="" className="h-[450px] w-auto rounded-lg" />
+                    <img
+                      src="bio.jpg"
+                      alt=""
+                      className="h-[450px] w-auto rounded-lg"
+                    />
                   </div>
-                
                 </div>
-              
               </div>
             </div>
 
             {/* متن معرفی */}
             <div className="lg:w-3/5 lg:pr-12 rtl:lg:pr-0 rtl:lg:pl-12">
               <div className="mb-6">
-                <span className="inline-block px-4 py-2 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold">
+                <span className="inline-block px-4 py-2 bg-amber-600 rounded-full text-sm font-semibold">
                   بیوگرافی هنرمند
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-bold  text-gray-700 mb-6 leading-tight">
                 حمیدرضا خواجه محمدی
-                <span className="block text-2xl md:text-3xl text-amber-600 mt-2">
+                <span className="block text-2xl md:text-3xl text-amber-600 mt-3">
                   پیشگام هنر معاصر ایران
                 </span>
               </h1>
@@ -148,22 +173,30 @@ const Biography = () => {
                 متعددی به نمایش درآمده‌اند.
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-white p-4 rounded-xl shadow-md text-center">
-                  <div className="text-2xl font-bold text-amber-600">۴۰+</div>
-                  <div className="text-gray-600 text-sm mt-1">سال تجربه</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 mt-4 gap-4 mb-8">
+                <div className="bg-white p-2 rounded-md shadow-md text-center">
+                  <div className="text-3xl font-bold text-amber-600">۴۰+</div>
+                  <div className="text-gray-600 text-sm font-semibold mt-1">
+                    سال تجربه
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow-md text-center">
-                  <div className="text-2xl font-bold text-amber-600">۵۰+</div>
-                  <div className="text-gray-600 text-sm mt-1">نمایشگاه</div>
+                <div className="bg-white p-4 rounded-md shadow-md text-center">
+                  <div className="text-3xl font-bold text-amber-600">۵۰+</div>
+                  <div className="text-gray-600 font-semibold text-sm mt-1">
+                    نمایشگاه
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow-md text-center">
-                  <div className="text-2xl font-bold text-amber-600">۱۰۰+</div>
-                  <div className="text-gray-600 text-sm mt-1">اثر هنری</div>
+                <div className="bg-white p-4 rounded-md shadow-md text-center">
+                  <div className="text-3xl font-bold text-amber-600">۱۰۰+</div>
+                  <div className="text-gray-600 font-semibold text-sm mt-1">
+                    اثر هنری
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow-md text-center">
-                  <div className="text-2xl font-bold text-amber-600">۱۵</div>
-                  <div className="text-gray-600 text-sm mt-1">جایزه</div>
+                <div className="bg-white p-4 rounded-md shadow-md text-center">
+                  <div className="text-3xl font-bold text-amber-600">۱۵</div>
+                  <div className="text-gray-600 font-semibold text-sm mt-1">
+                    جایزه
+                  </div>
                 </div>
               </div>
             </div>
@@ -173,7 +206,7 @@ const Biography = () => {
 
       {/* تب‌های بخش‌های مختلف بیوگرافی */}
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-12">
+        <div className="bg-white rounded-md shadow-sm overflow-hidden mb-12">
           <div className="border-b border-gray-200">
             <div className="flex overflow-x-auto scrollbar-hide">
               {tabs.map((tab) => (
@@ -212,7 +245,7 @@ const Biography = () => {
                       بزرگی چون مارکو گریگوریان و محمود فرشچیان قرار گرفت.
                     </p>
                   </div>
-                  <div className="bg-gradient-to-br from-blue-50 to-amber-50 p-6 rounded-xl">
+                  <div className=" rounded-xl">
                     <h4 className="font-bold text-gray-800 mb-3">تحصیلات</h4>
                     <ul className="space-y-2">
                       <li className="flex items-center">
@@ -321,14 +354,17 @@ const Biography = () => {
                   {exhibitions.map((exhibition, index) => (
                     <div
                       key={index}
-                      className="bg-gradient-to-br from-white to-amber-50 rounded-xl shadow-md overflow-hidden border border-amber-100"
+                      className="bg-gradient-to-br from-white to-amber-50 rounded-md shadow-md overflow-hidden border border-amber-100"
                     >
-                      <div className="p-5">
+                      <div className="">
+                        <div>
+                          <img src={exhibition.img} alt="" />
+                        </div>
                         <div className="flex justify-between items-start mb-3">
-                          <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-semibold">
-                            {exhibition.year}
+                          <span className="px-3 py-1 bg-amber-100 flex items-center ga text-amber-800 rounded-full text-sm font-semibold">
+                            <span>سال</span>
+                            <span> {exhibition.year}</span>
                           </span>
-                          <span className="text-2xl">🖼️</span>
                         </div>
                         <h4 className="font-bold text-gray-800 mb-2">
                           {exhibition.title}
@@ -491,7 +527,7 @@ const Biography = () => {
         </div>
 
         {/* بخش فلسفه هنری */}
-        <div className="bg-gradient-to-r from-amber-900 to-purple-900 text-white rounded-2xl overflow-hidden shadow-2xl mb-12">
+        <div className=" bg-gray-100  overflow-hidden shadow-sm mb-12">
           <div className="p-8 md:p-12">
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-amber-500/30 rounded-full flex items-center justify-center ml-4">
@@ -513,24 +549,39 @@ const Biography = () => {
                   فرهنگ‌ها باشد.
                 </p>
               </div>
-              <div className="bg-white/10 p-6 rounded-xl">
-                <h4 className="font-bold mb-3">تکنیک‌های شاخص</h4>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-white/20 rounded-full">
-                    نقاشی خط مدرن
-                  </span>
-                  <span className="px-3 py-1 bg-white/20 rounded-full">
-                    چیدمان مفهومی
-                  </span>
-                  <span className="px-3 py-1 bg-white/20 rounded-full">
-                    هنر دیجیتال
-                  </span>
-                  <span className="px-3 py-1 bg-white/20 rounded-full">
-                    مینیاتور معاصر
-                  </span>
-                  <span className="px-3 py-1 bg-white/20 rounded-full">
-                    طراحی صحنه
-                  </span>
+              <div className="bg-white/10 px-6 rounded-xl">
+                {/* <h4 className="font-bold mb-3">تکنیک‌ها </h4> */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="border bg-white py-4 px-6 rounded-md">
+                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
+                      نقاشی خط مدرن
+                    </span>
+                  </div>
+                  <div className="border bg-white py-4 px-6 rounded-md">
+                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
+                      نقاشی خط مدرن
+                    </span>
+                  </div>
+                  <div className="border bg-white py-4 px-6 rounded-md">
+                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
+                      چیدمان مفهومی
+                    </span>
+                  </div>
+                  <div className="border bg-white py-4 px-6 rounded-md">
+                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
+                      هنر دیجیتال
+                    </span>
+                  </div>
+                  <div className="border bg-white py-4 px-6 rounded-md">
+                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
+                      مینیاتور معاصر
+                    </span>
+                  </div>
+                  <div className="border bg-white py-4 px-6 rounded-md">
+                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
+                      طراحی صحنه
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -538,34 +589,26 @@ const Biography = () => {
         </div>
 
         {/* گالری تصاویر */}
-        <div className="mb-16">
+        <div className="mb-16 max-w-6xl mx-auto">
           <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             گالری آثار
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-              <div
-                key={item}
-                className="aspect-square rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300"
-              >
-                <div
-                  className={`w-full h-full flex items-center justify-center ${
-                    item % 3 === 0
-                      ? "bg-gradient-to-br from-amber-200 to-orange-300"
-                      : item % 3 === 1
-                      ? "bg-gradient-to-br from-blue-200 to-purple-300"
-                      : "bg-gradient-to-br from-green-200 to-teal-300"
-                  }`}
-                >
-                  <div className="text-center p-4">
-                    <div className="text-4xl mb-2">
-                      {item % 3 === 0 ? "🎨" : item % 3 === 1 ? "✏️" : "🖼️"}
-                    </div>
-                    <p className="text-gray-800 font-medium">
-                      اثر شماره {item}
-                    </p>
-                  </div>
-                </div>
+            {[
+              "bi/1.JPG",
+              "bi/2.JPG",
+              "bi/3.JPG",
+              "bi/4.JPG",
+              "bi/5.JPG",
+              "bi/6.JPG",
+              "bi/1.JPG",
+              "bi/2.JPG",
+            ].map((item) => (
+              <div key={item} className=" transition-shadow duration-300">
+                <img
+                  className={`h-full flex items-center w-[300px] justify-center `}
+                  src={item}
+                />
               </div>
             ))}
           </div>
