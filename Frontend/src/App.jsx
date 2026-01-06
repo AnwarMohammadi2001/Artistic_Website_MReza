@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import DashboardPage from "./pages/DashboardPage";
+import Printing from "./pages/Printing";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           {/* Public pages */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
+            <Route path="/painting" element={<Printing />} />
           </Route>
 
           {/* Auth pages */}
