@@ -1,3 +1,4 @@
+import Testimonials from "../components/Testimonials";
 import React, { useState } from "react";
 
 const Biography = () => {
@@ -92,12 +93,6 @@ const Biography = () => {
       title: "کالیگرافی مدرن",
       img: "b.JPG",
     },
-    {
-      year: "۱۴۰۰",
-      location: "گالری طراحان آزاد، تهران",
-      title: "چهل سال خلاقیت",
-      img: "b.JPG",
-    },
   ];
 
   const awards = [
@@ -129,7 +124,7 @@ const Biography = () => {
   ];
 
   return (
-    <div id="biography" className="bg-gradient-to-b from-gray-50 to-white">
+    <div className="bg-gradient-to-b from-gray-50 to-white">
       {/* هدر بخش بیوگرافی */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-amber-50 to-white z-0"></div>
@@ -350,28 +345,96 @@ const Biography = () => {
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   نمایشگاه‌ها
                 </h3>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {exhibitions.map((exhibition, index) => (
                     <div
                       key={index}
-                      className="bg-gradient-to-br from-white to-amber-50 rounded-md shadow-md overflow-hidden border border-amber-100"
+                      className="group relative overflow-hidden rounded-lg bg-gradient-to-br from-white via-amber-50 to-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-amber-100 hover:border-amber-300"
                     >
-                      <div className="">
-                        <div>
-                          <img src={exhibition.img} alt="" />
-                        </div>
-                        <div className="flex justify-between items-start mb-3">
-                          <span className="px-3 py-1 bg-amber-100 flex items-center ga text-amber-800 rounded-full text-sm font-semibold">
-                            <span>سال</span>
-                            <span> {exhibition.year}</span>
+                      {/* Hover Overlay Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-transparent to-amber-300/0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 z-0"></div>
+
+                      {/* Image Container with Overlay */}
+                      <div className="relative overflow-hidden h-64">
+                        <img
+                          src={exhibition.img}
+                          alt={exhibition.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60"></div>
+
+                        {/* Year Badge */}
+                        <div className="absolute top-4 right-4 z-10">
+                          <span className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-sm font-bold rounded-full shadow-lg flex items-center gap-2 backdrop-blur-sm">
+                            <svg
+                              className="w-4 h-4"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <span>{exhibition.year}</span>
                           </span>
                         </div>
-                        <h4 className="font-bold text-gray-800 mb-2">
+
+                        {/* Location Badge */}
+                        <div className="absolute bottom-4 right-4 z-10">
+                          <span className="px-3 py-1.5 bg-white/90 backdrop-blur-sm text-amber-800 text-xs font-semibold rounded-lg shadow-md flex items-center gap-1">
+                            <svg
+                              className="w-4 h-4"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            <span>{exhibition.location.split("،")[0]}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 relative z-10 bg-white">
+                        {/* Title with hover effect */}
+                        <h4 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-amber-700 transition-colors duration-300 line-clamp-2">
                           {exhibition.title}
                         </h4>
-                        <p className="text-gray-600 text-sm">
+
+                        {/* Description/Location */}
+                        <p className="text-gray-600 mb-4 text-sm leading-relaxed">
                           {exhibition.location}
                         </p>
+
+                        {/* View Details Button */}
+                        <button className="mt-6 w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-lg shadow-md hover:shadow-md hover:from-amber-600 hover:to-amber-700 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center gap-2 group/btn">
+                          <span>مشاهده جزئیات</span>
+                          <svg
+                            className="w-4 h-4 transform group-hover/btn:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M14 5l7 7m0 0l-7 7m7-7H3"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Corner Decoration */}
+                      <div className="absolute top-0 left-0 w-16 h-16 overflow-hidden">
+                        <div className="absolute -top-8 -left-8 w-16 h-16 bg-gradient-to-br from-amber-400/20 to-transparent rotate-45"></div>
                       </div>
                     </div>
                   ))}
@@ -430,34 +493,90 @@ const Biography = () => {
             )}
 
             {activeTab === "achievements" && (
-              <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  دستاوردها و جوایز
-                </h3>
-                <div className="space-y-4">
-                  {awards.map((award, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center bg-gradient-to-r from-white to-amber-50 p-5 rounded-xl shadow-sm border-r-4 border-amber-500"
-                    >
-                      <div className="flex-shrink-0 w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center ml-4">
-                        <span className="text-2xl">🏆</span>
-                      </div>
-                      <div className="flex-grow">
-                        <h4 className="font-bold text-gray-800">
-                          {award.title}
-                        </h4>
-                        <div className="flex justify-between items-center mt-1">
-                          <span className="text-amber-600 font-semibold">
-                            {award.year}
-                          </span>
-                          <span className="text-gray-600 text-sm">
-                            {award.organization}
-                          </span>
+              <div className="space-y-8">
+                <div className="text-center mb-10">
+                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    دستاوردها و جوایز
+                  </h3>
+                  <p className="text-gray-600 max-w-2xl mx-auto">
+                    تقدیر و تجلیل از تلاش‌های بی‌وقفه در عرصه هنر معاصر ایران
+                  </p>
+                </div>
+
+                <div className="relative">
+                  {/* Decorative Background */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 to-transparent rounded-3xl"></div>
+
+                  <div className="space-y-6 relative z-10">
+                    {awards.map((award, index) => (
+                      <div
+                        key={index}
+                        className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-amber-100 hover:border-amber-300"
+                      >
+                        {/* Animated Gradient Border */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-300/0 to-amber-500/0 group-hover:from-amber-400/10 group-hover:via-amber-300/10 group-hover:to-amber-500/10 transition-all duration-500"></div>
+
+                        <div className="relative p-6 flex items-center">
+                          {/* Medal Icon */}
+                          <div className="relative flex-shrink-0 ml-6">
+                            <div className="w-20 h-20 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-500">
+                              <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center border-4 border-amber-100">
+                                <span className="text-3xl">🏆</span>
+                              </div>
+                            </div>
+
+                            {/* Year Badge */}
+                            <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-700 to-amber-800 text-white text-sm font-bold py-1.5 px-4 rounded-full shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                              {award.year}
+                            </div>
+                          </div>
+
+                          {/* Content */}
+                          <div className="flex-grow">
+                            <h4 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-amber-700 transition-colors duration-300">
+                              {award.title}
+                            </h4>
+
+                            <div className="flex items-center gap-2 text-gray-600 mb-3">
+                              <svg
+                                className="w-5 h-5 text-amber-500"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <span className="font-medium">
+                                {award.organization}
+                              </span>
+                            </div>
+
+                            {/* Achievement Level */}
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <svg
+                                    key={i}
+                                    className="w-4 h-4 text-yellow-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                  >
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                  </svg>
+                                ))}
+                              </div>
+                              <span className="text-sm text-gray-500">
+                                جایزه بین‌المللی
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -613,20 +732,9 @@ const Biography = () => {
             ))}
           </div>
         </div>
-
-        {/* نقل قول پایانی */}
-        <div className="text-center py-12">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-6xl text-amber-400 mb-6">"</div>
-            <p className="text-2xl text-gray-800 italic leading-relaxed mb-8">
-              هنر تنها زیبایی نیست، زبانی است برای گفتن ناگفتنی‌ها، دری است به
-              جهان‌هایی که هنوز کشف نشده‌اند.
-            </p>
-            <div className="text-gray-600 font-medium">
-              — حمیدرضا خواجه محمدی
-            </div>
-          </div>
-        </div>
+      </div>
+      <div className="bg-amber-50">
+        <Testimonials />
       </div>
     </div>
   );

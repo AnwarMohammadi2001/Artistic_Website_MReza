@@ -1,0 +1,25 @@
+.custome-pagination {
+  position: absolute;
+  bottom: -30px; /* Adjust the vertical position as needed */
+  left: 50%; /* Center horizontally */
+  right: 50%; /* Center horizontally */
+  transform: translateX(-50%, -50%); /* Center horizontally */
+  gap: 5px; /* Space between bullets */
+}
+
+.custom-bullet {
+  width: 12px;
+  height: 8px;
+  background-color: #ccc; /* Inactive bullet color */
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+.custom-bullet-active {
+  background-color: #e7c013; /* Active bullet color */
+  width: 30px;
+  height: 8px;
+  border-radius: 20px;
+  transform: scale(1); /* Ensure the active bullet doesn't grow */
+}
