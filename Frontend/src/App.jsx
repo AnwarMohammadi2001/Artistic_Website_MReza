@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import DashboardPage from "./pages/DashboardPage";
 import Printing from "./pages/Printing";
 import GeraphicPage from "./pages/GeraphicPage";
+import InterviewPage from "./pages/InterviewPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="/painting" element={<Printing />} />
             <Route path="/graphic" element={<GeraphicPage />} />
+            <Route path="/interview" element={<InterviewPage />} />
           </Route>
 
           {/* Auth pages */}
