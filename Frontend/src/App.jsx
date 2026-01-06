@@ -11,6 +11,7 @@ import DashboardPage from "./pages/DashboardPage";
 import Printing from "./pages/Printing";
 import GeraphicPage from "./pages/GeraphicPage";
 import InterviewPage from "./pages/InterviewPage";
+import ExhibitionPage from "./pages/ExhibitionPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/painting" element={<Printing />} />
             <Route path="/graphic" element={<GeraphicPage />} />
             <Route path="/interview" element={<InterviewPage />} />
+            <Route path="/exhibition" element={<ExhibitionPage />} />
           </Route>
 
           {/* Auth pages */}
