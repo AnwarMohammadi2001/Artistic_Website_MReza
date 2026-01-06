@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { ToastContainer } from "react-toastify";
 import DashboardPage from "./pages/DashboardPage";
 import Printing from "./pages/Printing";
+import GeraphicPage from "./pages/GeraphicPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="/painting" element={<Printing />} />
+            <Route path="/graphic" element={<GeraphicPage />} />
           </Route>
 
           {/* Auth pages */}
