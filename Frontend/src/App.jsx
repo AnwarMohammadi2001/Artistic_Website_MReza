@@ -12,6 +12,11 @@ import Printing from "./pages/Printing";
 import GeraphicPage from "./pages/GeraphicPage";
 import InterviewPage from "./pages/InterviewPage";
 import ExhibitionPage from "./pages/ExhibitionPage";
+import Contact from "./pages/Contact";
+import TheaterPage from "./pages/TheaterPage";
+import MiscellaneousPage from "./pages/MiscellaneousPage";
+import DesignPage from "./pages/DesignPage";
+
 
 function App() {
   return (
@@ -25,6 +30,10 @@ function App() {
             <Route path="/graphic" element={<GeraphicPage />} />
             <Route path="/interview" element={<InterviewPage />} />
             <Route path="/exhibition" element={<ExhibitionPage />} />
+            <Route path="/theater" element={<TheaterPage />} />
+            <Route path="/miscellaneous" element={<MiscellaneousPage />} />
+            <Route path="/design" element={<DesignPage />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
 
           {/* Auth pages */}

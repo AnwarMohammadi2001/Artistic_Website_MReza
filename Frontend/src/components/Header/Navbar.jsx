@@ -108,15 +108,15 @@ const Navbar = () => {
             </div>
 
             {/* آیکون‌های اجتماعی و منو همبرگر */}
-            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            <div className="flex items-center gap-x-4 rtl:space-x-reverse">
               {/* دکمه منو موبایل */}
-              <Link
+              {/* <Link
                 to="/dashboard"
                 className="p-2 flex items-center gap-x-2 text-black justify-center rounded-full  md:rounded-md md:w-[100px] border-[2px] hover:bg-gray-100 border-gray-300   transition-colors duration-200"
               >
                 <span className="hidden md:block">ورود</span>
                 <PiSignIn className="h-4 w-4 md:h-5 md:w-5 rotate-180" />
-              </Link>
+              </Link> */}
               <button
                 onClick={toggleMenu}
                 className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md"

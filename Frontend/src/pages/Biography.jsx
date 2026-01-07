@@ -133,12 +133,12 @@ const Biography = () => {
             {/* تصویر هنرمند */}
             <div className="lg:w-2/5 mb-10 lg:mb-0">
               <div className="relative">
-                <div className="w-64 h-80 md:w-80  mx-auto ">
+                <div className="md:w-64 h-80 md:w-80  mx-auto ">
                   <div className="w-full h-full flex items-center justify-center">
                     <img
                       src="bio.jpg"
                       alt=""
-                      className="h-[450px] w-auto rounded-lg"
+                      className="h-[450px]  md:w-auto rounded-lg"
                     />
                   </div>
                 </div>
@@ -146,14 +146,14 @@ const Biography = () => {
             </div>
 
             {/* متن معرفی */}
-            <div className="lg:w-3/5 lg:pr-12 rtl:lg:pr-0 rtl:lg:pl-12">
+            <div className="lg:w-3/5 lg:pr-12 rtl:lg:pr-0 text-center rtl:lg:pl-12">
               <div className="mb-6">
-                <span className="inline-block px-4 py-2 bg-amber-600 rounded-full text-sm font-semibold">
+                <span className="md:inline-block hidden px-4 py-2 bg-amber-600 rounded-full text-sm font-semibold">
                   بیوگرافی هنرمند
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold  text-gray-700 mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-bold pt-10   text-gray-700 mb-6 leading-tight">
                 حمیدرضا خواجه محمدی
                 <span className="block text-2xl md:text-3xl text-amber-600 mt-3">
                   پیشگام هنر معاصر ایران
