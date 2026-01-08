@@ -264,20 +264,26 @@ const InterviewPage = () => {
 
       {/* فیلترها */}
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <div className="flex flex-wrap  justify-center gap-3 mb-12">
           {filters.map((filter) => (
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+              className={`relative  flex items-center gap-2 px-6 py-3 group rounded-full font-medium transition-all duration-300 ${
                 activeFilter === filter.id
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg transform scale-105"
-                  : "bg-white text-gray-700 shadow hover:shadow-md hover:bg-gray-50"
+                  ? "text-amber-600"
+                  : "text-gray-600 hover:text-amber-600"
               }`}
             >
-              {filter.icon}
               <span>{filter.label}</span>
-              <span className="text-sm opacity-80">({filter.count})</span>
+              <span
+                className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-500 transform transition-transform duration-500
+        ${
+          activeFilter === filter.id
+            ? "scale-x-100 origin-right"
+            : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
+        }`}
+              />
             </button>
           ))}
         </div>

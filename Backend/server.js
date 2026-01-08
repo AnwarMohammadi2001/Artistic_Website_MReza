@@ -7,24 +7,19 @@ import cookieParser from "cookie-parser";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import sequelize from "./config/db.js";
-
 // Routes
 import authRoutes from "./routes/authRoutes.js";
-import projectRoutes from "./routes/projectRoutes.js";
-import emailRoutes from "./routes/emailRoutes.js";
-
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // ✅ Allowed origins (update this with your live site)
 const allowedOrigins = [
-  "https://tet-soft.com", // your live frontend domain
+  // "https://tet-soft.com", // your live frontend domain
   "http://localhost:3000", // local React dev
   "http://localhost:5173",
-  "https://backend.tet-soft.com",
+  // "https://backend.tet-soft.com",
 ];
-
 // ✅ Configure CORS
 app.use(
   cors({
@@ -41,7 +36,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 // ✅ Handle CORS errors
 app.use((err, req, res, next) => {
   if (err.message && err.message.includes("CORS")) {
@@ -49,7 +43,6 @@ app.use((err, req, res, next) => {
   }
   next(err);
 });
-
 // ✅ Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -59,17 +52,12 @@ app.use(cookieParser());
 // ✅ Serve static files (for uploads)
 const uploadsDir = path.join(__dirname, "uploads");
 app.use("/uploads", express.static(uploadsDir));
-
 // ✅ Test route
 app.get("/", (req, res) => {
   res.send("🚀 TET Backend is running successfully...");
 });
-
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/contact", emailRoutes);
-
 // ✅ Start Server
 const startServer = async () => {
   try {
@@ -87,5 +75,4 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
 startServer();

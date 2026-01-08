@@ -1,27 +1,35 @@
 import React from "react";
 import Dashboard from "../pages/Dashboard";
-import Projects from "../pages/dashboard/Projects";
-import Profile from "../pages/dashboard/Profile";
+
 import Logout from "../pages/dashboard/Logout";
 import DashboardPage from "./DashboardPage";
-import AboutDashboard from "./dashboard/AboutDashboard";
-import DashboardMessages from "./dashboard/DashboardMessages";
-import ManageSkill from "./dashboard/ManageSkill";
+
+import Painting from "./dashboard/Painting";
+import Geraphic from "./dashboard/Geraphic";
+import Design from "./dashboard/Design";
+import Exhibition from "./dashboard/Exhibition";
+import Theater from "./dashboard/Theater";
+import Miscellaneous from "./dashboard/Miscellaneous";
+import Interview from "./dashboard/Interview";
 
 const MainContent = ({ activeComponent }) => {
   switch (activeComponent) {
     case "dashboard":
       return <Dashboard />;
-    case "projects":
-      return <Projects />;
-    case "profile":
-      return <Profile />;
-    case "about":
-      return <AboutDashboard />;
-    case "message":
-      return <DashboardMessages />;
-    case "skills":
-      return <ManageSkill />;
+    case "painting":
+      return <Painting />;
+    case "graphic":
+      return <Geraphic />;
+    case "interview":
+      return <Interview />;
+    case "design":
+      return <Design />;
+    case "exhibition":
+      return <Exhibition />;
+    case "theater":
+      return <Theater />;
+    case "miscellaneous":
+      return <Miscellaneous />;
     case "logout":
       return <Logout />;
     default:

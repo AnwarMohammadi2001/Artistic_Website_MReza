@@ -9,6 +9,15 @@ import {
   MdBuild,
   MdLogout,
 } from "react-icons/md";
+import {
+  MdBrush,
+  MdPalette,
+  MdQuestionAnswer,
+  MdDesignServices,
+  MdOutlineMuseum,
+  MdTheaterComedy,
+  MdCategory,
+} from "react-icons/md";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -38,27 +47,55 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
 
   const allMenuItems = [
     {
-      name: "Dashboard",
+      name: "داشبورد",
       value: "dashboard",
       icon: <MdDashboardCustomize className="text-green-500" />,
       adminOnly: false,
     },
     {
-      name: "Projects",
-      value: "projects",
-      icon: <MdWork className="text-blue-500" />,
+      name: "نقاشی",
+      value: "painting",
+      icon: <MdBrush className="text-blue-500" />,
       adminOnly: false,
     },
-
     {
-      name: "Message",
-      value: "message",
-      icon: <MdMessage className="text-pink-500" />,
+      name: "گرافیک",
+      value: "graphic",
+      icon: <MdPalette className="text-purple-500" />,
       adminOnly: false,
     },
-
     {
-      name: "Logout",
+      name: "مصاحبه",
+      value: "interview",
+      icon: <MdQuestionAnswer className="text-pink-500" />,
+      adminOnly: false,
+    },
+    {
+      name: "طراحی",
+      value: "design",
+      icon: <MdDesignServices className="text-indigo-500" />,
+      adminOnly: false,
+    },
+    {
+      name: "نمایشگاه",
+      value: "exhibition",
+      icon: <MdOutlineMuseum className="text-amber-500" />,
+      adminOnly: false,
+    },
+    {
+      name: "تئاتر",
+      value: "theater",
+      icon: <MdTheaterComedy className="text-red-500" />,
+      adminOnly: false,
+    },
+    {
+      name: "متفرقه",
+      value: "miscellaneous",
+      icon: <MdCategory className="text-gray-500" />,
+      adminOnly: false,
+    },
+    {
+      name: "خروج",
       value: "logout",
       icon: <MdLogout className="text-rose-500" />,
       adminOnly: false,
@@ -90,7 +127,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
             className={`text-lg font-semibold text-blue-600 whitespace-nowrap 
             ${isOpen ? "inline" : "hidden lg:inline"}`}
           >
-            TET Dashboard
+            حمید رضا
           </span>
 
           {/* Close button (Mobile only) */}
@@ -118,7 +155,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
                 className={`flex items-center gap-x-3 w-full px-4 py-3 rounded-md transition-all duration-300
                   ${
                     activeComponent === component.value
-                      ? "bg-gray-200 text-blue-600 dark:bg-gray-700 dark:text-blue-400 border-l-4 border-blue-600"
+                      ? "bg-gray-200 text-blue-600 dark:bg-gray-700 dark:text-blue-400  border-blue-600"
                       : "hover:bg-gray-200 dark:hover:bg-gray-700 text-black dark:text-gray-200"
                   }`}
               >

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { PiSignIn } from "react-icons/pi";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const location = useLocation(); // برای تشخیص مسیر فعلی
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -54,24 +55,69 @@ const Navbar = () => {
     };
   }, []);
 
-  // منو آیتم‌ها
+  // منو آیتم‌ها با رنگ‌های مختلف برای حالت فعال
   const menuItems = [
-    { name: "بیوگرافی", path: "/" },
-    { name: "نقاشی", path: "/painting" },
-    { name: "گرافیک", path: "/graphic" },
-    { name: "مصاحبه", path: "/interview" },
-    { name: "طراحی", path: "/design" },
-    { name: "نمایشگاه", path: "/exhibition" },
-    { name: "تئاتر", path: "/theater" },
-    { name: "متفرقه", path: "/miscellaneous" },
-    { name: "تماس با ما", path: "/contact" },
+    {
+      id: "biography",
+      name: "بیوگرافی",
+      path: "/",
+    },
+    {
+      id: "painting",
+      name: "نقاشی",
+      path: "/painting",
+    },
+    {
+      id: "graphic",
+      name: "گرافیک",
+      path: "/graphic",
+    },
+    {
+      id: "interview",
+      name: "مصاحبه",
+      path: "/interview",
+    },
+    {
+      id: "design",
+      name: "طراحی",
+      path: "/design",
+    },
+    {
+      id: "exhibition",
+      name: "نمایشگاه",
+      path: "/exhibition",
+    },
+    {
+      id: "theater",
+      name: "تئاتر",
+      path: "/theater",
+    },
+    {
+      id: "miscellaneous",
+      name: "متفرقه",
+      path: "/miscellaneous",
+    },
+    {
+      id: "contact",
+      name: "تماس با ما",
+      path: "/contact",
+    },
   ];
+
+  // تابع برای تشخیص اینکه آیا مسیر فعلی با آیتم منو مطابقت دارد
+  const isActivePath = (path) => {
+    // اگر در صفحه اصلی هستیم و path هم "/" است
+    if (location.pathname === "/" && path === "/") return true;
+
+    // برای صفحات دیگر، بررسی می‌کنیم که مسیر با path آیتم شروع شود
+    return location.pathname.startsWith(path) && path !== "/";
+  };
 
   return (
     <>
       {/* Navbar اصلی */}
       <nav
-        className={`fixed top-0 w-full  z-50 transition-all py-3 bg-gray-100 duration-300 ${
+        className={`fixed top-0 w-full z-50 transition-all py-3 bg-gray-100 duration-300 ${
           scrolled ? "" : ""
         }`}
       >
@@ -91,32 +137,43 @@ const Navbar = () => {
             </div>
 
             {/* منوی دسکتاپ */}
-            <div className="hidden lg:flex items-center gap-x-8 ">
-              {menuItems.map((item, index) => (
-                <Link
-                  key={index}
-                  to={item.path}
-                  className={`flex items-center  transition-all duration-200 ${
-                    activeSection === index
-                      ? "bg-white text-white shadow-md"
-                      : " hover:text-amber-600"
-                  }`}
-                >
-                  <span className="font-medium">{item.name}</span>
-                </Link>
-              ))}
+            <div className="hidden lg:flex items-center gap-x-8">
+              {menuItems.map((item) => {
+                const isActive =
+                  activeSection === item.id || isActivePath(item.path);
+
+                return (
+                  <Link
+                    key={item.id}
+                    to={item.path}
+                    className={`relative font-medium group transition-colors duration-300
+          ${isActive ? "text-amber-600" : "text-gray-700 hover:text-amber-600"}
+        `}
+                  >
+                    {item.name}
+
+                    {/* underline */}
+                    <span
+                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-600
+            transform transition-transform duration-300 origin-right
+            ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}
+          `}
+                    />
+                  </Link>
+                );
+              })}
             </div>
 
             {/* آیکون‌های اجتماعی و منو همبرگر */}
             <div className="flex items-center gap-x-4 rtl:space-x-reverse">
               {/* دکمه منو موبایل */}
-              {/* <Link
+              <Link
                 to="/dashboard"
-                className="p-2 flex items-center gap-x-2 text-black justify-center rounded-full  md:rounded-md md:w-[100px] border-[2px] hover:bg-gray-100 border-gray-300   transition-colors duration-200"
+                className="p-2 flex items-center gap-x-2 text-black justify-center rounded-full md:rounded-md md:w-[100px] border-[2px] hover:bg-gray-100 border-gray-300 transition-colors duration-200"
               >
                 <span className="hidden md:block">ورود</span>
                 <PiSignIn className="h-4 w-4 md:h-5 md:w-5 rotate-180" />
-              </Link> */}
+              </Link>
               <button
                 onClick={toggleMenu}
                 className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md"
@@ -168,25 +225,30 @@ const Navbar = () => {
           {/* لیست منو در موبایل */}
           <div className="flex-1 overflow-y-auto p-6">
             <ul className="space-y-3">
-              {menuItems.map((item, index) => (
-                <li key={index}>
-                  <Link
-                    to={item.path}
-                    className={`flex items-center p-4 rounded-xl transition-all ${
-                      activeSection === index
-                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md"
-                        : "bg-gray-50 hover:bg-amber-50 text-gray-700 hover:text-amber-700"
-                    }`}
-                    onClick={closeMenu}
-                  >
-                    <span className="text-2xl ml-4">{item.icon}</span>
-                    <span className="font-medium text-lg">{item.name}</span>
-                    {activeSection === index && (
-                      <span className="mr-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                    )}
-                  </Link>
-                </li>
-              ))}
+              {menuItems.map((item, index) => {
+                const isActive =
+                  activeSection === item.id || isActivePath(item.path);
+
+                return (
+                  <li key={index}>
+                    <Link
+                      to={item.path}
+                      className={`flex items-center p-4 rounded-xl transition-all
+                        ${
+                          isActive
+                            ? ` ${"text-amber-600"} shadow-md border-r-4}`
+                            : " hover:bg-gray-100 text-gray-700 hover:text-gray-900"
+                        }`}
+                      onClick={closeMenu}
+                    >
+                      <span className="font-medium text-lg">{item.name}</span>
+                      {isActive && (
+                        <span className="mr-auto w-2 h-2 rounded-full animate-pulse"></span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
 
             {/* اطلاعات تماس */}

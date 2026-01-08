@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, MapPin, Users, X, ZoomIn, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, X, Clock, Star } from "lucide-react";
 
 const DesignPage = () => {
   const [selectedExhibition, setSelectedExhibition] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [columns, setColumns] = useState(3);
-  const [imageDimensions, setImageDimensions] = useState({});
 
   useEffect(() => {
     const updateColumns = () => {
@@ -20,7 +18,7 @@ const DesignPage = () => {
     return () => window.removeEventListener("resize", updateColumns);
   }, []);
 
-  // داده‌های نمایشگاه‌ها با سایزهای واقعی تصاویر
+  // داده‌های نمایشگاه‌ها
   const exhibitions = [
     {
       id: 1,
@@ -192,84 +190,6 @@ const DesignPage = () => {
     },
   ];
 
-  // تابع برای اندازه‌گیری سایز واقعی تصاویر
-  useEffect(() => {
-    const loadImageDimensions = async () => {
-      const dimensions = {};
-
-      for (const exhibition of exhibitions) {
-        try {
-          await new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-              // محاسبه نسبت ابعاد تصویر
-              const aspectRatio = img.width / img.height;
-              dimensions[exhibition.id] = {
-                width: img.width,
-                height: img.height,
-                aspectRatio: aspectRatio,
-                // تعیین ارتفاع بر اساس نسبت ابعاد
-                heightClass:
-                  aspectRatio > 1.5
-                    ? "h-64" // landscape
-                    : aspectRatio < 0.8
-                    ? "h-96" // portrait
-                    : "h-80", // square
-              };
-              resolve();
-            };
-            img.onerror = () => {
-              dimensions[exhibition.id] = {
-                width: 800,
-                height: 600,
-                aspectRatio: 1.33,
-                heightClass: "h-80",
-              };
-              resolve();
-            };
-            img.src = exhibition.image;
-          });
-        } catch (error) {
-          console.log(`خطا در بارگذاری تصویر ${exhibition.id}:`, error);
-        }
-      }
-
-      setImageDimensions(dimensions);
-    };
-
-    loadImageDimensions();
-  }, []);
-
-  // تابع برای ساخت Masonry Layout با سایز واقعی تصاویر
-  const createMasonryColumns = () => {
-    const columnArrays = Array.from({ length: columns }, () => []);
-    const columnHeights = Array(columns).fill(0);
-
-    exhibitions.forEach((item) => {
-      const dimension = imageDimensions[item.id];
-      let itemHeight = 400; // مقدار پیش‌فرض
-
-      if (dimension) {
-        // محاسبه ارتفاع بر اساس نسبت ابعاد واقعی
-        itemHeight =
-          dimension.aspectRatio > 1.5
-            ? 300 // landscape کوتاه
-            : dimension.aspectRatio < 0.8
-            ? 500 // portrait بلند
-            : 400; // square متوسط
-      }
-
-      // پیدا کردن کوتاه‌ترین ستون
-      const shortestColumnIndex = columnHeights.indexOf(
-        Math.min(...columnHeights)
-      );
-      columnArrays[shortestColumnIndex].push(item);
-      columnHeights[shortestColumnIndex] += itemHeight;
-    });
-
-    return columnArrays;
-  };
-
   const openModal = (exhibition) => {
     setSelectedExhibition(exhibition);
     setIsModalOpen(true);
@@ -282,268 +202,208 @@ const DesignPage = () => {
     document.body.style.overflow = "auto";
   };
 
-  const masonryColumns = createMasonryColumns();
+  // بستن مودال با دکمه Esc
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("keydown", handleEscKey);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscKey);
+    };
+  }, [isModalOpen]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4">
-      {/* Masonry Grid نمایشگاه‌ها */}
-      <div className="mx-auto">
-        <AnimatePresence>
-          {exhibitions.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    <div className="min-h-screen bg-gray-50">
+      {/* هدر صفحه */}
+      <header className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <h1 className="text-3xl md:text-xl text-center font-bold text-gray-800 ">
+            نمایشگاه‌ها
+          </h1>
+        </div>
+      </header>
+
+      {/* محتوای اصلی */}
+      <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* شبکه نمایشگاه‌ها */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {exhibitions.map((exhibition) => (
+            <div
+              key={exhibition.id}
+              className="bg-white rounded-md shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
+              onClick={() => openModal(exhibition)}
             >
-              {masonryColumns.map((column, columnIndex) => (
-                <div key={columnIndex} className="flex flex-col gap-6">
-                  {column.map((exhibition) => (
-                    <motion.div
-                      key={exhibition.id}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: exhibition.id * 0.05,
-                      }}
-                      className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500"
-                      onClick={() => openModal(exhibition)}
-                      style={{
-                        // استفاده از کلاس ارتفاع بر اساس نسبت تصویر
-                        height: imageDimensions[exhibition.id]?.heightClass
-                          ? "auto"
-                          : "400px",
-                        minHeight: "300px",
-                      }}
-                    >
-                      {/* Container با نسبت ابعاد طبیعی */}
-                      <div className="relative w-full h-full">
-                        {/* تصویر نمایشگاه */}
-                        <div className="absolute inset-0">
-                          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300">
-                            <img
-                              src={exhibition.image}
-                              alt={exhibition.title}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                              loading="lazy"
-                              style={{
-                                objectPosition: "center",
-                              }}
-                            />
-                          </div>
+              {/* تصویر */}
+              <div className="relative h-60 overflow-hidden bg-gray-100">
+                <img
+                  src={exhibition.image}
+                  alt={exhibition.title}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
 
-                          {/* گرادیان Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                {/* برچسب سال */}
+                <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-lg text-lg font-bold">
+                  {exhibition.year}
+                </div>
+              </div>
+
+              {/* اطلاعات */}
+              <div className="p-5 ">
+                <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1">
+                  {exhibition.title}
+                </h3>
+                <p className="text-gray-600 mb-4 line-clamp-2">
+                  {exhibition.description}
+                </p>
+
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span className="truncate max-w-[120px]">
+                      {exhibition.location.split("،")[0]}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+      {/* مودال نمایش جزئیات */}
+      {isModalOpen && selectedExhibition && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          {/* Overlay */}
+          <div className="fixed inset-0 bg-black/60" onClick={closeModal} />
+
+          {/* Modal Container */}
+          <div className="relative min-h-screen flex items-center justify-center p-4">
+            {/* Modal Content */}
+            <div
+              className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-6 text-white">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                      {selectedExhibition.title}
+                    </h2>
+                    <div className="flex items-center gap-4 text-white/90">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-5 h-5" />
+                        <span>{selectedExhibition.year}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-5 h-5" />
+                        <span>{selectedExhibition.location.split("،")[0]}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={closeModal}
+                    className="bg-white/20 hover:bg-white/30 p-2 rounded-full transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="p-6">
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* تصویر */}
+                  <div className="lg:w-3/5">
+                    <div className="rounded-md overflow-hidden border border-gray-200">
+                      <img
+                        src={selectedExhibition.image}
+                        alt={selectedExhibition.title}
+                        className="w-full h-64 lg:h-80 object-cover"
+                      />
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Users className="w-5 h-5 text-purple-600" />
+                          <span className="font-bold text-gray-800">
+                            برگزارکننده
+                          </span>
                         </div>
-
-                        {/* اطلاعات پایه (همیشه نمایش داده می‌شود) */}
-                        <div className="absolute bottom-4 right-4 left-4">
-                          <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
-                            {exhibition.title}
-                          </h3>
-                          <div className="flex items-center justify-between text-white/90 text-sm">
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />
-                              <span className="truncate">
-                                {exhibition.location.split("،")[0]}
-                              </span>
-                            </div>
-                            <span className="font-bold">{exhibition.year}</span>
-                          </div>
+                        <div className="text-gray-700 pr-8">
+                          {selectedExhibition.organizer}
                         </div>
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <div className="text-6xl mb-6 opacity-50">🏛️</div>
-              <p className="text-gray-500 text-xl">
-                در حال بارگذاری نمایشگاه‌ها...
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
 
-      {/* Modal جزئیات نمایشگاه */}
-      <AnimatePresence>
-        {isModalOpen && selectedExhibition && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50"
-          >
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 bg-black/90 backdrop-blur-sm"
-              onClick={closeModal}
-            />
-
-            {/* Modal Content */}
-            <div className="relative min-h-screen flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: "spring", damping: 25 }}
-                className="relative bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Close Button */}
-                <button
-                  onClick={closeModal}
-                  className="absolute top-4 left-4 z-50 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white hover:scale-110 transition-all duration-300 md:top-6 md:left-6"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-
-                {/* سمت چپ: تصویر */}
-                <div className="md:w-1/2 h-64 md:h-auto">
-                  <div className="relative w-full h-full">
-                    <img
-                      src={selectedExhibition.image}
-                      alt={selectedExhibition.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                      <div className="text-white">
-                        <div className="text-sm opacity-90">سال برگزاری</div>
-                        <div className="text-2xl font-bold">
-                          {selectedExhibition.year}
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Clock className="w-5 h-5 text-amber-600" />
+                          <span className="font-bold text-gray-800">
+                            مدت زمان
+                          </span>
+                        </div>
+                        <div className="text-gray-700 pr-8">
+                          {selectedExhibition.duration}
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* سمت راست: محتوا */}
-                <div className="md:w-1/2 p-6 md:p-8 overflow-y-auto">
-                  <div className="space-y-6">
-                    {/* عنوان */}
-                    <div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-                        {selectedExhibition.title}
-                      </h2>
-                      <p className="text-gray-600 text-lg">
-                        {selectedExhibition.description}
-                      </p>
-                    </div>
-
-                    {/* جزئیات */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* ستون اول */}
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Calendar className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              تاریخ برگزاری
-                            </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.date}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <MapPin className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              مکان نمایشگاه
-                            </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.location}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              برگزارکننده
-                            </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.organizer}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* ستون دوم */}
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Clock className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              مدت زمان
-                            </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.duration}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              تعداد بازدیدکنندگان
-                            </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.visitors}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* توضیحات کامل */}
-                    <div className="pt-4 border-t border-gray-200">
-                      <h4 className="text-xl font-bold text-gray-800 mb-4">
-                        توضیحات کامل نمایشگاه
-                      </h4>
+                  {/* جزئیات */}
+                  <div className="lg:w-2/5">
+                    {/* توضیحات */}
+                    <div className="mb-6">
+                      <h3 className="text-lg font-bold text-gray-800 mb-3">
+                        درباره نمایشگاه
+                      </h3>
                       <p className="text-gray-700 leading-relaxed">
                         {selectedExhibition.fullDescription}
                       </p>
                     </div>
 
-                    {/* اطلاعات اضافی */}
-                    {selectedExhibition.featured && (
-                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-100">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold">★</span>
+                    {/* اطلاعات کامل */}
+                    <div className="space-y-4">
+                      <div className="">
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Calendar className="w-5 h-5 text-blue-600" />
+                            <span className="font-bold text-gray-800">
+                              تاریخ دقیق
+                            </span>
                           </div>
-                          <div>
-                            <div className="font-bold text-gray-800">
-                              نمایشگاه ویژه
-                            </div>
-                            <div className="text-gray-600 text-sm">
-                              این نمایشگاه جزء نمایشگاه‌های شاخص هنرمند محسوب
-                              می‌شود
-                            </div>
+                          <div className="text-gray-700 pr-8">
+                            {selectedExhibition.date}
+                          </div>
+                        </div>
+
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <div className="flex items-center gap-3 mb-2">
+                            <MapPin className="w-5 h-5 text-green-600" />
+                            <span className="font-bold text-gray-800">
+                              مکان نمایشگاه
+                            </span>
+                          </div>
+                          <div className="text-gray-700 pr-8">
+                            {selectedExhibition.location}
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
