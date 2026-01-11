@@ -116,7 +116,7 @@ const Printing = () => {
   return (
     <div className="min-h-screen">
       {/* Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r pb-5 from-amber-900 via-amber-800 to-amber-900">
+      <div className="relative overflow-hidden bg-gray-300 pb-5  ">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="container mx-auto px-4 py-20 relative">
           <motion.div

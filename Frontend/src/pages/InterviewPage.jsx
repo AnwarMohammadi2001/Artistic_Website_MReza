@@ -244,7 +244,7 @@ const InterviewPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* هدر */}
-      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white py-16 px-4">
+      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 bordre-b-4 border-blue-400 text-white py-16 px-4">
         <div className="container mx-auto max-w-6xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
