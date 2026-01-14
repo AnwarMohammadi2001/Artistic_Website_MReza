@@ -1,4 +1,5 @@
 import express from "express";
+<<<<<<< HEAD
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -59,3 +60,14 @@ router.delete("/:id", authMiddleware, (req, res) => {
 });
 
 export default router;
+=======
+import { createCategory, createSubCategory, getAllCategories } from "../controllers/categoryController.js";
+
+const router = express.Router();
+
+router.post("/", createCategory);      // ساخت دسته
+router.post("/sub", createSubCategory); // ساخت زیرمجموعه
+router.get("/", getAllCategories);     // دریافت همه
+
+export default router;
+>>>>>>> 60a9529111f64be2f16df52616230fce18e1cb9c

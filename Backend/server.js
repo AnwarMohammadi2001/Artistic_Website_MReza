@@ -9,7 +9,12 @@ import { fileURLToPath } from "url";
 import sequelize from "./config/db.js";
 import fs from "fs";
 
-// Routes
+// ✅ Import Models (نام فایل‌ها دقیق باشد)
+import Project from "./models/Project.js";
+import Category from "./models/Category.js";
+import SubCategory from "./models/SubCategory.js";
+
+// ✅ Import Routes
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import subCategoryRoutes from "./routes/subCategoryRoutes.js";
@@ -39,7 +44,6 @@ app.use(
   })
 );
 
-// ✅ Handle CORS errors
 app.use((err, req, res, next) => {
   if (err.message && err.message.includes("CORS")) {
     return res.status(403).json({ message: err.message });

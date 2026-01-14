@@ -32,8 +32,10 @@ const MainContent = ({ activeComponent }) => {
       return <Miscellaneous />;
     case "logout":
       return <Logout />;
+      
     default:
-      return <DashboardPage />;
+      // نکته مهم: اینجا نباید DashboardPage را برگردانید چون باعث حلقه می‌شود
+      return <Dashboard />;
   }
 };
 

@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
-import Sidebar from "./Sidebar";
-import MainContent from "./MainContent";
+import Sidebar from "../pages/Sidebar"; // مسیر را چک کنید
+import MainContent from "../pages/MainContent"; // مسیر را چک کنید
 import { AuthContext } from "../context/AuthContext";
-import DashboardTopBar from "./dashboard/DashboardTopBar";
+import DashboardTopBar from "../pages/dashboard/DashboardTopBar"; // مسیر را چک کنید
 
 const DashboardPage = () => {
   const [activeComponent, setActiveComponent] = useState("dashboard");
@@ -10,13 +10,17 @@ const DashboardPage = () => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-gray-100">
+      {/* سایدبار سمت چپ */}
       <Sidebar
         activeComponent={activeComponent}
         setActiveComponent={setActiveComponent}
       />
+      
+      {/* ستون سمت راست شامل هدر و محتوا */}
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
         <DashboardTopBar />
-        <main className="flex-1 overflow-y-auto dark:bg-gray-700 ">
+        
+        <main className="flex-1 overflow-y-auto dark:bg-gray-700 bg-gray-100 p-4">
           <MainContent activeComponent={activeComponent} />
         </main>
       </div>

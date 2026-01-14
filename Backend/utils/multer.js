@@ -1,32 +1,38 @@
 import multer from "multer";
 import path from "path";
+import fs from "fs";
 
-// ذخیره فایل‌ها در uploads/projects
+// اطمینان از وجود پوشه آپلود
+const uploadDir = "uploads/projects";
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/projects");
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    // نام یکتا برای فایل: timestamp-filename
+    cb(null, `${Date.now()}-${file.originalname.replace(/\s/g, '_')}`);
   },
 });
 
-// فیلتر نوع فایل و حجم
 const fileFilter = (req, file, cb) => {
-  const filetypes = /jpeg|jpg|png|gif|webp/;
-  const mimetype = filetypes.test(file.mimetype);
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-  if (mimetype && extname) {
+  // اجازه آپلود عکس و ویدیو
+  if (
+    file.mimetype.startsWith("image/") || 
+    file.mimetype.startsWith("video/")
+  ) {
     cb(null, true);
   } else {
-    cb("Error: Only images are allowed!");
+    cb(new Error("Only images and videos are allowed!"), false);
   }
 };
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // محدودیت 50 مگابایت
   fileFilter,
 });
 
