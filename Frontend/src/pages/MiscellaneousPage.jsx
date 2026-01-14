@@ -1,363 +1,317 @@
 import React, { useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosInstance";
 import { motion, AnimatePresence } from "framer-motion";
+import MiscellaneousCart from "../pages/components/MiscellaneousPage/MiscellaneousCart";
+import MiscellaneousModal from "../pages/components/MiscellaneousPage/MiscellaneousModal"
 import {
-  Camera,
+  Music,
+  BookOpen,
+  Film,
+  Gamepad2,
+  ChefHat,
+  Car,
+  Globe,
+  Lightbulb,
+  Coffee,
   Palette,
+  Camera,
   Building,
-  Search,
-  Filter,
-  X,
-  Maximize2,
-  ChevronDown,
 } from "lucide-react";
 
 const MiscellaneousPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  /* ================= STATES ================= */
+  const [loading, setLoading] = useState(true);
+  const [miscProjects, setMiscProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [columns, setColumns] = useState(3);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("date");
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  useEffect(() => {
-    const updateColumns = () => {
-      if (window.innerWidth < 768) setColumns(1);
-      else if (window.innerWidth < 1200) setColumns(2);
-      else setColumns(3);
-    };
-
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
-  }, []);
-
+  /* ================= CATEGORIES ================= */
   const categories = [
     {
-      id: "all",
-      label: "همه",
-      count: 12,
-      icon: <Filter className="w-5 h-5" />,
-      color: "from-blue-500 to-indigo-500",
-    },
-    {
-      id: "photography",
-      label: "عکاسی",
-      count: 6,
-      icon: <Camera className="w-5 h-5" />,
+      id: "music",
+      label: "موزیک و صوت",
+      icon: <Music className="w-5 h-5" />,
       color: "from-emerald-500 to-teal-500",
+      description: "آثار صوتی، موسیقی و پادکست‌ها",
     },
     {
-      id: "sculpture",
-      label: "مجسمه‌سازی",
-      count: 4,
-      icon: <Palette className="w-5 h-5" />,
+      id: "books",
+      label: "کتاب‌خوانی",
+      icon: <BookOpen className="w-5 h-5" />,
       color: "from-amber-500 to-orange-500",
+      description: "نقد کتاب، معرفی آثار و مقالات ادبی",
     },
     {
-      id: "architecture",
-      label: "معماری",
-      count: 8,
-      icon: <Building className="w-5 h-5" />,
+      id: "movies",
+      label: "فیلم و سینما",
+      icon: <Film className="w-5 h-5" />,
       color: "from-purple-500 to-pink-500",
+      description: "نقد فیلم، تحلیل سینمایی و مستند",
+    },
+    {
+      id: "games",
+      label: "بازی و سرگرمی",
+      icon: <Gamepad2 className="w-5 h-5" />,
+      color: "from-red-500 to-rose-500",
+      description: "بازی‌های ویدیویی، فکری و سرگرمی",
+    },
+    {
+      id: "cooking",
+      label: "آشپزی",
+      icon: <ChefHat className="w-5 h-5" />,
+      color: "from-yellow-500 to-red-500",
+      description: "دستور پخت، تکنیک‌ها و فرهنگ غذایی",
+    },
+    {
+      id: "travel",
+      label: "سفر و گردشگری",
+      icon: <Globe className="w-5 h-5" />,
+      color: "from-blue-500 to-cyan-500",
+      description: "تجربیات سفر، راهنمای گردشگری",
+    },
+    {
+      id: "tech",
+      label: "تکنولوژی",
+      icon: <Lightbulb className="w-5 h-5" />,
+      color: "from-indigo-500 to-purple-500",
+      description: "فناوری‌های جدید، گجت‌ها و نوآوری",
+    },
+    {
+      id: "lifestyle",
+      label: "سبک زندگی",
+      icon: <Coffee className="w-5 h-5" />,
+      color: "from-brown-500 to-amber-500",
+      description: "سلامت، آرامش و بهبود کیفیت زندگی",
     },
   ];
 
-  const sortOptions = [
-    { id: "date", label: "تاریخ (جدیدترین)" },
-    { id: "date-old", label: "تاریخ (قدیمی‌ترین)" },
-    { id: "title", label: "عنوان (الف-ی)" },
-    { id: "title-rev", label: "عنوان (ی-الف)" },
+  /* ================= FETCH DATA ================= */
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get("/projects");
+      const projects = res.data || [];
+
+      // Filter miscellaneous projects
+      const misc = projects.filter((p) => {
+        if (!p.Category || !p.Category.title) return false;
+        const categoryTitle = p.Category.title.toLowerCase().trim();
+
+        // Include various miscellaneous categories
+        const miscCategories = [
+          "متفرقه",
+          "miscellaneous",
+          "other",
+          "دیگر",
+          "موزیک",
+          "موسیقی",
+          "music",
+          "کتاب",
+          "book",
+          "فیلم",
+          "movie",
+          "بازی",
+          "game",
+          "آشپزی",
+          "cooking",
+          "سفر",
+          "travel",
+          "تکنولوژی",
+          "technology",
+          "سبک زندگی",
+          "lifestyle",
+        ];
+
+        return miscCategories.some((cat) => categoryTitle.includes(cat));
+      });
+
+      console.log("Filtered miscellaneous projects:", misc);
+      setMiscProjects(misc);
+      setFilteredProjects(misc);
+
+      // Extract subcategories
+      const subs = misc
+        .map((p) => p.SubCategory)
+        .filter((s) => s && (s.id || s.title));
+
+      const uniqueSubs = Array.from(
+        new Map(
+          subs.map((s) => [s.id ? `id-${s.id}` : `title-${s.title}`, s])
+        ).values()
+      );
+
+      setSubCategories(uniqueSubs);
+
+      // Set default active subcategory
+      if (uniqueSubs.length > 0) {
+        setActiveSub(uniqueSubs[0].id || uniqueSubs[0].title);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+
+      // Fallback to sample data if API fails
+      setFilteredProjects(sampleItems);
+      setSubCategories(sampleSubCategories);
+      setActiveSub(sampleSubCategories[0]?.id || "all");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= FILTER BY SUB CATEGORY ================= */
+  const handleSubCategory = (sub) => {
+    if (sub === null) {
+      setActiveSub(null);
+      setFilteredProjects(miscProjects);
+      return;
+    }
+
+    const key = sub.id || sub.title;
+    setActiveSub(key);
+
+    const filtered = miscProjects.filter((p) => {
+      if (!p.SubCategory) return false;
+
+      if (sub.id) {
+        return p.SubCategory.id === sub.id;
+      }
+      return p.SubCategory.title === sub.title;
+    });
+
+    setFilteredProjects(filtered.length > 0 ? filtered : miscProjects);
+  };
+
+  /* ================= SAMPLE DATA (Fallback) ================= */
+  const sampleSubCategories = [
+    { id: "all", title: "همه" },
+    { id: "recommended", title: "پیشنهادی" },
+    { id: "popular", title: "محبوب‌ترین" },
+    { id: "recent", title: "جدیدترین" },
   ];
 
-  // Sample data for photography, sculpture, and architecture
-  const items = [
-    // Photography
+  const sampleItems = [
     {
       id: 1,
-      type: "photography",
-      title: "طبیعت در قاب",
-      description:
-        "عکس‌برداری از مناظر طبیعی در غروب آفتاب با تکنیک نوردهی طولانی",
+      title: "آهنگ‌سازی مدرن",
+      description: "ترکیب موسیقی الکترونیک و سنتی ایرانی",
       year: "۱۴۰۲",
-      artist: "علی محمدی",
-      location: "شمال ایران",
-      src: "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["طبیعت", "غروب", "منظره"],
-      aspectRatio: "landscape",
-      featured: true,
+      category: "music",
+      artist: "رضا شجاعی",
+      tags: ["موسیقی", "الکترونیک", "ایرانی"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
     {
       id: 2,
-      type: "photography",
-      title: "پرتره انسانی",
-      description: "پرتره سیاه و سفید از چهره‌های متفاوت با نورپردازی رامبراند",
+      title: "معرفی رمان ایرانی",
+      description: "مروری بر بهترین رمان‌های نویسندگان معاصر ایران",
       year: "۱۴۰۱",
-      artist: "فاطمه رضایی",
-      location: "تهران",
-      src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["پرتره", "سیاه و سفید", "چهره"],
-      aspectRatio: "portrait",
+      category: "books",
+      artist: "مریم محمودی",
+      tags: ["کتاب", "رمان", "ادبیات"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
     {
       id: 3,
-      type: "photography",
-      title: "معماری شهری",
-      description: "نمایی مدرن از ساختمان‌های شهری با زوایای هندسی",
-      year: "۱۴۰۰",
-      artist: "محمد حسینی",
-      location: "شیراز",
-      src: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["شهری", "معماری", "مدرن"],
-      aspectRatio: "square",
+      title: "نقد فیلم ایرانی",
+      description: "تحلیل فیلم‌های برتر سینمای ایران",
+      year: "۱۴۰۲",
+      category: "movies",
+      artist: "علی کریمی",
+      tags: ["فیلم", "سینما", "نقد"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
     {
       id: 4,
-      type: "photography",
-      title: "زندگی خیابانی",
-      description: "مستندنگاری از زندگی روزمره در بازار سنتی",
-      year: "۱۳۹۹",
+      title: "آشپزی ایرانی",
+      description: "آموزش پخت غذاهای اصیل ایرانی",
+      year: "۱۴۰۱",
+      category: "cooking",
       artist: "سارا احمدی",
-      location: "اصفهان",
-      src: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["خیابانی", "مستند", "زندگی"],
-      aspectRatio: "landscape",
+      tags: ["آشپزی", "غذای ایرانی", "آموزش"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
     {
       id: 5,
-      type: "photography",
-      title: "حیات وحش",
-      description: "عکس‌برداری از پرندگان در زیستگاه طبیعی",
+      title: "سفر به شمال",
+      description: "تجربه سفر به جنگل‌های شمال ایران",
       year: "۱۴۰۲",
-      artist: "رضا کریمی",
-      location: "مازندران",
-      src: "https://images.unsplash.com/photo-1551085254-e96b210db58a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["حیات وحش", "پرندگان", "طبیعت"],
-      aspectRatio: "landscape",
+      category: "travel",
+      artist: "محمد رضایی",
+      tags: ["سفر", "طبیعت", "ایران"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
     {
       id: 6,
-      type: "photography",
-      title: "انتزاع هندسی",
-      description: "عکس‌های انتزاعی با استفاده از سایه و نور",
-      year: "۱۴۰۱",
-      artist: "نازنین محمودی",
-      location: "تبریز",
-      src: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["انتزاعی", "هندسی", "سایه"],
-      aspectRatio: "square",
+      title: "نوآوری‌های تکنولوژی",
+      description: "معرفی جدیدترین فناوری‌های سال",
+      year: "۱۴۰۲",
+      category: "tech",
+      artist: "امیرحسین محمدی",
+      tags: ["تکنولوژی", "نوآوری", "فناوری"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
-
-    // Sculpture
     {
       id: 7,
-      type: "sculpture",
-      title: "تجسم انسان مدرن",
-      description: "مجسمه برنزی با ارتفاع ۲ متر با الهام از فرم‌های انسانی",
-      year: "۱۳۹۸",
-      artist: "حمیدرضا خواجه‌محمدی",
-      location: "موزه هنرهای معاصر تهران",
-      src: "https://images.unsplash.com/photo-1569930784237-ea5e51c4f7c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["برنز", "انسان", "مدرن"],
-      aspectRatio: "portrait",
-      featured: true,
+      title: "بازی‌های ایرانی",
+      description: "معرفی بازی‌های موبایلی ساخت ایران",
+      year: "۱۴۰۱",
+      category: "games",
+      artist: "پریسا نوروزی",
+      tags: ["بازی", "موبایل", "ایرانی"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
     {
       id: 8,
-      type: "sculpture",
-      title: "نقش برجسته تاریخی",
-      description: "سنگ مرمر با نقش‌برجسته از صحنه‌های تاریخی",
-      year: "۱۳۹۵",
-      artist: "مرتضی اسدی",
-      location: "کاخ نیاوران",
-      src: "https://images.unsplash.com/photo-1599741295376-5f1e1ad415cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["سنگ مرمر", "تاریخی", "نقش برجسته"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 9,
-      type: "sculpture",
-      title: "انتزاع فلزی",
-      description: "ساختار فلزی با فرم‌های انتزاعی و مدرن",
-      year: "۱۴۰۰",
-      artist: "لیلا جعفری",
-      location: "پارک هنرمندان",
-      src: "https://images.unsplash.com/photo-1577560965171-3f27bf7d9e3c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["فلز", "انتزاعی", "ساختار"],
-      aspectRatio: "square",
-    },
-    {
-      id: 10,
-      type: "sculpture",
-      title: "پیکره‌سازی سنتی",
-      description: "مجسمه گچی با تکنیک‌های سنتی ایرانی",
-      year: "۱۳۹۷",
-      artist: "احمد نوری",
-      location: "موزه ملی ایران",
-      src: "https://images.unsplash.com/photo-1579781306499-a3d4a64a28e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["گچ", "سنتی", "ایرانی"],
-      aspectRatio: "portrait",
-    },
-
-    // Architecture
-    {
-      id: 11,
-      type: "architecture",
-      title: "خانه مدرن ایرانی",
-      description: "طراحی مسکونی با ترکیب معماری مدرن و عناصر سنتی ایرانی",
+      title: "مدیتیشن روزانه",
+      description: "تمرینات ساده برای آرامش ذهن",
       year: "۱۴۰۲",
-      architect: "دکتر مهدی شیرازی",
-      location: "شمال تهران",
-      src: "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["مسکونی", "مدرن ایرانی", "طراحی"],
-      aspectRatio: "landscape",
-      featured: true,
-    },
-    {
-      id: 12,
-      type: "architecture",
-      title: "برج تجاری شهر",
-      description: "سازه ۴۰ طبقه با طراحی پایدار و مصرف انرژی بهینه",
-      year: "۱۴۰۱",
-      architect: "گروه مهندسی آرمان",
-      location: "مرکز تجاری تهران",
-      src: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["تجاری", "پایدار", "برج"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 13,
-      type: "architecture",
-      title: "موزه هنر معاصر",
-      description: "طراحی موزه با نورگیرهای خاص و فضاهای نمایشی منعطف",
-      year: "۱۳۹۹",
-      architect: "فرهاد احمدی",
-      location: "اصفهان",
-      src: "https://images.unsplash.com/photo-1580130588675-8c5544b2d2c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["موزه", "هنری", "نمایشی"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 14,
-      type: "architecture",
-      title: "پل تاریخی",
-      description: "مرمت و بازسازی پل تاریخی با حفظ اصالت معماری",
-      year: "۱۳۹۸",
-      architect: "مهندسین مشاور فرهنگ",
-      location: "شیراز",
-      src: "https://images.unsplash.com/photo-1548626346-b3c2dce64f5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["تاریخی", "مرمت", "پل"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 15,
-      type: "architecture",
-      title: "خانه باغ سنتی",
-      description: "طراحی باغ ایرانی با الحاقات معماری سنتی",
-      year: "۱۳۹۷",
-      architect: "استاد حسین طاهری",
-      location: "کاشان",
-      src: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["باغ ایرانی", "سنتی", "خانه باغ"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 16,
-      type: "architecture",
-      title: "مجتمع فرهنگی",
-      description: "فضای چندمنظوره فرهنگی با طراحی معاصر",
-      year: "۱۴۰۰",
-      architect: "شرکت طرح و معماری",
-      location: "مشهد",
-      src: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["فرهنگی", "چندمنظوره", "معاصر"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 17,
-      type: "architecture",
-      title: "ویلا ساحلی",
-      description: "طراحی ویلای مدرن با دید به دریا",
-      year: "۱۴۰۲",
-      architect: "نوید رحیمی",
-      location: "جزیره کیش",
-      src: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["ویلا", "ساحلی", "مدرن"],
-      aspectRatio: "landscape",
-    },
-    {
-      id: 18,
-      type: "architecture",
-      title: "مرکز خرید مدرن",
-      description: "طراحی مرکز خرید با رویکرد تجربه خرید متفاوت",
-      year: "۱۴۰۱",
-      architect: "دپارتمان طراحی شهری",
-      location: "شهرک غرب تهران",
-      src: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      tags: ["تجاری", "مرکز خرید", "مدرن"],
-      aspectRatio: "landscape",
+      category: "lifestyle",
+      artist: "فاطمه حسینی",
+      tags: ["سبک زندگی", "سلامت", "آرامش"],
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        },
+      ],
     },
   ];
 
-  // Filter and sort items
-  const filteredItems = items
-    .filter((item) => {
-      const matchesCategory =
-        activeCategory === "all" || item.type === activeCategory;
-      const matchesSearch =
-        searchTerm === "" ||
-        item.title.includes(searchTerm) ||
-        item.description.includes(searchTerm) ||
-        item.tags.some((tag) => tag.includes(searchTerm));
-
-      return matchesCategory && matchesSearch;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "date":
-          return new Date(b.year) - new Date(a.year);
-        case "date-old":
-          return new Date(a.year) - new Date(b.year);
-        case "title":
-          return a.title.localeCompare(b.title, "fa");
-        case "title-rev":
-          return b.title.localeCompare(a.title, "fa");
-        default:
-          return 0;
-      }
-    });
-
-  // Create masonry columns
-  const createMasonryColumns = () => {
-    const columnArrays = Array.from({ length: columns }, () => []);
-    const columnHeights = Array(columns).fill(0);
-
-    filteredItems.forEach((item) => {
-      let itemHeight;
-      switch (item.aspectRatio) {
-        case "portrait":
-          itemHeight = 450 + Math.random() * 100;
-          break;
-        case "landscape":
-          itemHeight = 300 + Math.random() * 80;
-          break;
-        case "square":
-          itemHeight = 350 + Math.random() * 60;
-          break;
-        default:
-          itemHeight = 350;
-      }
-
-      const shortestColumnIndex = columnHeights.indexOf(
-        Math.min(...columnHeights)
-      );
-      columnArrays[shortestColumnIndex].push(item);
-      columnHeights[shortestColumnIndex] += itemHeight;
-    });
-
-    return columnArrays;
-  };
-
+  /* ================= MODAL ================= */
   const openModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
@@ -365,171 +319,205 @@ const MiscellaneousPage = () => {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
     setSelectedItem(null);
+    setIsModalOpen(false);
     document.body.style.overflow = "auto";
   };
 
-  const masonryColumns = createMasonryColumns();
-
-  const getCategoryColor = (categoryId) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category ? category.color : "from-gray-500 to-gray-600";
+  /* ================= ANIMATION ================= */
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
   };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.4 },
+    },
+  };
+
+  /* ================= GET CATEGORY INFO ================= */
+  const getCategoryInfo = (categoryId) => {
+    return categories.find((cat) => cat.id === categoryId) || categories[0];
+  };
+
+  /* ================= LOADING ================= */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
+        <div className="w-14 h-14 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div
       className="min-h-screen bg-gradient-to-b from-gray-50 to-white"
       dir="rtl"
     >
-      {/* Header */}
-      <div className="  py-12 px-4 relative overflow-hidden">
-       
+      {/* ================= HEADER ================= */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 pb-5">
+        {/* Decorative Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-overlay"></div>
+        </div>
 
-        <div className="container mx-auto max-w-6xl text-center relative z-10">
+        <div className="container mx-auto px-4 py-20 relative z-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="text-center text-white"
           >
-            <h1 className="text-4xl md:text-3xl text-gray-900 lg:text-3xl font-bold mb-3">
-              گالری هنرهای تجسمی
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              گالری متفرقه
+              <span className="block text-cyan-300 mt-2">
+                مجموعه‌ای از آثار متنوع
+              </span>
             </h1>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-              مجموعه‌ای از بهترین آثار عکاسی، مجسمه‌سازی و معماری هنرمندان
-              ایرانی
+
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-100 leading-relaxed mb-8">
+              از موزیک و کتاب تا سفر و تکنولوژی؛ دنیایی از تجربیات و علایق متنوع
             </p>
+
+            {/* Category Stats */}
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
+              {[
+                [`${filteredProjects.length}+`, "اثر متنوع"],
+                [`${categories.length}`, "دسته‌بندی"],
+                ["۱۰۰+", "نظر کاربران"],
+              ].map(([value, label]) => (
+                <div
+                  key={label}
+                  className="bg-white/10 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/20"
+                >
+                  <span className="font-bold text-3xl block mb-1">{value}</span>
+                  <p className="text-sm text-gray-200">{label}</p>
+                </div>
+              ))}
+            </div>
           </motion.div>
+        </div>
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0 z-30">
+          <svg
+            className="w-full h-[120px]"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,0V120H1200V0C800,80 400,80 0,0Z" fill="white" />
+          </svg>
         </div>
       </div>
 
-      {/* Search and Filter Section */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8  max-w-7xl  relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-       
-        >
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-            {/* Category Filter Buttons */}
-            <div className="w-full">
-              <div className="flex flex-wrap justify-center gap-3 mb-4">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveCategory(category.id)}
-                    className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300
-                      ${
-                        activeCategory === category.id
-                          ? "text-cyan-600"
-                          : "text-gray-600 hover:text-cyan-600"
-                      }`}
-                  >
-                    {category.label}
-
-                    <span
-                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-700 transform transition-transform duration-500
-                        ${
-                          activeCategory === category.id
-                            ? "scale-x-100 origin-right"
-                            : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
-                        }`}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
+      {/* ================= CATEGORY FILTERS ================= */}
+      <div className="container mx-auto px-4 -mt-8 relative z-40">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map((category) => {
+              const count = filteredProjects.filter(
+                (p) => p.category === category.id
+              ).length;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    const filtered = filteredProjects.filter(
+                      (p) => p.category === category.id
+                    );
+                    setFilteredProjects(
+                      filtered.length > 0 ? filtered : miscProjects
+                    );
+                  }}
+                  className="group relative px-5 py-3 rounded-xl transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-transparent min-w-[140px]"
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <div
+                      className={`p-2 rounded-lg bg-gradient-to-r ${category.color}`}
+                    >
+                      {category.icon}
+                    </div>
+                    <span className="font-semibold text-gray-800">
+                      {category.label}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {category.description}
+                    </span>
+                    <span className="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
+                      {count}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      {/* Masonry Grid */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
+      {/* ================= SUB CATEGORIES ================= */}
+      <div className="container mx-auto px-4 py-10">
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          <button
+            onClick={() => handleSubCategory(null)}
+            className={`px-6 py-3 font-bold rounded-xl transition-all duration-300 ${
+              activeSub === null
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            همه آثار
+          </button>
+
+          {subCategories.map((sub) => {
+            const key = sub.id || sub.title;
+            const isActive = activeSub === key;
+
+            return (
+              <button
+                key={key}
+                onClick={() => handleSubCategory(sub)}
+                className={`px-6 py-3 font-bold rounded-xl transition-all duration-300 ${
+                  isActive
+                    ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {sub.title}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ================= PROJECTS GRID ================= */}
         <AnimatePresence mode="wait">
-          {filteredItems.length > 0 ? (
+          {filteredProjects.length > 0 ? (
             <motion.div
-              key={`${activeCategory}-${columns}-${sortBy}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              key={activeSub}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             >
-              {masonryColumns.map((column, columnIndex) => (
-                <div key={columnIndex} className="flex flex-col gap-4">
-                  {column.map((item) => (
-                    <motion.div
-                      key={item.id}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100"
-                      onClick={() => openModal(item)}
-                      style={{
-                        minHeight:
-                          item.aspectRatio === "portrait"
-                            ? "450px"
-                            : item.aspectRatio === "landscape"
-                            ? "320px"
-                            : "350px",
-                      }}
-                    >
-                      
-
-                      {/* Category Badge */}
-                      <div className="absolute top-4 right-4 z-10">
-                        <span
-                          className={`bg-gradient-to-r ${getCategoryColor(
-                            item.type
-                          )} text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90`}
-                        >
-                          {categories.find((c) => c.id === item.type)?.label}
-                        </span>
-                      </div>
-
-                      {/* Image Container */}
-                      <div className="relative w-full h-full overflow-hidden">
-                        <img
-                          src={item.src}
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                          loading="lazy"
-                        />
-
-                        {/* Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                          <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                            <h3 className="text-xl font-bold mb-2">
-                              {item.title}
-                            </h3>
-                            <p className="text-sm text-gray-200 line-clamp-2 mb-3">
-                              {item.description}
-                            </p>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded">
-                                  {item.year}
-                                </span>
-                                <span className="text-xs bg-white/20 backdrop-blur-sm px-2 py-1 rounded">
-                                  {item.location}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Maximize2 className="w-4 h-4" />
-                                <span className="text-xs">مشاهده</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                   
-                    </motion.div>
-                  ))}
-                </div>
-              ))}
+              {filteredProjects.map((item) => {
+                const categoryInfo = getCategoryInfo(item.category);
+                return (
+                  <MiscellaneousCart
+                    key={item.id}
+                    item={item}
+                    categoryInfo={categoryInfo}
+                    itemVariants={itemVariants}
+                    openModal={openModal}
+                  />
+                );
+              })}
             </motion.div>
           ) : (
             <motion.div
@@ -538,24 +526,45 @@ const MiscellaneousPage = () => {
               className="text-center py-20"
             >
               <div className="text-6xl mb-6 opacity-50">🎨</div>
-              <p className="text-gray-500 text-xl mb-4">اثری یافت نشد.</p>
+              <p className="text-gray-500 text-xl mb-4">
+                اثری در این بخش یافت نشد.
+              </p>
               <p className="text-gray-400 max-w-md mx-auto mb-6">
-                لطفاً عبارت جستجوی خود را تغییر دهید یا دسته‌بندی دیگری را
-                انتخاب کنید.
+                لطفاً دسته‌بندی دیگری را انتخاب کنید یا منتظر اضافه شدن آثار
+                جدید باشید.
               </p>
               <button
                 className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium hover:opacity-90 transition-opacity shadow-lg"
-                onClick={() => {
-                  setSearchTerm("");
-                  setActiveCategory("all");
-                }}
+                onClick={() => handleSubCategory(null)}
               >
-                پاک کردن جستجو
+                مشاهده همه آثار
               </button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* ================= MODAL ================= */}
+      <AnimatePresence>
+        {isModalOpen && selectedItem && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50"
+          >
+            <div
+              className="absolute inset-0 bg-black/70"
+              onClick={closeModal}
+            />
+            <MiscellaneousModal
+              selectedItem={selectedItem}
+              categoryInfo={getCategoryInfo(selectedItem.category)}
+              closeModal={closeModal}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

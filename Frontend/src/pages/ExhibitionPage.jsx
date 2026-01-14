@@ -1,330 +1,377 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, MapPin, Users, X, ZoomIn, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, X, Clock } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
 
 const ExhibitionPage = () => {
-  const [selectedExhibition, setSelectedExhibition] = useState(null);
+  /* ================= STATES ================= */
+  const [loading, setLoading] = useState(true);
+  const [allProjects, setAllProjects] = useState([]);
+  const [exhibitionProjects, setExhibitionProjects] = useState([]);
+  const [filteredProjects, setFilteredProjects] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [columns, setColumns] = useState(3);
-  const [imageDimensions, setImageDimensions] = useState({});
+  const [subCategories, setSubCategories] = useState([]);
+  const [activeSub, setActiveSub] = useState(null);
 
+  /* ================= FETCH DATA ================= */
   useEffect(() => {
-    const updateColumns = () => {
-      if (window.innerWidth < 768) setColumns(1);
-      else if (window.innerWidth < 1200) setColumns(2);
-      else setColumns(3);
-    };
-
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
+    fetchProjects();
   }, []);
 
-  // داده‌های نمایشگاه‌ها با سایزهای واقعی تصاویر
-  const exhibitions = [
-    {
-      id: 1,
-      title: "چهل سال خلاقیت",
-      image: "ex/1.JPG",
-      year: "۱۴۰۰",
-      date: "۱۴۰۰/۰۶/۱۵ تا ۱۴۰۰/۰۷/۱۵",
-      location: "موزه هنرهای معاصر تهران",
-      organizer: "انجمن هنرمندان ایران",
-      description: "نمایشگاه مروری بر چهار دهه فعالیت هنری حمیدرضا خواجه محمدی",
-      fullDescription:
-        "این نمایشگاه که به مناسبت چهل‌سالگی فعالیت هنری برگزار شد، شامل بیش از ۵۰ اثر از دوره‌های مختلف کاری هنرمند بود. آثار شامل نقاشی، طراحی، گرافیک و تلفیق مواد مختلف می‌شد.",
-      duration: "۳۰ روز",
-      visitors: "۲۵۰۰ نفر",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "نقاشی خط معاصر",
-      image: "ex/2.JPG",
-      year: "۱۳۹۸",
-      date: "۱۳۹۸/۰۸/۱۰ تا ۱۳۹۸/۰۹/۱۰",
-      location: "گالری سیحون، تهران",
-      organizer: "خانه هنرمندان",
-      description: "نمایشگاه گروهی هنرمندان پیشگام نقاشی خط",
-      fullDescription:
-        "نمایشگاهی از آثار برجسته هنرمندان نقاشی خط ایران که تحولات این هنر در دهه‌های اخیر را به نمایش گذاشت.",
-      duration: "۳۰ روز",
-      visitors: "۱۸۰۰ نفر",
-    },
-    {
-      id: 3,
-      title: "هنر ایرانی در پاریس",
-      image: "ex/3.jpg",
-      year: "۱۳۹۶",
-      date: "۱۳۹۶/۰۳/۱۵ تا ۱۳۹۶/۰۴/۱۵",
-      location: "گالری کارتیه، پاریس",
-      organizer: "وزارت فرهنگ فرانسه",
-      description: "نمایشگاه بین‌المللی هنر معاصر ایران",
-      fullDescription:
-        "این نمایشگاه که با همکاری موزه لوور برگزار شد، آثار هنرمندان ایرانی را در قلب پاریس به نمایش گذاشت.",
-      duration: "۳۰ روز",
-      visitors: "۵۰۰۰ نفر",
-    },
-    {
-      id: 4,
-      title: "مینیاتورهای مدرن",
-      image: "ex/4.JPG",
-      year: "۱۳۹۹",
-      date: "۱۳۹۹/۱۱/۲۰ تا ۱۳۹۹/۱۲/۲۰",
-      location: "نگارخانه تهران",
-      organizer: "فرهنگستان هنر",
-      description: "تلفیق هنر مینیاتور با تکنیک‌های مدرن",
-      fullDescription:
-        "آثار این نمایشگاه نشان‌دهنده نوآوری در هنر مینیاتور با استفاده از مواد و تکنیک‌های معاصر بود.",
-      duration: "۳۰ روز",
-      visitors: "۲۰۰۰ نفر",
-    },
-    {
-      id: 5,
-      title: "طراحی و گرافیک",
-      image: "ex/5.jpg",
-      year: "۱۴۰۱",
-      date: "۱۴۰۱/۰۴/۰۵ تا ۱۴۰۱/۰۵/۰۵",
-      location: "موزه طراحی گرافیک",
-      organizer: "انجمن طراحان ایران",
-      description: "نمایشگاه آثار برجسته طراحی و گرافیک",
-      fullDescription:
-        "نمایشگاهی از بهترین آثار طراحی گرافیک سه دهه اخیر ایران با تمرکز بر آثار مفهومی و تجربی.",
-      duration: "۳۰ روز",
-      visitors: "۳۰۰۰ نفر",
-    },
-    {
-      id: 6,
-      title: "طبیعت و انتزاع",
-      image: "ex/6.jpg",
-      year: "۱۴۰۲",
-      date: "۱۴۰۲/۰۲/۱۰ تا ۱۴۰۲/۰۳/۱۰",
-      location: "گالری ویلا، اصفهان",
-      organizer: "استانداری اصفهان",
-      description: "آثار انتزاعی با الهام از طبیعت ایران",
-      fullDescription:
-        "این نمایشگاه که در شهر تاریخی اصفهان برگزار شد، تأثیر طبیعت ایران بر هنر انتزاعی را بررسی کرد.",
-      duration: "۲۸ روز",
-      visitors: "۲۲۰۰ نفر",
-    },
-    {
-      id: 7,
-      title: "هنر دیجیتال",
-      image: "ex/7.jpg",
-      year: "۱۴۰۰",
-      date: "۱۴۰۰/۰۹/۰۱ تا ۱۴۰۰/۱۰/۰۱",
-      location: "مرکز هنرهای دیجیتال",
-      organizer: "شرکت فناوری هنر",
-      description: "نمایشگاه هنر دیجیتال و تعاملی",
-      fullDescription:
-        "اولین نمایشگاه بزرگ هنر دیجیتال در ایران با آثار تعاملی و تکنولوژی‌های جدید.",
-      duration: "۳۰ روز",
-      visitors: "۳۵۰۰ نفر",
-    },
-    {
-      id: 8,
-      title: "نمایشگاه دبی",
-      image: "ex/8.jpg",
-      year: "۱۳۹۷",
-      date: "۱۳۹۷/۱۰/۱۵ تا ۱۳۹۷/۱۱/۱۵",
-      location: "مرکز تجارت جهانی دبی",
-      organizer: "دولت دبی",
-      description: "نمایشگاه هنر معاصر خاورمیانه",
-      fullDescription:
-        "نمایشگاهی بین‌المللی که هنرمندان برجسته خاورمیانه را گرد هم آورد.",
-      duration: "۳۰ روز",
-      visitors: "۸۰۰۰ نفر",
-    },
-    {
-      id: 9,
-      title: "نقاشی‌های بزرگ",
-      image: "ex/9.JPG",
-      year: "۱۳۹۵",
-      date: "۱۳۹۵/۰۵/۲۰ تا ۱۳۹۵/۰۶/۲۰",
-      location: "تالار وحدت تهران",
-      organizer: "وزارت فرهنگ و ارشاد اسلامی",
-      description: "نمایشگاه آثار بزرگ مقیاس",
-      fullDescription:
-        "آثار بزرگ مقیاسی که برای اولین بار در فضای عمومی به نمایش درآمدند.",
-      duration: "۳۰ روز",
-      visitors: "۴۰۰۰ نفر",
-    },
-    {
-      id: 10,
-      title: "جوانان و هنر",
-      image: "ex/10.JPG",
-      year: "۱۴۰۲",
-      date: "۱۴۰۲/۰۷/۰۱ تا ۱۴۰۲/۰۸/۰۱",
-      location: "دانشگاه هنر تهران",
-      organizer: "دانشگاه هنر",
-      description: "نمایشگاه آثار دانشجویان و هنرمندان جوان",
-      fullDescription:
-        "نمایشگاهی برای معرفی استعدادهای جوان هنر ایران با مربیگری هنرمندان پیشکسوت.",
-      duration: "۳۰ روز",
-      visitors: "۲۸۰۰ نفر",
-    },
-    {
-      id: 11,
-      title: "نمایشگاه استانبول",
-      image: "ex/11.jpg",
-      year: "۱۳۹۹",
-      date: "۱۳۹۹/۰۱/۱۵ تا ۱۳۹۹/۰۲/۱۵",
-      location: "موزه هنرهای مدرن استانبول",
-      organizer: "دولت ترکیه",
-      description: "نمایشگاه فرهنگی ایران و ترکیه",
-      fullDescription: "نمایشگاهی مشترک برای تقویت روابط فرهنگی بین دو کشور.",
-      duration: "۳۰ روز",
-      visitors: "۴۵۰۰ نفر",
-    },
-    {
-      id: 12,
-      title: "آثار اولیه",
-      image: "ex/1.JPG",
-      year: "۱۳۹۴",
-      date: "۱۳۹۴/۱۲/۰۱ تا ۱۳۹۵/۰۱/۰۱",
-      location: "گالری طراحان آزاد",
-      organizer: "انجمن هنرمندان تجسمی",
-      description: "نمایشگاه مروری بر آثار اولیه هنرمند",
-      fullDescription:
-        "نمایشگاهی از اولین آثار هنرمند که مسیر تحول او را نشان می‌دهد.",
-      duration: "۳۰ روز",
-      visitors: "۱۵۰۰ نفر",
-    },
-  ];
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get("/projects");
+      const projects = res.data || [];
 
-  // تابع برای اندازه‌گیری سایز واقعی تصاویر
-  useEffect(() => {
-    const loadImageDimensions = async () => {
-      const dimensions = {};
+      // بررسی همه دسته‌بندی‌های موجود
+      const allCategories = projects
+        .map((p) => p.Category?.title)
+        .filter(Boolean);
 
-      for (const exhibition of exhibitions) {
-        try {
-          await new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-              // محاسبه نسبت ابعاد تصویر
-              const aspectRatio = img.width / img.height;
-              dimensions[exhibition.id] = {
-                width: img.width,
-                height: img.height,
-                aspectRatio: aspectRatio,
-                // تعیین ارتفاع بر اساس نسبت ابعاد
-                heightClass:
-                  aspectRatio > 1.5
-                    ? "h-64" // landscape
-                    : aspectRatio < 0.8
-                    ? "h-96" // portrait
-                    : "h-80", // square
-              };
-              resolve();
-            };
-            img.onerror = () => {
-              dimensions[exhibition.id] = {
-                width: 800,
-                height: 600,
-                aspectRatio: 1.33,
-                heightClass: "h-80",
-              };
-              resolve();
-            };
-            img.src = exhibition.image;
-          });
-        } catch (error) {
-          console.log(`خطا در بارگذاری تصویر ${exhibition.id}:`, error);
-        }
-      }
+      const uniqueCategories = [...new Set(allCategories)];
+      console.log("ALL AVAILABLE CATEGORIES:", uniqueCategories);
 
-      setImageDimensions(dimensions);
-    };
+      // فیلتر برای دسته‌بندی "نمایشگاه"
+      const exhibitions = projects.filter((p) => {
+        if (!p.Category || !p.Category.title) return false;
 
-    loadImageDimensions();
-  }, []);
+        const categoryTitle = p.Category.title.toLowerCase().trim();
+        const possibleNames = [
+          "نمایشگاه",
+          "exhibition",
+          "exhibitions",
+          "گالری",
+          "gallery",
+          "نمایش",
+          "show",
+          "expo",
+        ];
 
-  // تابع برای ساخت Masonry Layout با سایز واقعی تصاویر
-  const createMasonryColumns = () => {
-    const columnArrays = Array.from({ length: columns }, () => []);
-    const columnHeights = Array(columns).fill(0);
+        return possibleNames.some((name) => categoryTitle.includes(name));
+      });
 
-    exhibitions.forEach((item) => {
-      const dimension = imageDimensions[item.id];
-      let itemHeight = 400; // مقدار پیش‌فرض
+      console.log("Filtered exhibition projects:", exhibitions);
 
-      if (dimension) {
-        // محاسبه ارتفاع بر اساس نسبت ابعاد واقعی
-        itemHeight =
-          dimension.aspectRatio > 1.5
-            ? 300 // landscape کوتاه
-            : dimension.aspectRatio < 0.8
-            ? 500 // portrait بلند
-            : 400; // square متوسط
-      }
+      // مپ کردن پروژه‌ها به فرمت نمایشگاه
+      const mappedExhibitions = exhibitions.map((project) => {
+        // ساخت URL تصویر
+        const getImageUrl = () => {
+          if (project.mainImage) {
+            if (project.mainImage.startsWith("http")) {
+              return project.mainImage;
+            }
+            const BASE_URL =
+              import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+            if (project.mainImage.startsWith("/")) {
+              return `${BASE_URL}${project.mainImage}`;
+            }
+            return `${BASE_URL}/${project.mainImage}`;
+          }
+          // تصویر پیش‌فرض
+          return "https://via.placeholder.com/800x600?text=نمایشگاه";
+        };
 
-      // پیدا کردن کوتاه‌ترین ستون
-      const shortestColumnIndex = columnHeights.indexOf(
-        Math.min(...columnHeights)
+        // تعیین aspect ratio
+        const getAspectRatio = () => {
+          if (project.size) {
+            if (project.size.includes("×")) {
+              const [width, height] = project.size.split("×").map(Number);
+              if (width > height) return "landscape";
+              if (height > width) return "portrait";
+              return "square";
+            }
+          }
+          // تصادفی انتخاب کن برای نمایش زیباتر
+          const ratios = ["portrait", "landscape", "square"];
+          return ratios[Math.floor(Math.random() * ratios.length)];
+        };
+
+        // تعیین ارتفاع بر اساس aspect ratio
+        const getHeightClass = () => {
+          const ratio = getAspectRatio();
+          if (ratio === "portrait") return "h-96";
+          if (ratio === "landscape") return "h-64";
+          return "h-80";
+        };
+
+        return {
+          ...project,
+          image: getImageUrl(),
+          aspectRatio: getAspectRatio(),
+          heightClass: getHeightClass(),
+          displayTitle: project.title || "بدون عنوان",
+          displayDescription:
+            project.description || project.fullDescription || "بدون توضیحات",
+          displayYear:
+            project.date ||
+            new Date(project.createdAt).getFullYear().toString() ||
+            "نامشخص",
+          displayLocation: project.location || "نامشخص",
+          displayOrganizer:
+            project.organizer || project.exhibitionName || "نامشخص",
+          displayDuration: project.duration || "نامشخص",
+          displayVisitors: project.visitors || "نامشخص",
+        };
+      });
+
+      setExhibitionProjects(mappedExhibitions);
+      setFilteredProjects(mappedExhibitions);
+      setAllProjects(projects);
+
+      // استخراج زیردسته‌های منحصر به فرد
+      const subs = mappedExhibitions
+        .map((p) => p.SubCategory)
+        .filter((s) => s && (s.id || s.title));
+
+      const uniqueSubs = Array.from(
+        new Map(
+          subs.map((s) => [s.id ? `id-${s.id}` : `title-${s.title}`, s])
+        ).values()
       );
-      columnArrays[shortestColumnIndex].push(item);
-      columnHeights[shortestColumnIndex] += itemHeight;
-    });
 
-    return columnArrays;
+      console.log("Extracted Subcategories:", uniqueSubs);
+      setSubCategories(uniqueSubs);
+
+      // فعال کردن "همه" به صورت پیش‌فرض
+      setActiveSub(null);
+    } catch (error) {
+      console.error("Error fetching exhibitions:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const openModal = (exhibition) => {
-    setSelectedExhibition(exhibition);
+  /* ================= FILTER BY SUB CATEGORY ================= */
+  const handleSubCategory = (sub) => {
+    const key = sub?.id || sub?.title;
+    setActiveSub(key);
+
+    if (key === null) {
+      setFilteredProjects(exhibitionProjects);
+      return;
+    }
+
+    const filtered = exhibitionProjects.filter((item) => {
+      if (!item.SubCategory) return false;
+
+      if (sub.id) {
+        return item.SubCategory.id === sub.id;
+      }
+
+      return item.SubCategory.title === sub.title;
+    });
+
+    setFilteredProjects(filtered);
+  };
+
+  const showAllItems = () => {
+    setActiveSub(null);
+    setFilteredProjects(exhibitionProjects);
+  };
+
+  /* ================= MODAL ================= */
+  const openModal = (item) => {
+    setSelectedItem(item);
     setIsModalOpen(true);
     document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedExhibition(null);
+    setSelectedItem(null);
     document.body.style.overflow = "auto";
   };
 
-  const masonryColumns = createMasonryColumns();
+  /* ================= ANIMATION ================= */
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.4 },
+    },
+  };
+
+  /* ================= LOADING ================= */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
+        <div className="text-center">
+          <div className="w-14 h-14 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600">در حال دریافت اطلاعات...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
-      {/* Masonry Grid نمایشگاه‌ها */}
-      <header className="bg-white py-5">
-        <div className="max-w-7xl mx-auto px-4 ">
-          <h1 className="text-3xl md:text-3xl text-center  font-bold text-gray-700 ">
-            نمایشگاه‌ها
-          </h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* ================= HERO SECTION ================= */}
+      <div className="relative overflow-hidden pb-6">
+        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-black/70 z-10" />
+
+        <div className="container mx-auto px-4 py-20 relative z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center text-white max-w-4xl mx-auto"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              نمایشگاه‌ها و رویدادهای هنری
+            </h1>
+            <p className="text-xl text-cyan-300 max-w-3xl mx-auto">
+              مجموعه‌ای از برگزیده‌ترین نمایشگاه‌های حمیدرضا خواجه محمدی در
+              ایران و جهان
+            </p>
+
+            {/* Stats */}
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
+              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">
+                  {exhibitionProjects.length}+
+                </div>
+                <div className="text-sm opacity-90">نمایشگاه برگزار شده</div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">
+                  {subCategories.length}+
+                </div>
+                <div className="text-sm opacity-90">دسته‌بندی موضوعی</div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">
+                  {new Set(exhibitionProjects.map((e) => e.displayYear)).size}+
+                </div>
+                <div className="text-sm opacity-90">سال فعالیت نمایشگاهی</div>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </header>
-      <div className="mx-auto max-w-7xl mt-5">
-        {exhibitions.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {masonryColumns.map((column, columnIndex) => (
-              <div key={columnIndex} className="flex flex-col gap-6">
-                {column.map((exhibition) => (
-                  <div
-                    key={exhibition.id}
-                    layout
-                    className="group relative cursor-pointer overflow-hidden rounded-md shadow-xl hover:shadow-2xl transition-all duration-500"
-                    onClick={() => openModal(exhibition)}
-                    style={{
-                      // استفاده از کلاس ارتفاع بر اساس نسبت تصویر
-                      height: imageDimensions[exhibition.id]?.heightClass
-                        ? "auto"
-                        : "400px",
-                      minHeight: "300px",
-                    }}
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0 z-30">
+          <svg
+            className="w-full h-[120px]"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,0V120H1200V0C800,80 400,80 0,0Z" fill="white" />
+          </svg>
+        </div>
+      </div>
+
+      {/* ================= SUBCATEGORY FILTERS ================= */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-12">
+            <div className="flex flex-wrap justify-center gap-4">
+              {/* دکمه "همه" */}
+              <button
+                onClick={showAllItems}
+                className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300 ${
+                  activeSub === null
+                    ? "text-cyan-600"
+                    : "text-gray-600 hover:text-cyan-600"
+                }`}
+              >
+                همه
+                <span
+                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500 ${
+                    activeSub === null
+                      ? "scale-x-100 origin-right"
+                      : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
+                  }`}
+                />
+              </button>
+
+              {/* زیردسته‌ها */}
+              {subCategories.map((sub) => {
+                const key = sub.id || sub.title;
+                const isActive = activeSub === key;
+
+                return (
+                  <button
+                    key={key}
+                    onClick={() => handleSubCategory(sub)}
+                    className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300 ${
+                      isActive
+                        ? "text-cyan-600"
+                        : "text-gray-600 hover:text-cyan-600"
+                    }`}
                   >
-                    {/* Container با نسبت ابعاد طبیعی */}
+                    {sub.title}
+                    <span
+                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500 ${
+                        isActive
+                          ? "scale-x-100 origin-right"
+                          : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ================= EXHIBITION GRID ================= */}
+          <AnimatePresence mode="wait">
+            {filteredProjects.length > 0 ? (
+              <motion.div
+                key={activeSub}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {filteredProjects.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    variants={itemVariants}
+                    layout
+                    className={`group relative cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ${item.heightClass}`}
+                    onClick={() => openModal(item)}
+                  >
+                    {/* Image Container */}
                     <div className="relative w-full h-full">
                       {/* تصویر نمایشگاه */}
                       <div className="absolute inset-0">
                         <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300">
                           <img
-                            src={exhibition.image}
-                            alt={exhibition.title}
+                            src={item.image}
+                            alt={item.displayTitle}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             loading="lazy"
-                            style={{
-                              objectPosition: "center",
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.parentElement.innerHTML = `
+                                <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex flex-col items-center justify-center p-4">
+                                  <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                                    <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                    </svg>
+                                  </div>
+                                  <p class="text-gray-500">تصویر نمایشگاه</p>
+                                  ${
+                                    item.SubCategory
+                                      ? `<span class="mt-2 px-2 py-1 bg-gray-400/20 rounded-full text-xs text-gray-600">${item.SubCategory.title}</span>`
+                                      : ""
+                                  }
+                                </div>
+                              `;
                             }}
                           />
                         </div>
@@ -336,37 +383,47 @@ const ExhibitionPage = () => {
                       {/* اطلاعات پایه (همیشه نمایش داده می‌شود) */}
                       <div className="absolute bottom-4 right-4 left-4">
                         <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
-                          {exhibition.title}
+                          {item.displayTitle}
                         </h3>
                         <div className="flex items-center justify-between text-white/90 text-sm">
                           <div className="flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
                             <span className="truncate">
-                              {exhibition.location.split("،")[0]}
+                              {item.displayLocation.split("،")[0] ||
+                                "مکان نامشخص"}
                             </span>
                           </div>
-                          <span className="font-bold">{exhibition.year}</span>
+                          <span className="font-bold">{item.displayYear}</span>
                         </div>
+                        {item.SubCategory && (
+                          <span className="inline-block mt-2 px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white">
+                            {item.SubCategory.title}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-6 opacity-50">🏛️</div>
-            <p className="text-gray-500 text-xl">
-              در حال بارگذاری نمایشگاه‌ها...
-            </p>
-          </div>
-        )}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20"
+              >
+                <div className="text-6xl mb-6 opacity-50">🏛️</div>
+                <p className="text-gray-500 text-xl">
+                  موردی در این دسته‌بندی یافت نشد.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Modal جزئیات نمایشگاه */}
+      {/* ================= MODAL ================= */}
       <AnimatePresence>
-        {isModalOpen && selectedExhibition && (
+        {isModalOpen && selectedItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -401,15 +458,28 @@ const ExhibitionPage = () => {
                 <div className="md:w-1/2 h-64 md:h-auto">
                   <div className="relative w-full h-full">
                     <img
-                      src={selectedExhibition.image}
-                      alt={selectedExhibition.title}
+                      src={selectedItem.image}
+                      alt={selectedItem.displayTitle}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerHTML = `
+                          <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex flex-col items-center justify-center">
+                            <div class="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center mb-4">
+                              <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                              </svg>
+                            </div>
+                            <p class="text-gray-500">تصویر نمایشگاه</p>
+                          </div>
+                        `;
+                      }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                       <div className="text-white">
                         <div className="text-sm opacity-90">سال برگزاری</div>
                         <div className="text-2xl font-bold">
-                          {selectedExhibition.year}
+                          {selectedItem.displayYear}
                         </div>
                       </div>
                     </div>
@@ -419,13 +489,20 @@ const ExhibitionPage = () => {
                 {/* سمت راست: محتوا */}
                 <div className="md:w-1/2 p-6 md:p-8 overflow-y-auto">
                   <div className="space-y-6">
+                    {/* Category Badge */}
+                    {selectedItem.SubCategory && (
+                      <div className="inline-block px-4 py-2 bg-cyan-100 text-cyan-700 rounded-full text-sm font-bold mb-2">
+                        {selectedItem.SubCategory.title}
+                      </div>
+                    )}
+
                     {/* عنوان */}
                     <div>
                       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-                        {selectedExhibition.title}
+                        {selectedItem.displayTitle}
                       </h2>
                       <p className="text-gray-600 text-lg">
-                        {selectedExhibition.description}
+                        {selectedItem.displayDescription}
                       </p>
                     </div>
 
@@ -433,100 +510,128 @@ const ExhibitionPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* ستون اول */}
                       <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Calendar className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              تاریخ برگزاری
+                        {selectedItem.displayYear &&
+                          selectedItem.displayYear !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Calendar className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  سال برگزاری
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayYear}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.date}
-                            </div>
-                          </div>
-                        </div>
+                          )}
 
-                        <div className="flex items-start gap-3">
-                          <MapPin className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              مکان نمایشگاه
+                        {selectedItem.displayLocation &&
+                          selectedItem.displayLocation !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <MapPin className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  مکان نمایشگاه
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayLocation}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.location}
-                            </div>
-                          </div>
-                        </div>
+                          )}
 
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              برگزارکننده
+                        {selectedItem.displayOrganizer &&
+                          selectedItem.displayOrganizer !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  برگزارکننده
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayOrganizer}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.organizer}
-                            </div>
-                          </div>
-                        </div>
+                          )}
                       </div>
 
                       {/* ستون دوم */}
                       <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Clock className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              مدت زمان
+                        {selectedItem.displayDuration &&
+                          selectedItem.displayDuration !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Clock className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  مدت زمان
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayDuration}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.duration}
-                            </div>
-                          </div>
-                        </div>
+                          )}
 
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              تعداد بازدیدکنندگان
-                            </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.visitors}
+                        {selectedItem.visitors && (
+                          <div className="flex items-start gap-3">
+                            <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                            <div>
+                              <div className="font-bold text-gray-700 mb-1">
+                                تعداد بازدیدکنندگان
+                              </div>
+                              <div className="text-gray-600">
+                                {selectedItem.visitors}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
+
+                        {selectedItem.date && (
+                          <div className="flex items-start gap-3">
+                            <Calendar className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
+                            <div>
+                              <div className="font-bold text-gray-700 mb-1">
+                                تاریخ دقیق
+                              </div>
+                              <div className="text-gray-600">
+                                {selectedItem.date}
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     {/* توضیحات کامل */}
-                    <div className="pt-4 border-t border-gray-200">
-                      <h4 className="text-xl font-bold text-gray-800 mb-4">
-                        توضیحات کامل نمایشگاه
-                      </h4>
-                      <p className="text-gray-700 leading-relaxed">
-                        {selectedExhibition.fullDescription}
-                      </p>
-                    </div>
+                    {selectedItem.fullDescription && (
+                      <div className="pt-4 border-t border-gray-200">
+                        <h4 className="text-xl font-bold text-gray-800 mb-4">
+                          توضیحات کامل نمایشگاه
+                        </h4>
+                        <p className="text-gray-700 leading-relaxed">
+                          {selectedItem.fullDescription}
+                        </p>
+                      </div>
+                    )}
 
                     {/* اطلاعات اضافی */}
-                    {selectedExhibition.featured && (
-                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-100">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold">★</span>
+                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">🏛️</span>
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-800">
+                            نمایشگاه هنری
                           </div>
-                          <div>
-                            <div className="font-bold text-gray-800">
-                              نمایشگاه ویژه
-                            </div>
-                            <div className="text-gray-600 text-sm">
-                              این نمایشگاه جزء نمایشگاه‌های شاخص هنرمند محسوب
-                              می‌شود
-                            </div>
+                          <div className="text-gray-600 text-sm">
+                            این نمایشگاه بخشی از فعالیت‌های هنری حمیدرضا خواجه
+                            محمدی است
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               </motion.div>
