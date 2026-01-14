@@ -180,26 +180,16 @@ const GeraphicPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r pb-5 from-amber-900 via-amber-800 to-amber-900">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-white/10 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animation: `twinkle ${2 + Math.random() * 3}s infinite ${
-                  Math.random() * 2
-                }s`,
-              }}
-            />
-          ))}
-        </div>
 
-        <div className="container mx-auto px-4 py-24 relative">
+      <div className="relative overflow-hidden bg-gray-700 pb-5">
+        {/* Background Image */}
+        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/70 z-10" />
+
+        {/* Content */}
+        <div className="container mx-auto px-4 py-20 relative z-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -234,9 +224,11 @@ const GeraphicPage = () => {
             </div>
           </motion.div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0">
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0 z-30">
           <svg
-            className="w-full"
+            className="w-full h-[120px]"
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
@@ -280,14 +272,14 @@ const GeraphicPage = () => {
                 className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300
       ${
         activeCategory === category.id
-          ? "text-amber-600"
-          : "text-gray-600 hover:text-amber-600"
+          ? "text-cyan-600"
+          : "text-gray-600 hover:text-cyan-600"
       }`}
               >
                 <div className="font-bold ">{category.label}</div>
 
                 <span
-                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-500 transform transition-transform duration-500
+                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500
         ${
           activeCategory === category.id
             ? "scale-x-100 origin-right"
@@ -348,7 +340,7 @@ const GeraphicPage = () => {
 
                   {/* Content */}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-purple-600 transition-colors line-clamp-1">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-cyan-600 transition-colors line-clamp-1">
                       {item.title}
                     </h3>
 

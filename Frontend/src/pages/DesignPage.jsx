@@ -223,7 +223,7 @@ const DesignPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* هدر صفحه */}
       <header className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 pt-8">
           <h1 className="text-3xl md:text-xl text-center font-bold text-gray-800 ">
             نمایشگاه‌ها
           </h1>

@@ -383,7 +383,7 @@ const MiscellaneousPage = () => {
       dir="rtl"
     >
       {/* Header */}
-      <div className="bg-gray-200  py-20 px-4 relative overflow-hidden">
+      <div className="  py-12 px-4 relative overflow-hidden">
        
 
         <div className="container mx-auto max-w-6xl text-center relative z-10">
@@ -392,7 +392,7 @@ const MiscellaneousPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-5xl text-gray-900 lg:text-6xl font-bold mb-6">
+            <h1 className="text-4xl md:text-3xl text-gray-900 lg:text-3xl font-bold mb-3">
               گالری هنرهای تجسمی
             </h1>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
@@ -404,7 +404,7 @@ const MiscellaneousPage = () => {
       </div>
 
       {/* Search and Filter Section */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 mt-7 max-w-7xl  relative z-20">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8  max-w-7xl  relative z-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -422,14 +422,14 @@ const MiscellaneousPage = () => {
                     className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300
                       ${
                         activeCategory === category.id
-                          ? "text-amber-600"
-                          : "text-gray-600 hover:text-amber-600"
+                          ? "text-cyan-600"
+                          : "text-gray-600 hover:text-cyan-600"
                       }`}
                   >
                     {category.label}
 
                     <span
-                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-500 transform transition-transform duration-500
+                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-700 transform transition-transform duration-500
                         ${
                           activeCategory === category.id
                             ? "scale-x-100 origin-right"

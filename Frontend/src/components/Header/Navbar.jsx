@@ -93,6 +93,11 @@ const Navbar = () => {
       path: "/theater",
     },
     {
+      id: "achivment",
+      name: "دست آورد ها",
+      path: "/achivment",
+    },
+    {
       id: "miscellaneous",
       name: "متفرقه",
       path: "/miscellaneous",
@@ -117,27 +122,15 @@ const Navbar = () => {
     <>
       {/* Navbar اصلی */}
       <nav
-        className={`fixed top-0 w-full z-50 transition-all py-3 bg-gray-100 duration-300 ${
+        className={`fixed top-0 w-full z-50 transition-all py-2.5  bg-cyan-700 duration-300 ${
           scrolled ? "" : ""
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between">
-            {/* لوگو */}
-            <div className="flex items-center space-x-3 ">
-              <a
-                href="#home"
-                className="flex flex-col items-start hover:opacity-80 transition-opacity"
-                onClick={closeMenu}
-              >
-                <span className="text-2xl md:text-3xl f font-bold text-gray-800 font-sans">
-                  لوگوی شما
-                </span>
-              </a>
-            </div>
-
+        <div className="max-w-7xl  py-3 mx-auto px-4">
+          <div className="flex items-center justify-center">
             {/* منوی دسکتاپ */}
-            <div className="hidden lg:flex items-center gap-x-8">
+
+            <div className="hidden lg:flex items-center justify-center gap-x-8">
               {menuItems.map((item) => {
                 const isActive =
                   activeSection === item.id || isActivePath(item.path);
@@ -147,14 +140,14 @@ const Navbar = () => {
                     key={item.id}
                     to={item.path}
                     className={`relative font-medium group transition-colors duration-300
-          ${isActive ? "text-amber-600" : "text-gray-700 hover:text-amber-600"}
+          ${isActive ? "text-gray-300" : "text-gray-100 hover:text-gray-300"}
         `}
                   >
                     {item.name}
 
                     {/* underline */}
                     <span
-                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-600
+                      className={`absolute right-0 -bottom-1 h-[2px] w-full bg-gray-300
             transform transition-transform duration-300 origin-right
             ${isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}
           `}
@@ -163,17 +156,8 @@ const Navbar = () => {
                 );
               })}
             </div>
-
-            {/* آیکون‌های اجتماعی و منو همبرگر */}
-            <div className="flex items-center gap-x-4 rtl:space-x-reverse">
+            <div className="flex items-center gap-x-4 justify-between ">
               {/* دکمه منو موبایل */}
-              <Link
-                to="/dashboard"
-                className="p-2 flex items-center gap-x-2 text-black justify-center rounded-full md:rounded-md md:w-[100px] border-[2px] hover:bg-gray-100 border-gray-300 transition-colors duration-200"
-              >
-                <span className="hidden md:block">ورود</span>
-                <PiSignIn className="h-4 w-4 md:h-5 md:w-5 rotate-180" />
-              </Link>
               <button
                 onClick={toggleMenu}
                 className="lg:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md"
@@ -195,6 +179,7 @@ const Navbar = () => {
                   }`}
                 ></span>
               </button>
+              <p className="md:hidden">حمید رضا خواجه محمدی</p>
             </div>
           </div>
         </div>

@@ -285,11 +285,11 @@ const ExhibitionPage = () => {
   const masonryColumns = createMasonryColumns();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-8">
       {/* Masonry Grid نمایشگاه‌ها */}
-      <header className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <h1 className="text-3xl md:text-xl text-center font-bold text-gray-800 ">
+      <header className="bg-white py-5">
+        <div className="max-w-7xl mx-auto px-4 ">
+          <h1 className="text-3xl md:text-3xl text-center  font-bold text-gray-700 ">
             نمایشگاه‌ها
           </h1>
         </div>
@@ -303,7 +303,7 @@ const ExhibitionPage = () => {
                   <div
                     key={exhibition.id}
                     layout
-                    className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500"
+                    className="group relative cursor-pointer overflow-hidden rounded-md shadow-xl hover:shadow-2xl transition-all duration-500"
                     onClick={() => openModal(exhibition)}
                     style={{
                       // استفاده از کلاس ارتفاع بر اساس نسبت تصویر

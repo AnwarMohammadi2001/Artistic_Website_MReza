@@ -116,9 +116,15 @@ const Printing = () => {
   return (
     <div className="min-h-screen">
       {/* Header Section */}
-      <div className="relative overflow-hidden bg-gray-300 pb-5  ">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto px-4 py-20 relative">
+      <div className="relative overflow-hidden bg-gray-700 pb-5">
+        {/* Background Image */}
+        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/70 z-10" />
+
+        {/* Content */}
+        <div className="container mx-auto px-4 py-20 relative z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,35 +133,39 @@ const Printing = () => {
           >
             <h1 className="text-4xl md:text-5xl lg:text-4xl font-bold mb-4 leading-tight">
               گالری نقاشی‌های
-              <span className="block text-amber-300 mt-2">
+              <span className="block text-cyan-500 mt-2">
                 حمیدرضا خواجه محمدی
               </span>
             </h1>
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-amber-100 leading-relaxed">
+
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-100 leading-relaxed">
               مروری بر چهار دهه خلق آثار هنری در سبک‌های مختلف از نقاشی اسلامی
               تا هنر معاصر انتزاعی
             </p>
+
+            {/* Stats */}
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <div className=" backdrop-blur-sm px-6 py-3 rounded-full">
-                <span className="font-bold text-2xl">۴۰+</span>
-                <p className="text-sm">سال تجربه</p>
-              </div>
-              <div className=" backdrop-blur-sm px-6 py-3 rounded-full">
-                <span className="font-bold text-2xl">۲۰۰+</span>
-                <p className="text-sm">اثر هنری</p>
-              </div>
-              <div className=" backdrop-blur-sm px-6 py-3 rounded-full">
-                <span className="font-bold text-2xl">۱۵+</span>
-                <p className="text-sm">نمایشگاه بین‌المللی</p>
-              </div>
+              {[
+                ["۴۰+", "سال تجربه"],
+                ["۲۰۰+", "اثر هنری"],
+                ["۱۵+", "نمایشگاه بین‌المللی"],
+              ].map(([value, label]) => (
+                <div
+                  key={label}
+                  className=" px-6 py-3 rounded-full"
+                >
+                  <span className="font-bold text-2xl">{value}</span>
+                  <p className="text-sm text-gray-200">{label}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
 
-        {/* Decorative Elements */}
-        <div className="absolute bottom-0 left-0 right-0">
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0 z-30">
           <svg
-            className="w-full"
+            className="w-full h-[120px]"
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
@@ -167,7 +177,7 @@ const Printing = () => {
       {/* Introduction Section */}
       <div className="container mx-auto px-4 ">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-700 mb-8">
             هنر نقاشی، زبان بی‌کلام احساسات
           </h2>
           <p className="text-lg text-gray-700 leading-relaxed mb-10">
@@ -186,14 +196,14 @@ const Printing = () => {
                 className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300
       ${
         activeCategory === category.id
-          ? "text-amber-600"
-          : "text-gray-600 hover:text-amber-600"
+          ? "text-cyan-600"
+          : "text-gray-600 hover:text-cayn-600"
       }`}
               >
                 {category.label}
 
                 <span
-                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-500 transform transition-transform duration-500
+                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500
         ${
           activeCategory === category.id
             ? "scale-x-100 origin-right"
@@ -212,9 +222,7 @@ const Printing = () => {
           {filteredPaintings.map((painting) => (
             <motion.div
               key={painting.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+             
               className="group relative bg-white rounded-md shadow-md hover:shadow-lg transition-all duration-500 overflow-hidden cursor-pointer"
               onClick={() => openModal(painting)}
             >
@@ -246,7 +254,7 @@ const Printing = () => {
                   </h3>
                   <div className="">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm font-bold text-amber-600 `}
+                      className={`px-3 py-1 rounded-full text-sm font-bold text-cyan-600 `}
                     >
                       {
                         categories.find((c) => c.id === painting.category)

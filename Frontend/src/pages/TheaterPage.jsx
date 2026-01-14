@@ -261,27 +261,16 @@ const TheaterPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4">
       {/* Masonry Grid نمایشگاه‌ها */}
       <div className="mx-auto">
-        <AnimatePresence>
+        <div>
           {exhibitions.length > 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
+            <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {masonryColumns.map((column, columnIndex) => (
                 <div key={columnIndex} className="flex flex-col gap-6">
                   {column.map((exhibition) => (
                     <motion.div
                       key={exhibition.id}
                       layout
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.5,
-                        delay: exhibition.id * 0.05,
-                      }}
-                      className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500"
+                      className="group relative cursor-pointer overflow-hidden rounded-md shadow-xl hover:shadow-2xl transition-all duration-500"
                       onClick={() => openModal(exhibition)}
                       style={{
                         // استفاده از کلاس ارتفاع بر اساس نسبت تصویر
@@ -344,7 +333,7 @@ const TheaterPage = () => {
               </p>
             </motion.div>
           )}
-        </AnimatePresence>
+        </div>
       </div>
 
       {/* Modal جزئیات نمایشگاه */}
@@ -358,7 +347,7 @@ const TheaterPage = () => {
           >
             {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black/90 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
               onClick={closeModal}
             />
 
@@ -369,7 +358,7 @@ const TheaterPage = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25 }}
-                className="relative bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row"
+                className="relative bg-white rounded-md shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}

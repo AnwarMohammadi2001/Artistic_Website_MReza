@@ -242,9 +242,9 @@ const InterviewPage = () => {
   const masonryColumns = createMasonryColumns();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b py-8 from-gray-50 to-white">
       {/* هدر */}
-      <div className="bg-gradient-to-r from-blue-900 to-indigo-900 bordre-b-4 border-blue-400 text-white py-16 px-4">
+      <div className="bg-white text-gray-700 py-10 px-4">
         <div className="container mx-auto max-w-6xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -254,7 +254,7 @@ const InterviewPage = () => {
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               آرشیو تصاویر و ویدیوهای مصاحبه
             </h1>
-            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+            <p className="text-xl text-cyan-600 max-w-3xl mx-auto">
               مجموعه‌ای از بهترین لحظات گفتگوهای حمیدرضا خواجه محمدی با
               رسانه‌های داخلی و بین‌المللی
             </p>
@@ -263,7 +263,7 @@ const InterviewPage = () => {
       </div>
 
       {/* فیلترها */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl py-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl ">
         <div className="flex flex-wrap  justify-center gap-3 mb-12">
           {filters.map((filter) => (
             <button
@@ -271,13 +271,13 @@ const InterviewPage = () => {
               onClick={() => setActiveFilter(filter.id)}
               className={`relative  flex items-center gap-2 px-6 py-3 group rounded-full font-medium transition-all duration-300 ${
                 activeFilter === filter.id
-                  ? "text-amber-600"
-                  : "text-gray-600 hover:text-amber-600"
+                  ? "text-cyan-600"
+                  : "text-gray-600 hover:text-cyan-600"
               }`}
             >
               <span>{filter.label}</span>
               <span
-                className={`absolute right-0 -bottom-1 h-[2px] w-full bg-amber-500 transform transition-transform duration-500
+                className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-700 transform transition-transform duration-500
         ${
           activeFilter === filter.id
             ? "scale-x-100 origin-right"
@@ -308,7 +308,7 @@ const InterviewPage = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: item.id * 0.05 }}
-                      className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500"
+                      className="group relative cursor-pointer overflow-hidden rounded-md shadow-lg hover:shadow-2xl transition-all duration-500"
                       onClick={() => openModal(item)}
                       style={{
                         minHeight:

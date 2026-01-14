@@ -16,6 +16,7 @@ import Contact from "./pages/Contact";
 import TheaterPage from "./pages/TheaterPage";
 import MiscellaneousPage from "./pages/MiscellaneousPage";
 import DesignPage from "./pages/DesignPage";
+import AchievementsPage from "./pages/AchievementsPage";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Route path="/interview" element={<InterviewPage />} />
             <Route path="/exhibition" element={<ExhibitionPage />} />
             <Route path="/theater" element={<TheaterPage />} />
+            <Route path="/achivment" element={<AchievementsPage />} />
             <Route path="/miscellaneous" element={<MiscellaneousPage />} />
             <Route path="/design" element={<DesignPage />} />
             <Route path="/contact" element={<Contact />} />

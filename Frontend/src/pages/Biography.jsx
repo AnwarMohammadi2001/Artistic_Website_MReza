@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Testimonials from "../components/Testimonials";
 import React, { useState } from "react";
 
@@ -6,11 +7,8 @@ const Biography = () => {
 
   const tabs = [
     { id: "early-life", label: "آغاز زندگی و تحصیلات" },
-    { id: "artistic-journey", label: "سفر هنری" },
     { id: "exhibitions", label: "نمایشگاه‌ها" },
     { id: "theater", label: "تئاتر و نمایش" },
-    { id: "achievements", label: "دستاوردها" },
-    { id: "current", label: "فعالیت‌های کنونی" },
   ];
 
   const timelineEvents = [
@@ -124,27 +122,13 @@ const Biography = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-gray-50 to-white">
+    <div className="">
       {/* هدر بخش بیوگرافی */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-50 to-white z-0"></div>
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center">
-            {/* تصویر هنرمند */}
-            <div className="lg:w-2/5 mb-10 lg:mb-0">
-              <div className="relative">
-                <div className="md:w-64 h-80 md:w-80  mx-auto ">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <img
-                      src="bio.jpg"
-                      alt=""
-                      className="h-[450px]  md:w-auto rounded-lg"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
+      <div className="relative overflow-hidden h-[600px]">
+        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-black/70"></div>
+        <div className="relative z-10 py-20">
+          <div className="flex  justify-center items-center">
             {/* متن معرفی */}
             <div className="lg:w-3/5 lg:pr-12 rtl:lg:pr-0 text-center rtl:lg:pl-12">
               <div className="mb-6">
@@ -153,14 +137,14 @@ const Biography = () => {
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold pt-10   text-gray-700 mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-bold   text-gray-100 mb-6 ">
                 حمیدرضا خواجه محمدی
-                <span className="block text-2xl md:text-3xl text-amber-600 mt-3">
-                  پیشگام هنر معاصر ایران
+                <span className="block text-2xl md:text-3xl pt-2 text-cyan-600 mt-3">
+                  هنرمند تجسمی و آرت دایرکتور
                 </span>
               </h1>
 
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+              <p className="text-lg text-gray-200 mb-6 max-w-2xl mx-auto  leading-relaxed">
                 حمیدرضا خواجه محمدی هنرمند چندرسانه‌ای ایرانی است که بیش از چهار
                 دهه در عرصه‌های نقاشی، گرافیک، طراحی، تئاتر و هنرهای تجسمی
                 فعالیت داشته است. آثار او تلفیقی هنرمندانه از سنت‌های هنر ایرانی
@@ -168,28 +152,28 @@ const Biography = () => {
                 متعددی به نمایش درآمده‌اند.
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 mt-4 gap-4 mb-8">
-                <div className="bg-white p-2 rounded-md shadow-md text-center">
-                  <div className="text-3xl font-bold text-amber-600">۴۰+</div>
-                  <div className="text-gray-600 text-sm font-semibold mt-1">
+              <div className="flex items-center justify-center  mt-4 gap-6 mb-8">
+                <div className=" p-2 rounded-md shadow-md text-center">
+                  <div className="text-5xl font-bold text-amber-600">۴۰+</div>
+                  <div className="text-gray-300 text-sm font-semibold mt-1">
                     سال تجربه
                   </div>
                 </div>
-                <div className="bg-white p-4 rounded-md shadow-md text-center">
-                  <div className="text-3xl font-bold text-amber-600">۵۰+</div>
-                  <div className="text-gray-600 font-semibold text-sm mt-1">
+                <div className=" p-4 rounded-md shadow-md text-center">
+                  <div className="text-5xl font-bold text-amber-600">۵۰+</div>
+                  <div className="text-gray-300 font-semibold text-sm mt-1">
                     نمایشگاه
                   </div>
                 </div>
-                <div className="bg-white p-4 rounded-md shadow-md text-center">
-                  <div className="text-3xl font-bold text-amber-600">۱۰۰+</div>
-                  <div className="text-gray-600 font-semibold text-sm mt-1">
+                <div className=" p-4 rounded-md shadow-md text-center">
+                  <div className="text-5xl font-bold text-amber-600">۱۰۰+</div>
+                  <div className="text-gray-300 font-semibold text-sm mt-1">
                     اثر هنری
                   </div>
                 </div>
-                <div className="bg-white p-4 rounded-md shadow-md text-center">
-                  <div className="text-3xl font-bold text-amber-600">۱۵</div>
-                  <div className="text-gray-600 font-semibold text-sm mt-1">
+                <div className=" p-4 rounded-md shadow-md text-center">
+                  <div className="text-5xl font-bold text-amber-600">۱۵</div>
+                  <div className="text-gray-300 font-semibold text-sm mt-1">
                     جایزه
                   </div>
                 </div>
@@ -208,10 +192,10 @@ const Biography = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-shrink-0 px-6 py-4 text-sm font-medium transition-all ${
+                  className={`flex-shrink-0 px-6 py-3 text-sm font-medium cursor-pointer transition-all ${
                     activeTab === tab.id
-                      ? "text-amber-700 border-b-2 border-amber-500 bg-amber-50"
-                      : "text-gray-600 hover:text-amber-600 hover:bg-amber-50/50"
+                      ? "text-cyan-700 border-b-2 border-cyan-600 bg-cyan-50"
+                      : "text-gray-700 hover:text-cyan-600 hover:bg-amber-50/50"
                   }`}
                 >
                   {tab.label}
@@ -224,7 +208,7 @@ const Biography = () => {
           <div className="p-6">
             {activeTab === "early-life" && (
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                <h3 className="text-3xl font-bold  text-gray-800 mb-4">
                   آغاز زندگی و تحصیلات
                 </h3>
                 <div className="grid md:grid-cols-2 gap-8">
@@ -244,19 +228,19 @@ const Biography = () => {
                     <h4 className="font-bold text-gray-800 mb-3">تحصیلات</h4>
                     <ul className="space-y-2">
                       <li className="flex items-center">
-                        <span className="w-2 h-2 bg-amber-500 rounded-full ml-3"></span>
+                        <span className="w-2 h-2 bg-cyan-700 rounded-full ml-3"></span>
                         <span>
                           کارشناسی هنرهای تجسمی - دانشگاه تهران (۱۳۶۸)
                         </span>
                       </li>
                       <li className="flex items-center">
-                        <span className="w-2 h-2 bg-amber-500 rounded-full ml-3"></span>
+                        <span className="w-2 h-2 bg-cyan-700 rounded-full ml-3"></span>
                         <span>
                           کارشناسی ارشد هنرهای نمایشی - دانشگاه هنر (۱۳۷۲)
                         </span>
                       </li>
                       <li className="flex items-center">
-                        <span className="w-2 h-2 bg-amber-500 rounded-full ml-3"></span>
+                        <span className="w-2 h-2 bg-cyan-700 rounded-full ml-3"></span>
                         <span>دوره تخصصی طراحی گرافیک - ایتالیا (۱۳۷۵)</span>
                       </li>
                     </ul>
@@ -491,228 +475,15 @@ const Biography = () => {
                 </div>
               </div>
             )}
-
-            {activeTab === "achievements" && (
-              <div className="space-y-8">
-                <div className="text-center mb-10">
-                  <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    دستاوردها و جوایز
-                  </h3>
-                  <p className="text-gray-600 max-w-2xl mx-auto">
-                    تقدیر و تجلیل از تلاش‌های بی‌وقفه در عرصه هنر معاصر ایران
-                  </p>
-                </div>
-
-                <div className="relative">
-                  {/* Decorative Background */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 to-transparent rounded-3xl"></div>
-
-                  <div className="space-y-6 relative z-10">
-                    {awards.map((award, index) => (
-                      <div
-                        key={index}
-                        className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-amber-100 hover:border-amber-300"
-                      >
-                        {/* Animated Gradient Border */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-amber-400/0 via-amber-300/0 to-amber-500/0 group-hover:from-amber-400/10 group-hover:via-amber-300/10 group-hover:to-amber-500/10 transition-all duration-500"></div>
-
-                        <div className="relative p-6 flex items-center">
-                          {/* Medal Icon */}
-                          <div className="relative flex-shrink-0 ml-6">
-                            <div className="w-20 h-20 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-500">
-                              <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center border-4 border-amber-100">
-                                <span className="text-3xl">🏆</span>
-                              </div>
-                            </div>
-
-                            {/* Year Badge */}
-                            <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-700 to-amber-800 text-white text-sm font-bold py-1.5 px-4 rounded-full shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                              {award.year}
-                            </div>
-                          </div>
-
-                          {/* Content */}
-                          <div className="flex-grow">
-                            <h4 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-amber-700 transition-colors duration-300">
-                              {award.title}
-                            </h4>
-
-                            <div className="flex items-center gap-2 text-gray-600 mb-3">
-                              <svg
-                                className="w-5 h-5 text-amber-500"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.498-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
-                              <span className="font-medium">
-                                {award.organization}
-                              </span>
-                            </div>
-
-                            {/* Achievement Level */}
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <svg
-                                    key={i}
-                                    className="w-4 h-4 text-yellow-400"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                  </svg>
-                                ))}
-                              </div>
-                              <span className="text-sm text-gray-500">
-                                جایزه بین‌المللی
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "current" && (
-              <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  فعالیت‌های کنونی
-                </h3>
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div>
-                    <div className="bg-gradient-to-br from-green-50 to-blue-50 p-6 rounded-xl h-full">
-                      <h4 className="font-bold text-gray-800 mb-4 text-lg">
-                        آموزش و مشاوره
-                      </h4>
-                      <p className="text-gray-700 mb-4">
-                        در حال حاضر، خواجه محمدی بخشی از وقت خود را به آموزش
-                        هنرجویان جوان اختصاص داده و در دانشگاه‌های هنری به تدریس
-                        اشتغال دارد.
-                      </p>
-                      <ul className="space-y-2">
-                        <li className="flex items-center">
-                          <span className="w-2 h-2 bg-green-500 rounded-full ml-3"></span>
-                          <span>استاد مدعو دانشگاه هنر تهران</span>
-                        </li>
-                        <li className="flex items-center">
-                          <span className="w-2 h-2 bg-green-500 rounded-full ml-3"></span>
-                          <span>مشاور هنری موزه هنرهای معاصر</span>
-                        </li>
-                        <li className="flex items-center">
-                          <span className="w-2 h-2 bg-green-500 rounded-full ml-3"></span>
-                          <span>کارگاه‌های آموزشی طراحی پیشرفته</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl h-full">
-                      <h4 className="font-bold text-gray-800 mb-4 text-lg">
-                        پروژه‌های جاری
-                      </h4>
-                      <p className="text-gray-700 mb-4">
-                        در حال کار بر روی چندین پروژه هنری بین‌رشته‌ای که تلفیقی
-                        از هنر دیجیتال، نقاشی سنتی و هنر مفهومی است.
-                      </p>
-                      <div className="space-y-3">
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 bg-purple-500 rounded-full ml-3 animate-pulse"></div>
-                          <span>مجموعه «حافظه شهر» - هنر شهری</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 bg-purple-500 rounded-full ml-3 animate-pulse"></div>
-                          <span>نمایشگاه بین‌المللی «ایران معاصر»</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-3 h-3 bg-purple-500 rounded-full ml-3 animate-pulse"></div>
-                          <span>کتاب «چهار دهه نقاشی خط»</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* بخش فلسفه هنری */}
-        <div className=" bg-gray-100  overflow-hidden shadow-sm mb-12">
-          <div className="p-8 md:p-12">
-            <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-amber-500/30 rounded-full flex items-center justify-center ml-4">
-                <span className="text-2xl">💭</span>
-              </div>
-              <h3 className="text-2xl font-bold">فلسفه هنری</h3>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div>
-                <p className="leading-relaxed mb-4">
-                  «هنر برای من گفتگویی بی‌پایان بین سنت و مدرنیته است. در هر
-                  قطعه‌ای که خلق می‌کنم، می‌کوشم ریشه‌های کهن هنر ایرانی را با
-                  زبان معاصر درآمیزم و پیامی فراتر از زمان ارائه دهم.»
-                </p>
-                <p className="leading-relaxed">
-                  آثار خواجه محمدی اغلب حول محور مفاهیم هویت، حافظه جمعی و
-                  گفتگوی فرهنگی می‌چرخند. او معتقد است هنر باید پلی بین نسل‌ها و
-                  فرهنگ‌ها باشد.
-                </p>
-              </div>
-              <div className="bg-white/10 px-6 rounded-xl">
-                {/* <h4 className="font-bold mb-3">تکنیک‌ها </h4> */}
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="border bg-white py-4 px-6 rounded-md">
-                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
-                      نقاشی خط مدرن
-                    </span>
-                  </div>
-                  <div className="border bg-white py-4 px-6 rounded-md">
-                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
-                      نقاشی خط مدرن
-                    </span>
-                  </div>
-                  <div className="border bg-white py-4 px-6 rounded-md">
-                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
-                      چیدمان مفهومی
-                    </span>
-                  </div>
-                  <div className="border bg-white py-4 px-6 rounded-md">
-                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
-                      هنر دیجیتال
-                    </span>
-                  </div>
-                  <div className="border bg-white py-4 px-6 rounded-md">
-                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
-                      مینیاتور معاصر
-                    </span>
-                  </div>
-                  <div className="border bg-white py-4 px-6 rounded-md">
-                    <span className="px-3 py-1 font-semibold text-gray-700 bg-white/20 rounded-full">
-                      طراحی صحنه
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* گالری تصاویر */}
         <div className="mb-16 max-w-6xl mx-auto">
-          <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            گالری آثار
+          <h3 className="text-3xl font-bold text-gray-700 mb-8 text-center">
+            گالری آثار من
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
             {[
               "bi/1.JPG",
               "bi/2.JPG",
@@ -723,18 +494,19 @@ const Biography = () => {
               "bi/1.JPG",
               "bi/2.JPG",
             ].map((item) => (
-              <div key={item} className=" transition-shadow duration-300">
+              <Link
+                key={item}
+                className="relative transition-shadow duration-300"
+              >
+                <div className="absolute inset-0 bg-black/30"></div>
                 <img
-                  className={`h-full flex items-center w-[300px] justify-center `}
+                  className={`h-full flex items-center w-[300px] rounded-md justify-center hover:scale-103 duration-300 transition-all hover:shadow `}
                   src={item}
                 />
-              </div>
+              </Link>
             ))}
           </div>
         </div>
-      </div>
-      <div className="bg-amber-50">
-        <Testimonials />
       </div>
     </div>
   );
