@@ -1,5 +1,5 @@
 // server.js — Final Production Version
-import "dotenv/config"; // ✅ Must be first
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -8,19 +8,25 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import sequelize from "./config/db.js";
 
-// Routes
+// ✅ Import Models (نام فایل‌ها دقیق باشد)
+import Project from "./models/Project.js";
+import Category from "./models/Category.js";
+import SubCategory from "./models/SubCategory.js";
+
+// ✅ Import Routes
 import authRoutes from "./routes/authRoutes.js";
-import projectRoutes from "./routes/projectRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// ✅ Allowed origins (update this with your live site)
+// ✅ Allowed origins
 const allowedOrigins = [
-  "https://tet-soft.com", // your live frontend domain
-  "http://localhost:3000", // local React dev
+  "https://tet-soft.com",
+  "http://localhost:3000",
   "http://localhost:5173",
   "https://backend.tet-soft.com",
 ];
@@ -29,7 +35,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (e.g., mobile apps or curl)
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -42,7 +47,6 @@ app.use(
   })
 );
 
-// ✅ Handle CORS errors
 app.use((err, req, res, next) => {
   if (err.message && err.message.includes("CORS")) {
     return res.status(403).json({ message: err.message });
@@ -56,7 +60,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// ✅ Serve static files (for uploads)
+// ✅ Serve static files
 const uploadsDir = path.join(__dirname, "uploads");
 app.use("/uploads", express.static(uploadsDir));
 
@@ -67,14 +71,45 @@ app.get("/", (req, res) => {
 
 // ✅ API Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/projects", projectRoutes);
 app.use("/api/contact", emailRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/categories", categoryRoutes);
+
+// ✅ 404 Handler (این را اضافه کنید تا بفهمیم چه آدرسی اشتباه است)
+app.use((req, res, next) => {
+  res.status(404).json({ 
+    message: "Route not found", 
+    requestedUrl: req.originalUrl, // آدرس درخواستی شما را نشان می‌دهد
+    method: req.method // متد درخواست (GET, POST)
+  });
+});
+// ✅ Define Database Relationships
+const setupAssociations = () => {
+  // Category <-> SubCategory
+  Category.hasMany(SubCategory, { onDelete: "CASCADE" });
+  SubCategory.belongsTo(Category);
+
+  // Category <-> Project
+  Category.hasMany(Project, { onDelete: "CASCADE" });
+  Project.belongsTo(Category);
+
+  // SubCategory <-> Project
+  SubCategory.hasMany(Project, { onDelete: "SET NULL" });
+  Project.belongsTo(SubCategory);
+
+  console.log("✅ Database associations established.");
+};
 
 // ✅ Start Server
 const startServer = async () => {
   try {
     await sequelize.authenticate();
     console.log("✅ MySQL connected via Sequelize!");
+
+    // اجرای روابط قبل از سینک
+    setupAssociations();
+
+    // سینک کردن جداول (alter: true تغییرات جدید را بدون حذف داده‌ها اعمال می‌کند)
     await sequelize.sync({ alter: true });
     console.log("✅ Database tables synced successfully");
 

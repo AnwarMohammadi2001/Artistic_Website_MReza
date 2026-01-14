@@ -1,31 +1,31 @@
 import React from "react";
-import Dashboard from "../pages/Dashboard";
-import Projects from "../pages/dashboard/Projects";
-import Profile from "../pages/dashboard/Profile";
+// ایمپورت صفحات
+import Dashboard from "../pages/Dashboard"; // صفحه اصلی داشبورد
+import CategoryManager from "../pages/dashboard/CategoryManager"; // صفحه دسته‌بندی
+import AddProject from "../pages/dashboard/AddProject"; // صفحه افزودن پروژه
+import Projects from "../pages/dashboard/Projects"; // صفحه لیست پروژه‌ها (اگر دارید)
 import Logout from "../pages/dashboard/Logout";
-import DashboardPage from "./DashboardPage";
-import AboutDashboard from "./dashboard/AboutDashboard";
-import DashboardMessages from "./dashboard/DashboardMessages";
-import ManageSkill from "./dashboard/ManageSkill";
 
 const MainContent = ({ activeComponent }) => {
   switch (activeComponent) {
     case "dashboard":
       return <Dashboard />;
+      
+    case "categories": 
+      return <CategoryManager />;
+      
+    case "add-project": 
+      return <AddProject />;
+      
     case "projects":
       return <Projects />;
-    case "profile":
-      return <Profile />;
-    case "about":
-      return <AboutDashboard />;
-    case "message":
-      return <DashboardMessages />;
-    case "skills":
-      return <ManageSkill />;
+      
     case "logout":
       return <Logout />;
+      
     default:
-      return <DashboardPage />;
+      // نکته مهم: اینجا نباید DashboardPage را برگردانید چون باعث حلقه می‌شود
+      return <Dashboard />;
   }
 };
 
