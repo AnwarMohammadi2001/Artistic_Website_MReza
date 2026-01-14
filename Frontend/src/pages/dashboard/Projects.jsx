@@ -35,7 +35,6 @@ const Projects = () => {
     }
   };
 
-  // حذف پروژه
   const handleDelete = (id) => {
     Swal.fire({
       title: "آیا مطمئن هستید؟",
