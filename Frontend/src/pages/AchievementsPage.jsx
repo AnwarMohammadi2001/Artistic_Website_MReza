@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Award, Medal, ScrollText, Calendar, Star, X } from "lucide-react";
+import AchievementsCart from "./components/Achievements/AchievementsCart";
+import AchievementsModal from "./components/Achievements/AchievementsModal";
 
 const AchievementsPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -58,46 +60,6 @@ const AchievementsPage = () => {
       description: "کسب جایزه نوآوری برای ترکیب تایپوگرافی سنتی و مدرن",
       icon: Star,
       image: "ach/4.JPG",
-    },
-    {
-      id: 4,
-      title: "جایزه نوآوری در طراحی",
-      category: "award",
-      year: "۱۳۹۹",
-      organizer: "انجمن طراحان گرافیک ایران",
-      description: "کسب جایزه نوآوری برای ترکیب تایپوگرافی سنتی و مدرن",
-      icon: Star,
-      image: "ach/5.JPG",
-    },
-    {
-      id: 4,
-      title: "جایزه نوآوری در طراحی",
-      category: "award",
-      year: "۱۳۹۹",
-      organizer: "انجمن طراحان گرافیک ایران",
-      description: "کسب جایزه نوآوری برای ترکیب تایپوگرافی سنتی و مدرن",
-      icon: Star,
-      image: "ach/6.JPG",
-    },
-    {
-      id: 4,
-      title: "جایزه نوآوری در طراحی",
-      category: "award",
-      year: "۱۳۹۹",
-      organizer: "انجمن طراحان گرافیک ایران",
-      description: "کسب جایزه نوآوری برای ترکیب تایپوگرافی سنتی و مدرن",
-      icon: Star,
-      image: "ach/7.JPG",
-    },
-    {
-      id: 4,
-      title: "جایزه نوآوری در طراحی",
-      category: "award",
-      year: "۱۳۹۹",
-      organizer: "انجمن طراحان گرافیک ایران",
-      description: "کسب جایزه نوآوری برای ترکیب تایپوگرافی سنتی و مدرن",
-      icon: Star,
-      image: "ach/6.JPG",
     },
   ];
 
@@ -192,87 +154,21 @@ const AchievementsPage = () => {
           {filteredItems.map((item) => {
             const Icon = item.icon;
             return (
-              <div
+              <AchievementsCart
+                item={item}
                 key={item.id}
-                onClick={() => setSelectedItem(item)}
-                className="bg-white rounded-md shadow-lg hover:shadow-2xl transition-all overflow-hidden border border-gray-100"
-              >
-                {/* Image */}
-                <div className="h-48 w-full overflow-hidden">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-amber-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-800">
-                        {item.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Calendar className="w-4 h-4" />
-                        {item.year}
-                      </div>
-                    </div>
-                  </div>
-
-                  <p className="text-gray-700 text-sm mb-4">
-                    {item.description}
-                  </p>
-
-                  <div className="text-sm text-gray-500 font-medium">
-                    {item.organizer}
-                  </div>
-                </div>
-              </div>
+                setSelectedItem={setSelectedItem}
+                Icon={Icon}
+              />
             );
           })}
         </div>
         {/* ================= MODAL ================= */}
         {selectedItem && (
-          <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-            <div className="bg-white max-w-3xl w-full flex  h-[500px] rounded-lg overflow-hidden relative">
-              {/* Close */}
-              <button
-                onClick={() => setSelectedItem(null)}
-                className="absolute top-4 left-4 text-gray-600  hover:text-red-500"
-              >
-                <X />
-              </button>
-
-              {/* Image */}
-              <div className="h-full ">
-                <img
-                  src={selectedItem.image}
-                  alt={selectedItem.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Content */}
-              <div className="p-6 space-y-4">
-                <h2 className="text-2xl font-bold text-gray-800">
-                  {selectedItem.title}
-                </h2>
-
-                <div className="flex items-center gap-3 text-sm text-gray-500">
-                  <Calendar className="w-4 h-4" />
-                  {selectedItem.year} – {selectedItem.organizer}
-                </div>
-
-                <p className="text-gray-700 leading-relaxed">
-                  {selectedItem.description}
-                </p>
-              </div>
-            </div>
-          </div>
+          <AchievementsModal
+            selectedItem={selectedItem}
+            setSelectedItem={selectedItem}
+          />
         )}
 
         {filteredItems.length === 0 && (

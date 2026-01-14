@@ -1,32 +1,21 @@
 import multer from "multer";
-import path from "path";
 
-// ذخیره فایل‌ها در uploads/projects
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/projects");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
+const storage = multer.memoryStorage();
 
-// فیلتر نوع فایل و حجم
 const fileFilter = (req, file, cb) => {
-  const filetypes = /jpeg|jpg|png|gif|webp/;
-  const mimetype = filetypes.test(file.mimetype);
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-  if (mimetype && extname) {
+  if (
+    file.mimetype.startsWith("image/") ||
+    file.mimetype.startsWith("video/")
+  ) {
     cb(null, true);
   } else {
-    cb("Error: Only images are allowed!");
+    cb(new Error("Only images and videos are allowed!"), false);
   }
 };
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB (برای ویدیوها لازم است)
   fileFilter,
 });
 

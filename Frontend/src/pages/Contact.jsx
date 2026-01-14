@@ -11,6 +11,8 @@ import {
   Linkedin,
   SendHorizonal,
 } from "lucide-react";
+import bill from "./Bill";
+import Bill from "./Bill";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -78,6 +80,8 @@ const Contact = () => {
 
   return (
     <div className=" bg-gray-50  flex flex-col items-center py-8" dir="rtl">
+      <Bill />
+
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid lg:grid-cols-2 border">
           {/* Contact Info */}

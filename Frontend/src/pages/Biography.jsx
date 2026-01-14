@@ -255,7 +255,6 @@ const Biography = () => {
                   سفر هنری
                 </h3>
                 <div className="relative">
-                  {/* تایم‌لاین */}
                   <div className="border-r-2 border-amber-200 absolute h-full left-1/2 transform -translate-x-1/2 hidden md:block"></div>
 
                   <div className="space-y-12">
@@ -335,7 +334,6 @@ const Biography = () => {
                       key={index}
                       className="group relative overflow-hidden rounded-lg bg-gradient-to-br from-white via-amber-50 to-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-amber-100 hover:border-amber-300"
                     >
-                      {/* Hover Overlay Effect */}
                       <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/0 via-transparent to-amber-300/0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 z-0"></div>
 
                       {/* Image Container with Overlay */}
