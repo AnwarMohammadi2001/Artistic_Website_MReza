@@ -94,7 +94,7 @@ const Navbar = () => {
     },
     {
       id: "achivment",
-      name: "دست آورد ها",
+      name: "دستاوردها",
       path: "/achivment",
     },
     {

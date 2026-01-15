@@ -1,148 +1,118 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../utils/axiosInstance";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  X,
-  ZoomIn,
-  Calendar,
-  Palette,
-  Award,
-  BookOpen,
-  Image as ImageIcon,
-  Film,
-  Download,
-  Share2,
-  Heart,
-  Eye,
-} from "lucide-react";
+import GeraphicCart from "./components/GeraphicPage/GeraphicCart";
+import GeraphicModal from "./components/GeraphicPage/GeraphicModal";
 
 const GeraphicPage = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
+  /* ================= STATES ================= */
+  const [loading, setLoading] = useState(true);
+
+  const [allProjects, setAllProjects] = useState([]); // همه پروژه‌ها
+  const [graphicProjects, setGraphicProjects] = useState([]); // فقط گرافیک
+  const [filteredProjects, setFilteredProjects] = useState([]);
+
+  const [subCategories, setSubCategories] = useState([]);
+  const [activeSub, setActiveSub] = useState(null);
+
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState("grid"); // grid or list
+    const [paintings, setPaintings] = useState([]);
 
-  const categories = [
-    {
-      id: "all",
-      label: "همه آثار",
-      icon: "🎨",
-    },
-    {
-      id: "poster",
-      label: "پوستر",
-    },
-    {
-      id: "book",
-      label: "تصویرسازی کتاب",
-    },
-  ];
+  /* ================= FETCH DATA ================= */
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get("/projects");
+      const projects = res.data || [];
 
-  const designItems = [
-    {
-      id: 1,
-      title: "نمایشگاه هنر معاصر تهران",
-      category: "poster",
-      type: "پوستر فرهنگی",
-      year: "۱۴۰۲",
-      client: "موزه هنرهای معاصر",
-      description:
-        "طراحی پوستر نمایشگاه بین‌المللی هنر معاصر با تلفیق خطاطی ایرانی و المان‌های مدرن",
-      fullDescription:
-        "این پوستر برای نمایشگاه سالانه هنر معاصر تهران طراحی شده است. در طراحی از تکنیک دیجیتال و دستی استفاده شده و ترکیبی از خطاطی سنتی ایرانی با تایپوگرافی مدرن را ارائه می‌دهد. رنگ‌بندی طلایی و مشکی نماد هنر اصیل ایرانی است.",
-      image: "cover1.JPG",
-      awards: ["جایزه طراحی ملی ۱۴۰۲", "نشان طلای طراحی گرافیک"],
-      dimensions: "۷۰ × ۱۰۰ سانتی‌متر",
-      likes: 142,
-      views: 890,
-    },
-    {
-      id: 2,
-      title: "قصه‌های کهن ایرانی",
-      category: "book",
-      type: "تصویرسازی کتاب کودک",
-      year: "۱۴۰۱",
-      client: "انتشارات فرهنگ",
-      description:
-        "مجموعه تصویرسازی برای کتاب قصه‌های عامیانه ایرانی با رویکرد مدرن",
-      fullDescription:
-        "این پروژه شامل ۳۵ تصویرسازی برای کتاب داستان کودکان است. هر تصویر با تکنیک دیجیتال و دستی خلق شده و المان‌های فرهنگ ایرانی را با سبک مدرن ترکیب کرده است.",
-      image: "cover2.JPG",
-      awards: ["جایزه بهترین تصویرسازی کتاب کودک"],
-      tools: ["Procreate", "Adobe Fresco", "Photoshop"],
-      dimensions: "A4",
-      likes: 98,
-      views: 654,
-    },
-    {
-      id: 3,
-      title: "برندینگ کافه بوتیک",
-      category: "branding",
-      type: "هویت بصری",
-      year: "۱۴۰۰",
-      client: "کافه هنر تهران",
-      description: "طراحی کامل هویت بصری برای کافه‌گالری مدرن در تهران",
-      fullDescription:
-        "طراحی کامل هویت بصری شامل لوگو، کارت ویزیت، منو، بسته‌بندی و فضای داخلی. استفاده از رنگ‌های طبیعی و خطوط ارگانیک برای القای حس آرامش و هنر.",
-      image: "cover3.JPG",
-      awards: [],
-      tools: ["Adobe Illustrator", "InDesign", "Figma"],
-      dimensions: "متنوع",
-      likes: 167,
-      views: 1023,
-    },
-    {
-      id: 4,
-      title: "بسته‌بندی چای ویژه",
-      category: "packaging",
-      type: "طراحی بسته‌بندی",
-      year: "۱۳۹۹",
-      client: "کارخانه چای ایرانی",
-      description: "طراحی بسته‌بندی لوکس برای چای مرغوب ایرانی",
-      fullDescription:
-        "طراحی بسته‌بندی چای با الهام از نقوش اسلیمی ایرانی و استفاده از مواد بازیافتی. این طراحی برنده جایزه طراحی سبز شد.",
-      image: "cover1.JPG",
-      awards: ["جایزه طراحی سبز ۱۳۹۹"],
-      tools: ["Adobe Dimension", "Illustrator", "Blender"],
-      dimensions: "۲۰ × ۳۰ × ۸ سانتی‌متر",
-      likes: 89,
-      views: 567,
-    },
-    {
-      id: 5,
-      title: "تیزر تبلیغاتی هنرمند",
-      category: "motion",
-      type: "موشن گرافیک",
-      year: "۱۴۰۲",
-      client: "گالری هنری معاصر",
-      description: "انیمیشن تبلیغاتی برای معرفی هنرمند معاصر ایرانی",
-      fullDescription:
-        "موشن گرافیک ۶۰ ثانیه‌ای با ترکیب هنر دیجیتال و انیمیشن سنتی. استفاده از تکنیک روتوسکوپی برای آثار هنری.",
-      image: "cover2.JPG",
-      awards: ["جایزه بهترین موشن دیزاین"],
-      tools: ["After Effects", "Cinema 4D", "Premiere Pro"],
-      dimensions: "۱۹۲۰ × ۱۰۸۰",
-    },
-    {
-      id: 6,
-      title: "پوستر جشنواره فیلم",
-      category: "poster",
-      type: "پوستر سینمایی",
-      year: "۱۳۹۸",
-      client: "جشنواره فیلم فجر",
-      description: "طراحی پوستر رسمی سی و هشتمین جشنواره فیلم فجر",
-      fullDescription:
-        "پوستر اصلی جشنواره با مفهوم نور و سینما. استفاده از نمادهای سینمایی در قالب طراحی مدرن مینیمال.",
-      image: "cover3.JPG",
-      awards: ["نشان طلای جشنواره"],
-      dimensions: "۵۰ × ۷۰ سانتی‌متر",
-    },
-  ];
+      // اول همه دسته‌بندی‌ها را بررسی کنید
+      const allCategories = projects
+        .map((p) => p.Category?.title)
+        .filter(Boolean);
 
-  const filteredItems =
-    activeCategory === "all"
-      ? designItems
-      : designItems.filter((item) => item.category === activeCategory);
+      const uniqueCategories = [...new Set(allCategories)];
+      console.log("ALL AVAILABLE CATEGORIES:", uniqueCategories);
 
+      // اگر "گرافیک" وجود ندارد، شاید نامش متفاوت است
+      // مثلا: "graphic", "Graphics", "گرافیک", "طراحی گرافیک" و غیره
+      const graphic = projects.filter((p) => {
+        if (!p.Category || !p.Category.title) return false;
+
+        const categoryTitle = p.Category.title.toLowerCase().trim();
+        const possibleNames = [
+          "گرافیک",
+          "graphic",
+          "graphics",
+          "طراحی گرافیک",
+          "graphic design",
+        ];
+
+        return possibleNames.some((name) => categoryTitle.includes(name));
+      });
+
+      console.log("Filtered graphic projects:", graphic);
+
+      // بقیه کد مانند قبل...
+      setGraphicProjects(graphic);
+      setFilteredProjects(graphic);
+
+    const subs = graphic
+      .map((p) => p.SubCategory)
+      .filter((s) => s && (s.id || s.title));
+
+    const uniqueSubs = Array.from(
+      new Map(
+        subs.map((s) => [s.id ? `id-${s.id}` : `title-${s.title}`, s])
+      ).values()
+    );
+
+    setSubCategories(uniqueSubs);
+
+
+      setSubCategories(uniqueSubs);
+
+      // اگر پروژه‌ای وجود دارد، اولین زیردسته را فعال کنید
+      if (uniqueSubs.length > 0) {
+        setActiveSub(uniqueSubs[0].id || uniqueSubs[0].title);
+      } else if (graphic.length > 0) {
+        // اگر زیردسته‌ای ندارند، "همه" را فعال نگه دارید
+        setActiveSub(null);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= FILTER BY SUB CATEGORY ================= */
+ const handleSubCategory = (sub) => {
+   setActiveSub(sub.id || sub.title);
+
+   const filtered = graphicProjects.filter((p) => {
+     if (!p.SubCategory) return false;
+
+     if (sub.id) {
+       return p.SubCategory.id === sub.id;
+     }
+
+     return p.SubCategory.title === sub.title;
+   });
+
+   setFilteredProjects(filtered);
+ };
+
+  useEffect(() => {
+    console.log("All Projects:", allProjects);
+    console.log("Graphic Projects:", graphicProjects);
+    console.log("Sub Categories:", subCategories);
+  }, [allProjects, graphicProjects, subCategories]);
+
+  /* ================= MODAL ================= */
   const openModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
@@ -150,19 +120,17 @@ const GeraphicPage = () => {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
     setSelectedItem(null);
+    setIsModalOpen(false);
     document.body.style.overflow = "auto";
   };
 
-  // Animation variants
+  /* ================= ANIMATION ================= */
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
+      transition: { staggerChildren: 0.1 },
     },
   };
 
@@ -171,16 +139,22 @@ const GeraphicPage = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
+      transition: { duration: 0.4 },
     },
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Hero Header */}
+  /* ================= LOADING ================= */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-14 h-14 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* ================= SUB CATEGORIES ================= */}
       <div className="relative overflow-hidden bg-gray-700 pb-5">
         {/* Background Image */}
         <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
@@ -191,36 +165,35 @@ const GeraphicPage = () => {
         {/* Content */}
         <div className="container mx-auto px-4 py-20 relative z-20">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center text-white max-w-4xl mx-auto"
+            className="text-center text-white"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              دنیای طراحی گرافیک
-            </h1>
-
-            <p className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed">
-              از پوسترهای مفهومی تا برندینگ حرفه‌ای - مروری بر آثار گرافیکی
-              <span className="text-gray-300 font-semibold">
-                {" "}
+            <h1 className="text-4xl md:text-5xl lg:text-4xl font-bold mb-4 leading-tight">
+              گالری نقاشی‌های
+              <span className="block text-cyan-500 mt-2">
                 حمیدرضا خواجه محمدی
               </span>
+            </h1>
+
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-100 leading-relaxed">
+              مروری بر چهار دهه خلق آثار هنری در سبک‌های مختلف از نقاشی اسلامی
+              تا هنر معاصر انتزاعی
             </p>
 
-            <div className="flex flex-wrap justify-center gap-6">
-              <div className=" backdrop-blur-sm px-8 py-4 rounded-2xl  border-white/20">
-                <div className="text-3xl font-bold">۲۵+</div>
-                <div className="text-sm opacity-90">سال تجربه</div>
-              </div>
-              <div className=" backdrop-blur-sm px-8 py-4 rounded-2xl  border-white/20">
-                <div className="text-3xl font-bold">۲۰۰+</div>
-                <div className="text-sm opacity-90">پروژه موفق</div>
-              </div>
-              <div className=" backdrop-blur-sm px-8 py-4 rounded-2xl  border-white/20">
-                <div className="text-3xl font-bold">۱۵+</div>
-                <div className="text-sm opacity-90">جایزه ملی</div>
-              </div>
+            {/* Stats */}
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
+              {[
+                ["۴۰+", "سال تجربه"],
+                [`${paintings.length}+`, "اثر هنری"],
+                ["۱۵+", "نمایشگاه بین‌المللی"],
+              ].map(([value, label]) => (
+                <div key={label} className=" px-6 py-3 rounded-full">
+                  <span className="font-bold text-2xl">{value}</span>
+                  <p className="text-sm text-gray-200">{label}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
@@ -236,271 +209,89 @@ const GeraphicPage = () => {
           </svg>
         </div>
       </div>
-
-      {/* Introduction */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+      <div className="container mx-auto px-4 py-10">
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <button
+            onClick={() => {
+              setActiveSub(null);
+              setFilteredProjects(graphicProjects);
+            }}
+            className={`px-6 py-3 font-bold ${
+              activeSub === null
+                ? "text-cyan-600 border-b-2 cursor-pointer border-cyan-600"
+                : "text-gray-500"
+            }`}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-8">
-              هنر گرافیک، زبان بصری عصر مدرن
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed mb-12">
-              طراحی گرافیک هنر برقراری ارتباط بصری است. در این مجموعه، شاهد
-              تلفیق هنر سنتی ایرانی با تکنولوژی روز طراحی هستید. هر پروژه
-              داستانی منحصربه‌فرد از چالش، خلاقیت و نتیجه نهایی است.
-            </p>
-          </motion.div>
-        </div>
-      </div>
+            همه
+          </button>
 
-      {/* Categories */}
-      <div className="container mx-auto px-4 pb-12">
-        <div className="mb-12">
-          {/* Category Buttons */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((category) => (
-              <motion.button
-                key={category.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveCategory(category.id)}
-                className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300
-      ${
-        activeCategory === category.id
-          ? "text-cyan-600"
-          : "text-gray-600 hover:text-cyan-600"
-      }`}
+          {subCategories.map((sub) => {
+            const key = sub.id || sub.title;
+            const isActive = activeSub === key;
+
+            return (
+              <button
+                key={key}
+                onClick={() => handleSubCategory(sub)}
+                className={`px-6 py-3 font-bold transition-all cursor-pointer duration-300 ${
+                  isActive
+                    ? "text-cyan-600 border-b-2 border-cyan-600"
+                    : "text-gray-500 hover:text-cyan-600"
+                }`}
               >
-                <div className="font-bold ">{category.label}</div>
-
-                <span
-                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500
-        ${
-          activeCategory === category.id
-            ? "scale-x-100 origin-right"
-            : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
-        }`}
-                />
-              </motion.button>
-            ))}
-          </div>
+                {sub.title}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Design Items */}
+        {/* ================= PROJECTS ================= */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeCategory + viewMode}
+            key={activeSub}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-                : "space-y-6"
-            }
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            {filteredItems.map((item) => (
-              <motion.div
+            {filteredProjects.map((item) => (
+              <GeraphicCart
                 key={item.id}
-                variants={itemVariants}
-                layout
-                className={`group relative ${
-                  viewMode === "grid"
-                    ? "bg-white rounded-lg shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100"
-                    : "bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
-                }`}
-                onClick={() => openModal(item)}
-              >
-                <>
-                  {/* Image Container */}
-                  <div className="relative h-64 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
-                    <div
-                      className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 group-hover:scale-110 transition-transform duration-700"
-                      style={{
-                        backgroundImage: `url(${item.image})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    ></div>
-
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-center justify-center">
-                      <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 text-center">
-                        <ZoomIn className="w-12 h-12 text-white mx-auto mb-2" />
-                        <p className="text-white font-medium">مشاهده جزئیات</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-cyan-600 transition-colors line-clamp-1">
-                      {item.title}
-                    </h3>
-
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">
-                          {item.year}
-                        </span>
-                      </div>
-                      <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                        {item.type}
-                      </span>
-                    </div>
-
-                    <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-                      {item.description}
-                    </p>
-                  </div>
-                </>
-              </motion.div>
+                item={item}
+                itemVariants={itemVariants}
+                openModal={openModal}
+              />
             ))}
           </motion.div>
         </AnimatePresence>
 
-        {filteredItems.length === 0 && (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-6">🎨</div>
-            <p className="text-gray-500 text-xl">
-              هنوز اثری در این دسته‌بندی ثبت نشده است.
-            </p>
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-20 text-gray-500 text-xl">
+            هنوز پروژه‌ای در این بخش وجود ندارد.
           </div>
         )}
       </div>
 
-      {/* Modal */}
+      {/* ================= MODAL ================= */}
       <AnimatePresence>
         {isModalOpen && selectedItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 overflow-y-auto"
+            className="fixed inset-0 z-50"
           >
-            {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/70"
               onClick={closeModal}
             />
-
-            {/* Modal Content */}
-            <div className="relative min-h-screen flex items-center justify-center p-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: "spring", damping: 25 }}
-                className="relative bg-white rounded-lg shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Close Button */}
-                <button
-                  onClick={closeModal}
-                  className="absolute top-6 left-6 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white hover:scale-110 transition-all duration-300"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-
-                {/* Modal Header */}
-                <div className="p-6 border-gray-200 bg-gradient-to-r from-gray-50 to-white">
-                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                    <div>
-                      <h2 className="text-3xl font-bold text-gray-800 mb-2">
-                        {selectedItem.title}
-                      </h2>
-                      <p className="text-gray-600">
-                        برای {selectedItem.client} • {selectedItem.year}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Modal Body */}
-                <div className="grid lg:grid-cols-2 p-6 gap-0 h-full">
-                  {/* Main Image */}
-                  <div className="lg:col-span-1 relative min-h-[400px] lg:min-h-[350px]">
-                    <div>
-                      <img
-                        src={selectedItem.image}
-                        alt={selectedItem.title}
-                        className="h-[350px] w-auto"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Details Sidebar */}
-                  <div className="p-8 overflow-y-auto">
-                    <div className="space-y-8">
-                      {/* Description */}
-                      <div>
-                        <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                          <BookOpen className="w-6 h-6 text-amber-600" />
-                          توضیحات پروژه
-                        </h4>
-                        <p className="text-gray-700 leading-relaxed">
-                          {selectedItem.fullDescription}
-                        </p>
-                      </div>
-
-                      {/* Specifications */}
-                      <div className="space-y-4">
-                        <h4 className="text-xl font-bold text-gray-800 mb-4">
-                          مشخصات فنی
-                        </h4>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-gray-50 p-4 rounded-xl">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Calendar className="w-5 h-5 text-amber-600" />
-                              <span className="font-bold text-gray-700">
-                                سال تولید
-                              </span>
-                            </div>
-                            <p className="text-gray-800">{selectedItem.year}</p>
-                          </div>
-
-                          <div className="bg-gray-50 p-4 rounded-xl">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Palette className="w-5 h-5 text-amber-600" />
-                              <span className="font-bold text-gray-700">
-                                ابعاد
-                              </span>
-                            </div>
-                            <p className="text-gray-800">
-                              {selectedItem.dimensions}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
+            <GeraphicModal
+              selectedItem={selectedItem}
+              closeModal={closeModal}
+            />
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes twinkle {
-          0%,
-          100% {
-            opacity: 0.2;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 };

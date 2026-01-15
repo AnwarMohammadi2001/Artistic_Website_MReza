@@ -6,6 +6,7 @@ import {
   MdLogout,
   MdCategory, // آیکون برای دسته‌ها
   MdAddBox, // آیکون برای افزودن پروژه
+<<<<<<< HEAD
 } from "react-icons/md";
 import {
   MdBrush,
@@ -14,6 +15,8 @@ import {
   MdDesignServices,
   MdOutlineMuseum,
   MdTheaterComedy,
+=======
+>>>>>>> Anwar
 } from "react-icons/md";
 import { FaBars, FaTimes } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -52,6 +55,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
       adminOnly: false,
     },
     {
+<<<<<<< HEAD
       name: "نقاشی",
       value: "painting",
       icon: <MdBrush className="text-blue-500" />,
@@ -91,6 +95,23 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
       name: "متفرقه",
       value: "miscellaneous",
       icon: <MdCategory className="text-gray-500" />,
+=======
+      name: "مدیریت دسته‌ها",
+      value: "categories",
+      icon: <MdCategory className="text-orange-500" />,
+      adminOnly: true, // مثلا فقط ادمین ببیند
+    },
+    {
+      name: "افزودن پروژه",
+      value: "add-project",
+      icon: <MdAddBox className="text-purple-500" />,
+      adminOnly: true,
+    },
+    {
+      name: "لیست پروژه‌ها",
+      value: "projects", // اگر صفحه‌ای برای لیست دارید
+      icon: <MdWork className="text-blue-500" />,
+>>>>>>> Anwar
       adminOnly: false,
     },
     {
@@ -129,7 +150,11 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
             className={`text-lg font-bold text-gray-700 dark:text-white whitespace-nowrap 
             ${isOpen ? "inline" : "hidden lg:inline"}`}
           >
+<<<<<<< HEAD
             حمید رضا
+=======
+            پنل مدیریت
+>>>>>>> Anwar
           </span>
 
           {/* Close button (Mobile only) */}
@@ -157,8 +182,13 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
                 className={`flex items-center gap-x-3 w-full px-4 py-3 rounded-xl transition-all duration-200
                   ${
                     activeComponent === component.value
+<<<<<<< HEAD
                       ? "bg-gray-200 text-blue-600 dark:bg-gray-700 dark:text-blue-400  border-blue-600"
                       : "hover:bg-gray-200 dark:hover:bg-gray-700 text-black dark:text-gray-200"
+=======
+                      ? "bg-blue-50 text-blue-600 dark:bg-gray-700 dark:text-blue-400 font-bold shadow-sm"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300"
+>>>>>>> Anwar
                   }`}
               >
                 <span className="text-2xl">{component.icon}</span>

@@ -2,25 +2,25 @@ import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
 
 const Project = sequelize.define("Project", {
-  title: { type: DataTypes.STRING, allowNull: false }, // عنوان
-  description: { type: DataTypes.TEXT }, // توضیحات کوتاه
-  fullDescription: { type: DataTypes.TEXT }, // توضیحات کامل
-  
-  technique: { type: DataTypes.STRING }, // تکنیک
-  size: { type: DataTypes.STRING }, // سایز
-  location: { type: DataTypes.STRING }, // مکان
-  organizer: { type: DataTypes.STRING }, // برگزار کننده
-  exhibitionName: { type: DataTypes.STRING }, // نام نمایشگاه
-  
-  date: { type: DataTypes.STRING }, // تاریخ
-  duration: { type: DataTypes.STRING }, // مدت زمان
-  link: { type: DataTypes.STRING }, // لینک خارجی
-  
-  mediaType: { 
-    type: DataTypes.ENUM("image", "video"), 
-    defaultValue: "image" 
+  title: { type: DataTypes.STRING, allowNull: false }, // اجباری
+
+  // بقیه فیلدها اختیاری شدند (allowNull: true)
+  description: { type: DataTypes.TEXT, allowNull: true },
+  fullDescription: { type: DataTypes.TEXT, allowNull: true },
+  technique: { type: DataTypes.STRING, allowNull: true },
+  size: { type: DataTypes.STRING, allowNull: true },
+  location: { type: DataTypes.STRING, allowNull: true },
+  organizer: { type: DataTypes.STRING, allowNull: true },
+  exhibitionName: { type: DataTypes.STRING, allowNull: true },
+  date: { type: DataTypes.STRING, allowNull: true },
+  duration: { type: DataTypes.STRING, allowNull: true },
+  link: { type: DataTypes.STRING, allowNull: true },
+
+  mediaType: {
+    type: DataTypes.ENUM("image", "video"),
+    defaultValue: "image",
   },
-  mainImage: { type: DataTypes.STRING }, // مسیر فایل آپلود شده
+  mainImage: { type: DataTypes.STRING, allowNull: true }, // شاید بخواهید بعدا عکس اضافه کنید
 });
 
 export default Project;

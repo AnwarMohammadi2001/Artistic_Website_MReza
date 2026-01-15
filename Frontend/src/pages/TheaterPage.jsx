@@ -1,344 +1,312 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, MapPin, Users, X, ZoomIn, Clock } from "lucide-react";
+import { Calendar, MapPin, Users, X, Clock } from "lucide-react";
+import axiosInstance from "../utils/axiosInstance";
 
 const TheaterPage = () => {
-  const [selectedExhibition, setSelectedExhibition] = useState(null);
+  /* ================= STATES ================= */
+  const [loading, setLoading] = useState(true);
+  const [allProjects, setAllProjects] = useState([]);
+  const [theaterProjects, setTheaterProjects] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [columns, setColumns] = useState(3);
-  const [imageDimensions, setImageDimensions] = useState({});
 
+  /* ================= FETCH DATA ================= */
   useEffect(() => {
-    const updateColumns = () => {
-      if (window.innerWidth < 768) setColumns(1);
-      else if (window.innerWidth < 1200) setColumns(2);
-      else setColumns(3);
-    };
-
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
+    fetchProjects();
   }, []);
 
-  // داده‌های نمایشگاه‌ها با سایزهای واقعی تصاویر
-  const exhibitions = [
-    {
-      id: 1,
-      title: "چهل سال خلاقیت",
-      image: "th/1.jpg",
-      year: "۱۴۰۰",
-      date: "۱۴۰۰/۰۶/۱۵ تا ۱۴۰۰/۰۷/۱۵",
-      location: "موزه هنرهای معاصر تهران",
-      organizer: "انجمن هنرمندان ایران",
-      description: "نمایشگاه مروری بر چهار دهه فعالیت هنری حمیدرضا خواجه محمدی",
-      fullDescription:
-        "این نمایشگاه که به مناسبت چهل‌سالگی فعالیت هنری برگزار شد، شامل بیش از ۵۰ اثر از دوره‌های مختلف کاری هنرمند بود. آثار شامل نقاشی، طراحی، گرافیک و تلفیق مواد مختلف می‌شد.",
-      duration: "۳۰ روز",
-      visitors: "۲۵۰۰ نفر",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "نقاشی خط معاصر",
-      image: "th/2.JPG",
-      year: "۱۳۹۸",
-      date: "۱۳۹۸/۰۸/۱۰ تا ۱۳۹۸/۰۹/۱۰",
-      location: "گالری سیحون، تهران",
-      organizer: "خانه هنرمندان",
-      description: "نمایشگاه گروهی هنرمندان پیشگام نقاشی خط",
-      fullDescription:
-        "نمایشگاهی از آثار برجسته هنرمندان نقاشی خط ایران که تحولات این هنر در دهه‌های اخیر را به نمایش گذاشت.",
-      duration: "۳۰ روز",
-      visitors: "۱۸۰۰ نفر",
-    },
-    {
-      id: 3,
-      title: "هنر ایرانی در پاریس",
-      image: "th/3.jpg",
-      year: "۱۳۹۶",
-      date: "۱۳۹۶/۰۳/۱۵ تا ۱۳۹۶/۰۴/۱۵",
-      location: "گالری کارتیه، پاریس",
-      organizer: "وزارت فرهنگ فرانسه",
-      description: "نمایشگاه بین‌المللی هنر معاصر ایران",
-      fullDescription:
-        "این نمایشگاه که با همکاری موزه لوور برگزار شد، آثار هنرمندان ایرانی را در قلب پاریس به نمایش گذاشت.",
-      duration: "۳۰ روز",
-      visitors: "۵۰۰۰ نفر",
-    },
-    {
-      id: 4,
-      title: "مینیاتورهای مدرن",
-      image: "th/4.jpg",
-      year: "۱۳۹۹",
-      date: "۱۳۹۹/۱۱/۲۰ تا ۱۳۹۹/۱۲/۲۰",
-      location: "نگارخانه تهران",
-      organizer: "فرهنگستان هنر",
-      description: "تلفیق هنر مینیاتور با تکنیک‌های مدرن",
-      fullDescription:
-        "آثار این نمایشگاه نشان‌دهنده نوآوری در هنر مینیاتور با استفاده از مواد و تکنیک‌های معاصر بود.",
-      duration: "۳۰ روز",
-      visitors: "۲۰۰۰ نفر",
-    },
-    {
-      id: 5,
-      title: "طراحی و گرافیک",
-      image: "th/5.JPG",
-      year: "۱۴۰۱",
-      date: "۱۴۰۱/۰۴/۰۵ تا ۱۴۰۱/۰۵/۰۵",
-      location: "موزه طراحی گرافیک",
-      organizer: "انجمن طراحان ایران",
-      description: "نمایشگاه آثار برجسته طراحی و گرافیک",
-      fullDescription:
-        "نمایشگاهی از بهترین آثار طراحی گرافیک سه دهه اخیر ایران با تمرکز بر آثار مفهومی و تجربی.",
-      duration: "۳۰ روز",
-      visitors: "۳۰۰۰ نفر",
-    },
-    {
-      id: 6,
-      title: "طبیعت و انتزاع",
-      image: "th/7.jpg",
-      year: "۱۴۰۲",
-      date: "۱۴۰۲/۰۲/۱۰ تا ۱۴۰۲/۰۳/۱۰",
-      location: "گالری ویلا، اصفهان",
-      organizer: "استانداری اصفهان",
-      description: "آثار انتزاعی با الهام از طبیعت ایران",
-      fullDescription:
-        "این نمایشگاه که در شهر تاریخی اصفهان برگزار شد، تأثیر طبیعت ایران بر هنر انتزاعی را بررسی کرد.",
-      duration: "۲۸ روز",
-      visitors: "۲۲۰۰ نفر",
-    },
-    {
-      id: 7,
-      title: "هنر دیجیتال",
-      image: "th/8.JPG",
-      year: "۱۴۰۰",
-      date: "۱۴۰۰/۰۹/۰۱ تا ۱۴۰۰/۱۰/۰۱",
-      location: "مرکز هنرهای دیجیتال",
-      organizer: "شرکت فناوری هنر",
-      description: "نمایشگاه هنر دیجیتال و تعاملی",
-      fullDescription:
-        "اولین نمایشگاه بزرگ هنر دیجیتال در ایران با آثار تعاملی و تکنولوژی‌های جدید.",
-      duration: "۳۰ روز",
-      visitors: "۳۵۰۰ نفر",
-    },
-    {
-      id: 8,
-      title: "نمایشگاه دبی",
-      image: "th/9.jpg",
-      year: "۱۳۹۷",
-      date: "۱۳۹۷/۱۰/۱۵ تا ۱۳۹۷/۱۱/۱۵",
-      location: "مرکز تجارت جهانی دبی",
-      organizer: "دولت دبی",
-      description: "نمایشگاه هنر معاصر خاورمیانه",
-      fullDescription:
-        "نمایشگاهی بین‌المللی که هنرمندان برجسته خاورمیانه را گرد هم آورد.",
-      duration: "۳۰ روز",
-      visitors: "۸۰۰۰ نفر",
-    },
-    {
-      id: 9,
-      title: "نقاشی‌های بزرگ",
-      image: "th/10.JPG",
-      year: "۱۳۹۵",
-      date: "۱۳۹۵/۰۵/۲۰ تا ۱۳۹۵/۰۶/۲۰",
-      location: "تالار وحدت تهران",
-      organizer: "وزارت فرهنگ و ارشاد اسلامی",
-      description: "نمایشگاه آثار بزرگ مقیاس",
-      fullDescription:
-        "آثار بزرگ مقیاسی که برای اولین بار در فضای عمومی به نمایش درآمدند.",
-      duration: "۳۰ روز",
-      visitors: "۴۰۰۰ نفر",
-    },
-    {
-      id: 10,
-      title: "جوانان و هنر",
-      image: "ex/10.JPG",
-      year: "۱۴۰۲",
-      date: "۱۴۰۲/۰۷/۰۱ تا ۱۴۰۲/۰۸/۰۱",
-      location: "دانشگاه هنر تهران",
-      organizer: "دانشگاه هنر",
-      description: "نمایشگاه آثار دانشجویان و هنرمندان جوان",
-      fullDescription:
-        "نمایشگاهی برای معرفی استعدادهای جوان هنر ایران با مربیگری هنرمندان پیشکسوت.",
-      duration: "۳۰ روز",
-      visitors: "۲۸۰۰ نفر",
-    },
-  ];
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get("/projects");
+      const projects = res.data || [];
 
-  // تابع برای اندازه‌گیری سایز واقعی تصاویر
-  useEffect(() => {
-    const loadImageDimensions = async () => {
-      const dimensions = {};
+      // بررسی همه دسته‌بندی‌های موجود
+      const allCategories = projects
+        .map((p) => p.Category?.title)
+        .filter(Boolean);
 
-      for (const exhibition of exhibitions) {
-        try {
-          await new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-              // محاسبه نسبت ابعاد تصویر
-              const aspectRatio = img.width / img.height;
-              dimensions[exhibition.id] = {
-                width: img.width,
-                height: img.height,
-                aspectRatio: aspectRatio,
-                // تعیین ارتفاع بر اساس نسبت ابعاد
-                heightClass:
-                  aspectRatio > 1.5
-                    ? "h-64" // landscape
-                    : aspectRatio < 0.8
-                    ? "h-96" // portrait
-                    : "h-80", // square
-              };
-              resolve();
-            };
-            img.onerror = () => {
-              dimensions[exhibition.id] = {
-                width: 800,
-                height: 600,
-                aspectRatio: 1.33,
-                heightClass: "h-80",
-              };
-              resolve();
-            };
-            img.src = exhibition.image;
-          });
-        } catch (error) {
-          console.log(`خطا در بارگذاری تصویر ${exhibition.id}:`, error);
-        }
-      }
+      const uniqueCategories = [...new Set(allCategories)];
+      console.log("ALL AVAILABLE CATEGORIES:", uniqueCategories);
 
-      setImageDimensions(dimensions);
-    };
+      // فیلتر برای دسته‌بندی "تئاتر"
+      const theaterItems = projects.filter((p) => {
+        if (!p.Category || !p.Category.title) return false;
 
-    loadImageDimensions();
-  }, []);
+        const categoryTitle = p.Category.title.toLowerCase().trim();
+        const possibleNames = [
+          "تئاتر",
+          "theater",
+          "theatre",
+          "نمایش",
+          "play",
+          "drama",
+          "stage",
+          "نمایشنامه",
+          "نمایش صحنه‌ای",
+        ];
 
-  // تابع برای ساخت Masonry Layout با سایز واقعی تصاویر
-  const createMasonryColumns = () => {
-    const columnArrays = Array.from({ length: columns }, () => []);
-    const columnHeights = Array(columns).fill(0);
+        return possibleNames.some((name) => categoryTitle.includes(name));
+      });
 
-    exhibitions.forEach((item) => {
-      const dimension = imageDimensions[item.id];
-      let itemHeight = 400; // مقدار پیش‌فرض
+      console.log("Filtered theater projects:", theaterItems);
 
-      if (dimension) {
-        // محاسبه ارتفاع بر اساس نسبت ابعاد واقعی
-        itemHeight =
-          dimension.aspectRatio > 1.5
-            ? 300 // landscape کوتاه
-            : dimension.aspectRatio < 0.8
-            ? 500 // portrait بلند
-            : 400; // square متوسط
-      }
+      // مپ کردن پروژه‌ها به فرمت تئاتر
+      const mappedTheater = theaterItems.map((project) => {
+        // ساخت URL تصویر
+        const getImageUrl = () => {
+          if (project.mainImage) {
+            if (project.mainImage.startsWith("http")) {
+              return project.mainImage;
+            }
+            const BASE_URL =
+              import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+            if (project.mainImage.startsWith("/")) {
+              return `${BASE_URL}${project.mainImage}`;
+            }
+            return `${BASE_URL}/${project.mainImage}`;
+          }
+          // تصویر پیش‌فرض
+          return "https://via.placeholder.com/800x600?text=تئاتر";
+        };
 
-      // پیدا کردن کوتاه‌ترین ستون
-      const shortestColumnIndex = columnHeights.indexOf(
-        Math.min(...columnHeights)
-      );
-      columnArrays[shortestColumnIndex].push(item);
-      columnHeights[shortestColumnIndex] += itemHeight;
-    });
+        // تعیین aspect ratio
+        const getAspectRatio = () => {
+          if (project.size) {
+            if (project.size.includes("×")) {
+              const [width, height] = project.size.split("×").map(Number);
+              if (width > height) return "landscape";
+              if (height > width) return "portrait";
+              return "square";
+            }
+          }
+          // بیشتر تصاویر تئاتر landscape هستند
+          const ratios = ["landscape", "portrait", "square"];
+          return ratios[Math.floor(Math.random() * ratios.length)];
+        };
 
-    return columnArrays;
+        // تعیین ارتفاع بر اساس aspect ratio
+        const getHeightClass = () => {
+          const ratio = getAspectRatio();
+          if (ratio === "portrait") return "h-96";
+          if (ratio === "landscape") return "h-64";
+          return "h-80";
+        };
+
+        return {
+          ...project,
+          image: getImageUrl(),
+          aspectRatio: getAspectRatio(),
+          heightClass: getHeightClass(),
+          displayTitle: project.title || "بدون عنوان",
+          displayDescription:
+            project.description || project.fullDescription || "بدون توضیحات",
+          displayYear:
+            project.date ||
+            new Date(project.createdAt).getFullYear().toString() ||
+            "نامشخص",
+          displayLocation: project.location || "نامشخص",
+          displayOrganizer:
+            project.organizer || project.exhibitionName || "نامشخص",
+          displayDuration: project.duration || "نامشخص",
+          displayVisitors: project.visitors || "نامشخص",
+          displayDirector: project.director || "نامشخص",
+          displayCast: project.cast || "نامشخص",
+          displayGenre: project.genre || "نامشخص",
+        };
+      });
+
+      setTheaterProjects(mappedTheater);
+      setAllProjects(projects);
+    } catch (error) {
+      console.error("Error fetching theater projects:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const openModal = (exhibition) => {
-    setSelectedExhibition(exhibition);
+  /* ================= MODAL ================= */
+  const openModal = (item) => {
+    setSelectedItem(item);
     setIsModalOpen(true);
     document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedExhibition(null);
+    setSelectedItem(null);
     document.body.style.overflow = "auto";
   };
 
-  const masonryColumns = createMasonryColumns();
+  /* ================= ANIMATION ================= */
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.4 },
+    },
+  };
+
+  /* ================= LOADING ================= */
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
+        <div className="text-center">
+          <div className="w-14 h-14 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600">در حال دریافت اطلاعات...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white p-4">
-      {/* Masonry Grid نمایشگاه‌ها */}
-      <div className="mx-auto">
-        <div>
-          {exhibitions.length > 0 ? (
-            <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {masonryColumns.map((column, columnIndex) => (
-                <div key={columnIndex} className="flex flex-col gap-6">
-                  {column.map((exhibition) => (
-                    <motion.div
-                      key={exhibition.id}
-                      layout
-                      className="group relative cursor-pointer overflow-hidden rounded-md shadow-xl hover:shadow-2xl transition-all duration-500"
-                      onClick={() => openModal(exhibition)}
-                      style={{
-                        // استفاده از کلاس ارتفاع بر اساس نسبت تصویر
-                        height: imageDimensions[exhibition.id]?.heightClass
-                          ? "auto"
-                          : "400px",
-                        minHeight: "300px",
-                      }}
-                    >
-                      {/* Container با نسبت ابعاد طبیعی */}
-                      <div className="relative w-full h-full">
-                        {/* تصویر نمایشگاه */}
-                        <div className="absolute inset-0">
-                          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300">
-                            <img
-                              src={exhibition.image}
-                              alt={exhibition.title}
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                              loading="lazy"
-                              style={{
-                                objectPosition: "center",
-                              }}
-                            />
-                          </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* ================= HERO SECTION ================= */}
+      <div className="relative overflow-hidden pb-6">
+        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-black/70 z-10" />
 
-                          {/* گرادیان Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                        </div>
+        <div className="container mx-auto px-4 py-20 relative z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center text-white max-w-4xl mx-auto"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              آثار تئاتر و نمایش‌های صحنه‌ای
+            </h1>
+            <p className="text-xl text-cyan-300 max-w-3xl mx-auto">
+              مجموعه‌ای از آثار نمایشی و تئاتری حمیدرضا خواجه محمدی
+            </p>
 
-                        {/* اطلاعات پایه (همیشه نمایش داده می‌شود) */}
-                        <div className="absolute bottom-4 right-4 left-4">
-                          <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
-                            {exhibition.title}
-                          </h3>
-                          <div className="flex items-center justify-between text-white/90 text-sm">
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />
-                              <span className="truncate">
-                                {exhibition.location.split("،")[0]}
-                              </span>
-                            </div>
-                            <span className="font-bold">{exhibition.year}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
+            {/* Stats */}
+            <div className="mt-10 flex flex-wrap justify-center gap-6">
+              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">
+                  {theaterProjects.length}+
                 </div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20"
-            >
-              <div className="text-6xl mb-6 opacity-50">🏛️</div>
-              <p className="text-gray-500 text-xl">
-                در حال بارگذاری نمایشگاه‌ها...
-              </p>
-            </motion.div>
-          )}
+                <div className="text-sm opacity-90">نمایش و تئاتر</div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">
+                  {new Set(theaterProjects.map((e) => e.displayYear)).size}+
+                </div>
+                <div className="text-sm opacity-90">سال فعالیت تئاتری</div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Bottom Wave */}
+        <div className="absolute bottom-0 left-0 right-0 z-30">
+          <svg
+            className="w-full h-[120px]"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path d="M0,0V120H1200V0C800,80 400,80 0,0Z" fill="white" />
+          </svg>
         </div>
       </div>
 
-      {/* Modal جزئیات نمایشگاه */}
+      {/* ================= THEATER GRID ================= */}
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto">
+          <AnimatePresence>
+            {theaterProjects.length > 0 ? (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {theaterProjects.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    variants={itemVariants}
+                    layout
+                    className={`group relative cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ${item.heightClass}`}
+                    onClick={() => openModal(item)}
+                  >
+                    {/* Image Container */}
+                    <div className="relative w-full h-full">
+                      {/* تصویر تئاتر */}
+                      <div className="absolute inset-0">
+                        <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800">
+                          <img
+                            src={item.image}
+                            alt={item.displayTitle}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.parentElement.innerHTML = `
+                                <div class="w-full h-full flex flex-col items-center justify-center p-4">
+                                  <div class="w-16 h-16 bg-gradient-to-br from-purple-900/30 to-indigo-900/30 rounded-full flex items-center justify-center mb-4">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                    </svg>
+                                  </div>
+                                  <p class="text-white text-sm">تصویر تئاتر</p>
+                                </div>
+                              `;
+                            }}
+                          />
+                        </div>
+
+                        {/* گرادیان Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                      </div>
+
+                      {/* اطلاعات پایه */}
+                      <div className="absolute bottom-4 right-4 left-4">
+                        <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
+                          {item.displayTitle}
+                        </h3>
+                        <div className="flex items-center justify-between text-white/90 text-sm">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            <span className="truncate">
+                              {item.displayLocation.split("،")[0] ||
+                                "مکان نامشخص"}
+                            </span>
+                          </div>
+                          <span className="font-bold">{item.displayYear}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20"
+              >
+                <div className="text-6xl mb-6 opacity-50">🎭</div>
+                <p className="text-gray-500 text-xl">موردی یافت نشد.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ================= MODAL ================= */}
       <AnimatePresence>
-        {isModalOpen && selectedExhibition && (
+        {isModalOpen && selectedItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -347,7 +315,7 @@ const TheaterPage = () => {
           >
             {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/90 backdrop-blur-sm"
               onClick={closeModal}
             />
 
@@ -358,7 +326,7 @@ const TheaterPage = () => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25 }}
-                className="relative bg-white rounded-md shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row"
+                className="relative bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}
@@ -373,15 +341,28 @@ const TheaterPage = () => {
                 <div className="md:w-1/2 h-64 md:h-auto">
                   <div className="relative w-full h-full">
                     <img
-                      src={selectedExhibition.image}
-                      alt={selectedExhibition.title}
+                      src={selectedItem.image}
+                      alt={selectedItem.displayTitle}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerHTML = `
+                          <div class="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col items-center justify-center">
+                            <div class="w-20 h-20 bg-gradient-to-br from-purple-900/30 to-indigo-900/30 rounded-full flex items-center justify-center mb-4">
+                              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                              </svg>
+                            </div>
+                            <p class="text-white">تصویر تئاتر</p>
+                          </div>
+                        `;
+                      }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                       <div className="text-white">
-                        <div className="text-sm opacity-90">سال برگزاری</div>
+                        <div className="text-sm opacity-90">سال اجرا</div>
                         <div className="text-2xl font-bold">
-                          {selectedExhibition.year}
+                          {selectedItem.displayYear}
                         </div>
                       </div>
                     </div>
@@ -394,10 +375,10 @@ const TheaterPage = () => {
                     {/* عنوان */}
                     <div>
                       <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-                        {selectedExhibition.title}
+                        {selectedItem.displayTitle}
                       </h2>
                       <p className="text-gray-600 text-lg">
-                        {selectedExhibition.description}
+                        {selectedItem.displayDescription}
                       </p>
                     </div>
 
@@ -405,100 +386,172 @@ const TheaterPage = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* ستون اول */}
                       <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Calendar className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              تاریخ برگزاری
+                        {selectedItem.displayYear &&
+                          selectedItem.displayYear !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Calendar className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  سال اجرا
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayYear}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.date}
-                            </div>
-                          </div>
-                        </div>
+                          )}
 
-                        <div className="flex items-start gap-3">
-                          <MapPin className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              مکان نمایشگاه
+                        {selectedItem.displayLocation &&
+                          selectedItem.displayLocation !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <MapPin className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  مکان اجرا
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayLocation}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.location}
-                            </div>
-                          </div>
-                        </div>
+                          )}
 
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              برگزارکننده
+                        {selectedItem.displayOrganizer &&
+                          selectedItem.displayOrganizer !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Users className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  برگزارکننده
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayOrganizer}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.organizer}
-                            </div>
-                          </div>
-                        </div>
+                          )}
                       </div>
 
                       {/* ستون دوم */}
                       <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                          <Clock className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              مدت زمان
+                        {selectedItem.displayDuration &&
+                          selectedItem.displayDuration !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Clock className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  مدت زمان
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayDuration}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.duration}
-                            </div>
-                          </div>
-                        </div>
+                          )}
 
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-blue-500 mt-1 flex-shrink-0" />
-                          <div>
-                            <div className="font-bold text-gray-700 mb-1">
-                              تعداد بازدیدکنندگان
+                        {selectedItem.displayVisitors &&
+                          selectedItem.displayVisitors !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <Users className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0" />
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  تعداد تماشاگران
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayVisitors}
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-gray-600">
-                              {selectedExhibition.visitors}
+                          )}
+
+                        {selectedItem.displayDirector &&
+                          selectedItem.displayDirector !== "نامشخص" && (
+                            <div className="flex items-start gap-3">
+                              <svg
+                                className="w-5 h-5 text-purple-500 mt-1 flex-shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                />
+                              </svg>
+                              <div>
+                                <div className="font-bold text-gray-700 mb-1">
+                                  کارگردان
+                                </div>
+                                <div className="text-gray-600">
+                                  {selectedItem.displayDirector}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
+                          )}
                       </div>
                     </div>
 
-                    {/* توضیحات کامل */}
-                    <div className="pt-4 border-t border-gray-200">
-                      <h4 className="text-xl font-bold text-gray-800 mb-4">
-                        توضیحات کامل نمایشگاه
-                      </h4>
-                      <p className="text-gray-700 leading-relaxed">
-                        {selectedExhibition.fullDescription}
-                      </p>
-                    </div>
+                    {/* اطلاعات اضافی تئاتر */}
+                    {(selectedItem.displayCast ||
+                      selectedItem.displayGenre) && (
+                      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {selectedItem.displayCast && (
+                            <div>
+                              <h4 className="font-bold text-gray-800 mb-2">
+                                بازیگران
+                              </h4>
+                              <p className="text-gray-600 text-sm">
+                                {selectedItem.displayCast}
+                              </p>
+                            </div>
+                          )}
 
-                    {/* اطلاعات اضافی */}
-                    {selectedExhibition.featured && (
-                      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-100">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white font-bold">★</span>
-                          </div>
-                          <div>
-                            <div className="font-bold text-gray-800">
-                              نمایشگاه ویژه
+                          {selectedItem.displayGenre && (
+                            <div>
+                              <h4 className="font-bold text-gray-800 mb-2">
+                                ژانر
+                              </h4>
+                              <p className="text-gray-600 text-sm">
+                                {selectedItem.displayGenre}
+                              </p>
                             </div>
-                            <div className="text-gray-600 text-sm">
-                              این نمایشگاه جزء نمایشگاه‌های شاخص هنرمند محسوب
-                              می‌شود
-                            </div>
-                          </div>
+                          )}
                         </div>
                       </div>
                     )}
+
+                    {/* توضیحات کامل */}
+                    {selectedItem.fullDescription && (
+                      <div className="pt-4 border-t border-gray-200">
+                        <h4 className="text-xl font-bold text-gray-800 mb-4">
+                          توضیحات کامل نمایش
+                        </h4>
+                        <p className="text-gray-700 leading-relaxed">
+                          {selectedItem.fullDescription}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* اطلاعات اضافی */}
+                    <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-100">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold">🎭</span>
+                        </div>
+                        <div>
+                          <div className="font-bold text-gray-800">
+                            اثر تئاتری
+                          </div>
+                          <div className="text-gray-600 text-sm">
+                            این نمایش بخشی از فعالیت‌های هنری حمیدرضا خواجه
+                            محمدی در زمینه تئاتر است
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
