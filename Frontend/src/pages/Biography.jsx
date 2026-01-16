@@ -73,24 +73,7 @@ const Biography = () => {
       title: "آثار ترکیبی",
       img: "b.JPG",
     },
-    {
-      year: "۱۳۸۵",
-      location: "نگارخانه تهران",
-      title: "مینیاتورهای مدرن",
-      img: "b.JPG",
-    },
-    {
-      year: "۱۳۹۰",
-      location: "پاریس، فرانسه",
-      title: "هنر ایرانی معاصر",
-      img: "b.JPG",
-    },
-    {
-      year: "۱۳۹۵",
-      location: "دبی، امارات",
-      title: "کالیگرافی مدرن",
-      img: "b.JPG",
-    },
+   
   ];
 
   const awards = [
@@ -120,13 +103,23 @@ const Biography = () => {
       organization: "وزارت فرهنگ و ارشاد اسلامی",
     },
   ];
+  const items = [
+    { img: "p/ach.JPG", title: "دستاورد ها", path: "/achivment" },
+    { img: "p/design.JPG", title: "طراحی", path: "/design" },
+    { img: "p/garaphic.jpg", title: "گرافیک", path: "/graphic" },
+    { img: "p/inter.JPG", title: "نقاشی", path: "/painting" },
+    { img: "p/mot.JPG", title: "مصاحبه", path: "/interview" },
+    { img: "p/painting.JPG", title: "متفرقه", path: "/miscellaneous" },
+    { img: "p/tet.JPG", title: "نمایشگاه", path: "/exhibition" },
+    { img: "p/view.jpg", title: "تئاتر", path: "/theater" },
+  ];
 
   return (
     <div className="">
       {/* هدر بخش بیوگرافی */}
       <div className="relative overflow-hidden h-[600px]">
-        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center"></div>
-        <div className="absolute inset-0 bg-black/70"></div>
+        <div className="absolute inset-0 bg-[url('/cover.jpg')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-black/80"></div>
         <div className="relative z-10 py-20">
           <div className="flex  justify-center items-center">
             {/* متن معرفی */}
@@ -478,29 +471,36 @@ const Biography = () => {
 
         {/* گالری تصاویر */}
         <div className="mb-16 max-w-6xl mx-auto">
-          <h3 className="text-3xl font-bold text-gray-700 mb-8 text-center">
+          <h3 className="text-3xl font-bold text-gray-700 rounded-md mb-8 text-center">
             گالری آثار من
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4">
-            {[
-              "bi/1.JPG",
-              "bi/2.JPG",
-              "bi/3.JPG",
-              "bi/4.JPG",
-              "bi/5.JPG",
-              "bi/6.JPG",
-              "bi/1.JPG",
-              "bi/2.JPG",
-            ].map((item) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {items.map((item) => (
               <Link
-                key={item}
-                className="relative transition-shadow duration-300"
+                to={item.path}
+                key={item.title}
+                className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300"
               >
-                <div className="absolute inset-0 bg-black/30"></div>
+                {/* Image */}
                 <img
-                  className={`h-full flex items-center w-[300px] rounded-md justify-center hover:scale-103 duration-300 transition-all hover:shadow `}
-                  src={item}
+                  src={item.img}
+                  alt={item.title}
+                  className="h-[320px] w-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
+
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Content */}
+                <div className="absolute bottom-5 w-full p-4 flex flex-col items-center text-white translate-y-6 group-hover:translate-y-0 transition-all duration-300">
+                  <h3 className="text-lg hidden group-hover:block font-semibold mb-2">
+                    {item.title}
+                  </h3>
+
+                  <button className="bg-white hidden group-hover:block  text-black px-4 py-1.5 rounded-md text-sm font-medium hover:bg-cyan-500 hover:text-white transition">
+                    دیدن بشتر 
+                  </button>
+                </div>
               </Link>
             ))}
           </div>

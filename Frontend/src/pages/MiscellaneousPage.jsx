@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { motion, AnimatePresence } from "framer-motion";
 import MiscellaneousCart from "../pages/components/MiscellaneousPage/MiscellaneousCart";
-import MiscellaneousModal from "../pages/components/MiscellaneousPage/MiscellaneousModal"
+import MiscellaneousModal from "../pages/components/MiscellaneousPage/MiscellaneousModal";
 import {
   Music,
   BookOpen,
@@ -361,48 +361,23 @@ const MiscellaneousPage = () => {
       className="min-h-screen bg-gradient-to-b from-gray-50 to-white"
       dir="rtl"
     >
-      {/* ================= HEADER ================= */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 pb-5">
-        {/* Decorative Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-overlay"></div>
-        </div>
+      <div className="relative overflow-hidden py-24">
+        <div className="absolute inset-0 bg-[url('/cover.jpg')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-black/70 z-10" />
 
         <div className="container mx-auto px-4 py-20 relative z-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center text-white"
+            className="text-center text-white max-w-4xl mx-auto"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">
               گالری متفرقه
-              <span className="block text-cyan-300 mt-2">
-                مجموعه‌ای از آثار متنوع
-              </span>
             </h1>
-
-            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-100 leading-relaxed mb-8">
-              از موزیک و کتاب تا سفر و تکنولوژی؛ دنیایی از تجربیات و علایق متنوع
+            <p className="text-xl text-cyan-300 max-w-3xl mx-auto">
+              مجموعه‌ای از آثار متنوع
             </p>
-
-            {/* Category Stats */}
-            <div className="mt-10 flex flex-wrap justify-center gap-6">
-              {[
-                [`${filteredProjects.length}+`, "اثر متنوع"],
-                [`${categories.length}`, "دسته‌بندی"],
-                ["۱۰۰+", "نظر کاربران"],
-              ].map(([value, label]) => (
-                <div
-                  key={label}
-                  className="bg-white/10 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/20"
-                >
-                  <span className="font-bold text-3xl block mb-1">{value}</span>
-                  <p className="text-sm text-gray-200">{label}</p>
-                </div>
-              ))}
-            </div>
           </motion.div>
         </div>
 
@@ -418,63 +393,21 @@ const MiscellaneousPage = () => {
         </div>
       </div>
 
-      {/* ================= CATEGORY FILTERS ================= */}
-      <div className="container mx-auto px-4 -mt-8 relative z-40">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-          <div className="flex flex-wrap justify-center gap-3">
-            {categories.map((category) => {
-              const count = filteredProjects.filter(
-                (p) => p.category === category.id
-              ).length;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => {
-                    const filtered = filteredProjects.filter(
-                      (p) => p.category === category.id
-                    );
-                    setFilteredProjects(
-                      filtered.length > 0 ? filtered : miscProjects
-                    );
-                  }}
-                  className="group relative px-5 py-3 rounded-xl transition-all duration-300 hover:shadow-lg border border-gray-200 hover:border-transparent min-w-[140px]"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <div
-                      className={`p-2 rounded-lg bg-gradient-to-r ${category.color}`}
-                    >
-                      {category.icon}
-                    </div>
-                    <span className="font-semibold text-gray-800">
-                      {category.label}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {category.description}
-                    </span>
-                    <span className="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">
-                      {count}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* ================= SUB CATEGORIES ================= */}
       <div className="container mx-auto px-4 py-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-700 mb-8">
+            هنر نقاشی، زبان بی‌کلام احساسات
+          </h2>
+          <p className="text-lg text-gray-700 leading-relaxed mb-10">
+            نقاشی‌های حمیدرضا خواجه محمدی تلفیقی است از سنت‌های کهن هنر ایرانی و
+            نوآوری‌های معاصر. هر اثر روایتی است از زندگی، مبارزه، امید و زیبایی.
+            از نقاشی‌های اسلامی با تکنیک طلاکاری سنتی تا آثار انتزاعی معاصر، همه
+            نشان‌دهنده عمق نگاه و تسلط هنرمند بر سبک‌های مختلف است.
+          </p>
+        </div>
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          <button
-            onClick={() => handleSubCategory(null)}
-            className={`px-6 py-3 font-bold rounded-xl transition-all duration-300 ${
-              activeSub === null
-                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            همه آثار
-          </button>
+        
 
           {subCategories.map((sub) => {
             const key = sub.id || sub.title;
@@ -484,13 +417,20 @@ const MiscellaneousPage = () => {
               <button
                 key={key}
                 onClick={() => handleSubCategory(sub)}
-                className={`px-6 py-3 font-bold rounded-xl transition-all duration-300 ${
-                  isActive
-                    ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300 ${
+                  activeSub === null
+                    ? "text-cyan-600"
+                    : "text-gray-600 hover:text-cyan-600"
                 }`}
               >
                 {sub.title}
+                <span
+                  className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500 ${
+                    activeSub === null
+                      ? "scale-x-100 origin-right"
+                      : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
+                  }`}
+                />
               </button>
             );
           })}

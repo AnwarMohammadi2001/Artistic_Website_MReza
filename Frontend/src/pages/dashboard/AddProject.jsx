@@ -106,12 +106,11 @@ const AddProject = () => {
 
   return (
     <div
-      className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans"
+      className="p-6 min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans"
       dir="rtl"
     >
-      <div className="max-w-5xl mx-auto">
+      <div className=" mx-auto">
         <div className="flex items-center gap-3 mb-8 border-b pb-4 border-gray-200 dark:border-gray-700">
-          <FaPenNib className="text-3xl text-amber-600" />
           <h2 className="text-2xl font-bold">افزودن محتوای جدید</h2>
         </div>
 
@@ -121,7 +120,7 @@ const AddProject = () => {
         >
           <div className="lg:col-span-2 space-y-6">
             {/* انتخاب دسته - اجباری */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
               <h3 className="font-bold mb-4 border-b pb-2 text-blue-600">
                 دسته‌بندی (اجباری)
               </h3>
@@ -134,7 +133,7 @@ const AddProject = () => {
                     name="categoryId"
                     value={formData.categoryId}
                     onChange={handleChange}
-                    className="w-full p-3 rounded-xl border dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                     required // ✅ این اجباری است
                   >
                     <option value="">انتخاب کنید...</option>
@@ -153,7 +152,7 @@ const AddProject = () => {
                     name="subCategoryId"
                     value={formData.subCategoryId}
                     onChange={handleChange}
-                    className="w-full p-3 rounded-xl border dark:bg-gray-700"
+                    className="flex-1 p-3  w-full rounded-md  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                     disabled={!formData.categoryId}
                   >
                     <option value="">انتخاب کنید...</option>
@@ -168,7 +167,7 @@ const AddProject = () => {
             </div>
 
             {/* مشخصات اثر - فقط عنوان اجباری */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
               <h3 className="font-bold mb-4 border-b pb-2 text-amber-600">
                 مشخصات اثر
               </h3>
@@ -182,7 +181,7 @@ const AddProject = () => {
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="w-full p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                     required // ✅ این اجباری است
                   />
                 </div>
@@ -193,63 +192,63 @@ const AddProject = () => {
                     name="technique"
                     value={formData.technique}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="سایز (اختیاری)"
                     name="size"
                     value={formData.size}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="نام نمایشگاه (اختیاری)"
                     name="exhibitionName"
                     value={formData.exhibitionName}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="مکان برگزاری (اختیاری)"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="برگزار کننده (اختیاری)"
                     name="organizer"
                     value={formData.organizer}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="تاریخ (اختیاری)"
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="مدت زمان (اختیاری)"
                     name="duration"
                     value={formData.duration}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                   <input
                     placeholder="لینک (اختیاری)"
                     name="link"
                     value={formData.link}
                     onChange={handleChange}
-                    className="p-3 border rounded-xl dark:bg-gray-700"
+                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
                 </div>
               </div>
             </div>
 
             {/* توضیحات - اختیاری */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
               <h3 className="font-bold mb-4 border-b pb-2 text-green-600">
                 توضیحات (اختیاری)
               </h3>
@@ -260,7 +259,7 @@ const AddProject = () => {
                   value={formData.description}
                   rows="2"
                   onChange={handleChange}
-                  className="w-full p-3 border rounded-xl dark:bg-gray-700"
+                  className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                 ></textarea>
                 <textarea
                   placeholder="توضیحات کامل..."
@@ -268,7 +267,7 @@ const AddProject = () => {
                   value={formData.fullDescription}
                   rows="5"
                   onChange={handleChange}
-                  className="w-full p-3 border rounded-xl dark:bg-gray-700"
+                  className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                 ></textarea>
               </div>
             </div>
@@ -276,7 +275,7 @@ const AddProject = () => {
 
           {/* آپلود فایل - اختیاری */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md sticky top-6">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md sticky top-6">
               <h3 className="font-bold mb-4 border-b pb-2 text-purple-600 flex items-center gap-2">
                 <FaImage /> تصویر یا ویدیو
               </h3>
@@ -287,7 +286,7 @@ const AddProject = () => {
                   name="mediaType"
                   value={formData.mediaType}
                   onChange={handleChange}
-                  className="w-full p-3 border rounded-xl dark:bg-gray-700"
+                  className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                 >
                   <option value="image">تصویر</option>
                   <option value="video">ویدیو</option>

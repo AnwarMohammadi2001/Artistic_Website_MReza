@@ -218,7 +218,7 @@ const ExhibitionPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden pb-6">
-        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-[url('/cover.jpg')] bg-cover bg-center z-0" />
         <div className="absolute inset-0 bg-black/70 z-10" />
 
         <div className="container mx-auto px-4 py-20 relative z-20">
@@ -277,6 +277,17 @@ const ExhibitionPage = () => {
       {/* ================= SUBCATEGORY FILTERS ================= */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-700 mb-8">
+              هنر نقاشی، زبان بی‌کلام احساسات
+            </h2>
+            <p className="text-lg text-gray-700 leading-relaxed mb-10">
+              نقاشی‌های حمیدرضا خواجه محمدی تلفیقی است از سنت‌های کهن هنر ایرانی
+              و نوآوری‌های معاصر. هر اثر روایتی است از زندگی، مبارزه، امید و
+              زیبایی. از نقاشی‌های اسلامی با تکنیک طلاکاری سنتی تا آثار انتزاعی
+              معاصر، همه نشان‌دهنده عمق نگاه و تسلط هنرمند بر سبک‌های مختلف است.
+            </p>
+          </div>
           <div className="mb-12">
             <div className="flex flex-wrap justify-center gap-4">
               {/* دکمه "همه" */}

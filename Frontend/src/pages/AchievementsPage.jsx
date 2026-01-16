@@ -229,7 +229,7 @@ const AchievementsPage = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden pb-6">
-        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-[url('/cover.jpg')] bg-cover bg-center z-0" />
         <div className="absolute inset-0 bg-black/70 z-10" />
 
         <div className="container mx-auto px-4 py-20 relative z-20">

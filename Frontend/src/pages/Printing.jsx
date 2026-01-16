@@ -148,7 +148,7 @@ const Printing = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden bg-gray-700 pb-5">
         {/* Background Image */}
-        <div className="absolute inset-0 bg-[url('/cover.JPG')] bg-cover bg-center z-0" />
+        <div className="absolute inset-0 bg-[url('/cover.jpg')] bg-cover bg-center z-0" />
 
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/70 z-10" />
