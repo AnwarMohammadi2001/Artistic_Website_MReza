@@ -80,19 +80,17 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className="fixed inset-0  z-50 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm"
         onClick={closeModal}
       ></div>
 
       {/* Modal Content */}
-      <div className="relative min-h-screen flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
+      <div className="relative max-h-screen flex items-center justify-center p-4">
+        <div
+       
           className="relative bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
@@ -104,7 +102,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
             <X className="w-6 h-6" />
           </button>
 
-          <div className="md:grid md:grid-cols-2 gap-8 p-6 md:p-8">
+          <div className=" gap-8 p-6 md:p-8">
             {/* Left Column - Image */}
             <div className="mb-8 md:mb-0">
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden h-[400px] md:h-full">
@@ -112,7 +110,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                   <img
                     src={imageUrl}
                     alt={selectedPainting.title || "تصویر نقاشی"}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     onError={(e) => {
                       e.target.style.display = "none";
                       e.target.parentElement.innerHTML = `
@@ -151,27 +149,27 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
             </div>
 
             {/* Right Column - Details */}
-            <div className="space-y-6">
-              {/* Category Badge */}
+            {/* <div className="space-y-6">
+            
               <div className="mb-2">
                 <span className="inline-block px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-bold">
                   {getCategory()}
                 </span>
               </div>
 
-              {/* Title */}
+           
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                 {selectedPainting.title || "بدون عنوان"}
               </h2>
 
-              {/* Short Description */}
+           
               {selectedPainting.description && (
                 <p className="text-gray-600 text-lg leading-relaxed">
                   {selectedPainting.description}
                 </p>
               )}
 
-              {/* Specifications Grid */}
+        
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-8">
                 <div className="bg-cyan-50 p-4 rounded-xl">
                   <div className="flex items-center gap-3 mb-2">
@@ -197,7 +195,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                   <p className="text-gray-800 text-lg">{getTechnique()}</p>
                 </div>
 
-                {/* Additional info boxes */}
+        
                 {getLocation() && (
                   <div className="bg-blue-50 p-4 rounded-xl">
                     <div className="flex items-center gap-3 mb-2">
@@ -223,7 +221,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                 )}
               </div>
 
-              {/* Full Description */}
+      
               {selectedPainting.fullDescription && (
                 <div className="pt-6 border-t border-gray-200">
                   <h4 className="text-xl font-bold text-gray-800 mb-4">
@@ -239,7 +237,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                 </div>
               )}
 
-              {/* Artist Info */}
+            
               <div className="pt-6 border-t border-gray-200">
                 <div className="flex items-start gap-4">
                   <div className="bg-gradient-to-br from-cyan-500 to-blue-600 w-12 h-12 rounded-full flex items-center justify-center">
@@ -251,7 +249,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                     </p>
                     <p className="text-gray-600">هنرمند و خالق اثر</p>
 
-                    {/* Additional artist info if available */}
+                 
                     {selectedPainting.organizer && (
                       <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
                         <Award className="w-4 h-4" />
@@ -262,7 +260,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                 </div>
               </div>
 
-              {/* External Link */}
+         
               {selectedPainting.link && (
                 <div className="pt-6">
                   <a
@@ -288,9 +286,9 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                   </a>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

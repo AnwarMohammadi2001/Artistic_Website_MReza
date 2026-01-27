@@ -1,27 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Calendar,
-  MapPin,
-  Users,
-  X,
-  Clock,
-  Star,
-  Palette,
-  Ruler,
-  Layers,
-} from "lucide-react";
+import { X, Palette, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const DesignPage = () => {
   /* ================= STATES ================= */
   const [loading, setLoading] = useState(true);
-  const [allProjects, setAllProjects] = useState([]);
   const [designProjects, setDesignProjects] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [subCategories, setSubCategories] = useState([]);
-  const [activeSub, setActiveSub] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [imageLoading, setImageLoading] = useState({});
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [isZoomed, setIsZoomed] = useState(false);
+
+  // Function to get proper image URL
+  const getImageUrl = (project) => {
+    if (!project) return "/placeholder.jpg";
+
+    // Check mainImage first
+    if (project.mainImage) {
+      if (project.mainImage.startsWith("http")) {
+        return project.mainImage;
+      }
+
+      if (project.mainImage.startsWith("/uploads/")) {
+        return `http://localhost:5000${project.mainImage}`;
+      }
+
+      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+    }
+
+    // Check images array
+    if (project.images && project.images.length > 0 && project.images[0].url) {
+      const imageUrl = project.images[0].url;
+
+      if (imageUrl.startsWith("http")) {
+        return imageUrl;
+      }
+
+      if (imageUrl.startsWith("/uploads/")) {
+        return `http://localhost:5000${imageUrl}`;
+      }
+
+      return `http://localhost:5000/${imageUrl}`;
+    }
+
+    return "/placeholder.jpg";
+  };
 
   /* ================= FETCH DATA ================= */
   useEffect(() => {
@@ -34,22 +62,13 @@ const DesignPage = () => {
       const res = await axiosInstance.get("/projects");
       const projects = res.data || [];
 
-      // بررسی همه دسته‌بندی‌های موجود
-      const allCategories = projects
-        .map((p) => p.Category?.title)
-        .filter(Boolean);
-
-      const uniqueCategories = [...new Set(allCategories)];
-      console.log("ALL AVAILABLE CATEGORIES:", uniqueCategories);
-
-      // فیلتر برای دسته‌بندی "طراحی"
+      // Filter design projects
       const designItems = projects.filter((p) => {
         if (!p.Category || !p.Category.title) return false;
 
         const categoryTitle = p.Category.title.toLowerCase().trim();
         const possibleNames = [
           "طراحی",
-        
           "graphics",
           "طراحی گرافیک",
           "graphic design",
@@ -67,97 +86,43 @@ const DesignPage = () => {
           "catalog",
           "بروشور",
           "brochure",
+          "design",
         ];
 
         return possibleNames.some((name) => categoryTitle.includes(name));
       });
 
-      console.log("Filtered design projects:", designItems);
+      console.log("Design projects found:", designItems.length);
 
-      // مپ کردن پروژه‌ها به فرمت طراحی
+      // Map projects to proper format
       const mappedDesigns = designItems.map((project) => {
-        // ساخت URL تصویر
-        const getImageUrl = () => {
-          if (project.mainImage) {
-            if (project.mainImage.startsWith("http")) {
-              return project.mainImage;
-            }
-            const BASE_URL =
-              import.meta.env.VITE_BASE_URL || "http://localhost:5000";
-            if (project.mainImage.startsWith("/")) {
-              return `${BASE_URL}${project.mainImage}`;
-            }
-            return `${BASE_URL}/${project.mainImage}`;
-          }
-          // تصویر پیش‌فرض
-          return "https://via.placeholder.com/800x600?text=طراحی";
-        };
-
-        // تعیین aspect ratio
-        const getAspectRatio = () => {
-          if (project.size) {
-            if (project.size.includes("×")) {
-              const [width, height] = project.size.split("×").map(Number);
-              if (width > height) return "landscape";
-              if (height > width) return "portrait";
-              return "square";
-            }
-          }
-          // بیشتر طراحی‌ها landscape هستند
-          const ratios = ["landscape", "portrait", "square"];
-          return ratios[Math.floor(Math.random() * ratios.length)];
-        };
-
-        // تعیین ارتفاع بر اساس aspect ratio
-        const getHeightClass = () => {
-          const ratio = getAspectRatio();
-          if (ratio === "portrait") return "h-80";
-          if (ratio === "landscape") return "h-64";
-          return "h-72";
-        };
-
         return {
           ...project,
-          image: getImageUrl(),
-          aspectRatio: getAspectRatio(),
-          heightClass: getHeightClass(),
-          displayTitle: project.title || "بدون عنوان",
+          id: project.id,
+          src: getImageUrl(project),
+          displayTitle: project.title || "Untitled Design",
           displayDescription:
-            project.description || project.fullDescription || "بدون توضیحات",
+            project.description ||
+            project.fullDescription ||
+            "No description available",
           displayYear:
             project.date ||
             new Date(project.createdAt).getFullYear().toString() ||
-            "نامشخص",
-          displayLocation: project.location || "نامشخص",
+            "Unknown",
+          displayLocation: project.location || "Unknown",
           displayOrganizer:
-            project.organizer || project.exhibitionName || "نامشخص",
-          displayDuration: project.duration || "نامشخص",
-          displaySize: project.size || "نامشخص",
-          displayTechnique: project.technique || "نامشخص",
-          displaySoftware: project.software || "نامشخص",
-          displayClient: project.client || "نامشخص",
+            project.organizer || project.exhibitionName || "Unknown",
+          displayDuration: project.duration || "Unknown",
+          displaySize: project.size || "Unknown",
+          displayTechnique: project.technique || "Unknown",
+          displaySoftware: project.software || "Unknown",
+          displayClient: project.client || "Unknown",
+          // Consistent aspect ratio for all cards
+          aspectRatio: "landscape",
         };
       });
 
       setDesignProjects(mappedDesigns);
-      setAllProjects(projects);
-
-      // استخراج زیردسته‌های منحصر به فرد
-      const subs = mappedDesigns
-        .map((p) => p.SubCategory)
-        .filter((s) => s && (s.id || s.title));
-
-      const uniqueSubs = Array.from(
-        new Map(
-          subs.map((s) => [s.id ? `id-${s.id}` : `title-${s.title}`, s])
-        ).values()
-      );
-
-      console.log("Extracted Subcategories:", uniqueSubs);
-      setSubCategories(uniqueSubs);
-
-      // فعال کردن "همه" به صورت پیش‌فرض
-      setActiveSub(null);
     } catch (error) {
       console.error("Error fetching design projects:", error);
     } finally {
@@ -165,68 +130,51 @@ const DesignPage = () => {
     }
   };
 
-  /* ================= FILTER BY SUB CATEGORY ================= */
-  const handleSubCategory = (sub) => {
-    const key = sub?.id || sub?.title;
-    setActiveSub(key);
-
-    if (key === null) {
-      setFilteredProjects(designProjects);
-      return;
-    }
-
-    const filtered = designProjects.filter((item) => {
-      if (!item.SubCategory) return false;
-
-      if (sub.id) {
-        return item.SubCategory.id === sub.id;
-      }
-
-      return item.SubCategory.title === sub.title;
-    });
-
-    setFilteredProjects(filtered);
+  /* ================= LOAD MORE ================= */
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => Math.min(prev + 6, designProjects.length));
   };
-
-  const showAllItems = () => {
-    setActiveSub(null);
-    setFilteredProjects(designProjects);
-  };
-
-  const [filteredProjects, setFilteredProjects] = useState([]);
-
-  useEffect(() => {
-    if (activeSub === null) {
-      setFilteredProjects(designProjects);
-    } else {
-      const activeSubCategory = subCategories.find(
-        (sub) => sub.id === activeSub || sub.title === activeSub
-      );
-
-      if (activeSubCategory) {
-        const filtered = designProjects.filter((item) => {
-          if (!item.SubCategory) return false;
-          if (activeSubCategory.id) {
-            return item.SubCategory.id === activeSubCategory.id;
-          }
-          return item.SubCategory.title === activeSubCategory.title;
-        });
-        setFilteredProjects(filtered);
-      }
-    }
-  }, [activeSub, designProjects, subCategories]);
 
   /* ================= MODAL ================= */
   const openModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
+    setZoomLevel(1);
+    setIsZoomed(false);
     document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
     setSelectedItem(null);
+    setIsModalOpen(false);
+    setZoomLevel(1);
+    setIsZoomed(false);
     document.body.style.overflow = "auto";
+  };
+
+  /* ================= ZOOM CONTROLS ================= */
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.25, 3));
+    setIsZoomed(true);
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.25, 1));
+    if (zoomLevel <= 1.25) setIsZoomed(false);
+  };
+
+  const handleZoomReset = () => {
+    setZoomLevel(1);
+    setIsZoomed(false);
+  };
+
+  /* ================= LAZY LOADING ================= */
+  const handleImageLoad = (id) => {
+    setImageLoading((prev) => ({ ...prev, [id]: false }));
+  };
+
+  const handleImageStartLoad = (id) => {
+    setImageLoading((prev) => ({ ...prev, [id]: true }));
   };
 
   /* ================= ANIMATION ================= */
@@ -250,226 +198,204 @@ const DesignPage = () => {
   /* ================= LOADING ================= */
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
         <div className="text-center">
-          <div className="w-14 h-14 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال دریافت اطلاعات...</p>
+          <div className="w-16 h-16 border-4 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-6 text-gray-600 font-medium">
+            Loading design projects...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* ================= HERO SECTION ================= */}
-      <div className="relative overflow-hidden pb-6">
-        <div className="absolute inset-0 bg-[url('/cover.jpg')] bg-cover bg-center z-0" />
-        <div className="absolute inset-0 bg-black/70 z-10" />
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[url('/25.JPG')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-black/80" />
+        </div>
 
-        <div className="container mx-auto px-4 py-20 relative z-20">
+        <div className="relative z-10 container mx-auto px-4 py-20 md:py-24">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center text-white max-w-4xl mx-auto"
+            className="text-center text-white"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              طراحی و گرافیک
-            </h1>
-            <p className="text-xl text-cyan-300 max-w-3xl mx-auto">
-              مجموعه‌ای از آثار طراحی گرافیک، تصویرسازی و پروژه‌های بصری حمیدرضا
-              خواجه محمدی
-            </p>
-
-            {/* Stats */}
-            <div className="mt-10 flex flex-wrap justify-center gap-6">
-              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
-                <div className="text-3xl font-bold">
-                  {designProjects.length}+
-                </div>
-                <div className="text-sm opacity-90">پروژه طراحی</div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
-                <div className="text-3xl font-bold">
-                  {subCategories.length}+
-                </div>
-                <div className="text-sm opacity-90">دسته‌بندی طراحی</div>
-              </div>
-
-              <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-2xl">
-                <div className="text-3xl font-bold">
-                  {new Set(designProjects.map((e) => e.displayYear)).size}+
-                </div>
-                <div className="text-sm opacity-90">سال فعالیت طراحی</div>
-              </div>
+            <div className="inline-flex items-center gap-3 mb-6">
+              <span className="px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium">
+                Design Collection
+              </span>
             </div>
-          </motion.div>
-        </div>
 
-        {/* Bottom Wave */}
-        <div className="absolute bottom-0 left-0 right-0 z-30">
-          <svg
-            className="w-full h-[120px]"
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-          >
-            <path d="M0,0V120H1200V0C800,80 400,80 0,0Z" fill="white" />
-          </svg>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              Graphic Design Portfolio
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-cyan-300 mt-3">
+                Hamidreza Khajehmohammadi
+              </span>
+            </h1>
+
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-200 leading-relaxed mb-10">
+              A collection of graphic design works including posters, logos,
+              illustrations, and branding materials
+            </p>
+          </motion.div>
         </div>
       </div>
 
-      {/* ================= SUBCATEGORY FILTERS ================= */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-700 mb-8">
-            هنر نقاشی، زبان بی‌کلام احساسات
+      {/* ================= INTRODUCTION SECTION ================= */}
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
+            <span className="bg-gradient-to-r from-amber-600 to-cyan-600 bg-clip-text text-transparent">
+              Design: Visual Communication
+            </span>
           </h2>
-          <p className="text-lg text-gray-700 leading-relaxed mb-10">
-            نقاشی‌های حمیدرضا خواجه محمدی تلفیقی است از سنت‌های کهن هنر ایرانی و
-            نوآوری‌های معاصر. هر اثر روایتی است از زندگی، مبارزه، امید و زیبایی.
-            از نقاشی‌های اسلامی با تکنیک طلاکاری سنتی تا آثار انتزاعی معاصر، همه
-            نشان‌دهنده عمق نگاه و تسلط هنرمند بر سبک‌های مختلف است.
+
+          <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-cyan-400 rounded-full mx-auto mb-8"></div>
+
+          <p className="text-lg text-gray-700 leading-relaxed mb-10 max-w-3xl mx-auto">
+            The graphic design works of Hamidreza Khajehmohammadi showcase his
+            expertise in visual communication, combining traditional Persian
+            aesthetics with modern design principles. Each piece reflects
+            careful consideration of composition, color, and typography.
           </p>
         </div>
-        <div className="max-w-6xl mx-auto">
-          {subCategories.length > 0 && (
-            <div className="mb-12">
-              <div className="flex flex-wrap justify-center gap-4">
-                {/* دکمه "همه" */}
-                <button
-                  onClick={showAllItems}
-                  className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300 ${
-                    activeSub === null
-                      ? "text-cyan-600"
-                      : "text-gray-600 hover:text-cyan-600"
-                  }`}
-                >
-                  همه
-                  <span
-                    className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500 ${
-                      activeSub === null
-                        ? "scale-x-100 origin-right"
-                        : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
-                    }`}
-                  />
-                </button>
+      </div>
 
-                {/* زیردسته‌ها */}
-                {subCategories.map((sub) => {
-                  const key = sub.id || sub.title;
-                  const isActive = activeSub === key;
-
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => handleSubCategory(sub)}
-                      className={`relative px-6 py-3 group font-medium cursor-pointer transition-colors duration-300 ${
-                        isActive
-                          ? "text-cyan-600"
-                          : "text-gray-600 hover:text-cyan-600"
-                      }`}
-                    >
-                      {sub.title}
-                      <span
-                        className={`absolute right-0 -bottom-1 h-[2px] w-full bg-cyan-600 transform transition-transform duration-500 ${
-                          isActive
-                            ? "scale-x-100 origin-right"
-                            : "scale-x-0 origin-left group-hover:scale-x-100 group-hover:origin-right"
-                        }`}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* ================= DESIGN GRID ================= */}
-          <AnimatePresence mode="wait">
-            {filteredProjects.length > 0 ? (
+      {/* ================= DESIGN GRID ================= */}
+      <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
+        {designProjects.length > 0 ? (
+          <>
+            <AnimatePresence mode="wait">
               <motion.div
-                key={activeSub}
+                key="design-grid"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
               >
-                {filteredProjects.map((item) => (
+                {designProjects.slice(0, visibleCount).map((item) => (
                   <motion.div
                     key={item.id}
                     variants={itemVariants}
-                    layout
-                    className={`group relative cursor-pointer overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 ${item.heightClass}`}
+                    className="group relative cursor-pointer"
                     onClick={() => openModal(item)}
                   >
-                    {/* Image Container */}
-                    <div className="relative w-full h-full">
-                      {/* تصویر طراحی */}
-                      <div className="absolute inset-0">
-                        <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800">
-                          <img
-                            src={item.image}
-                            alt={item.displayTitle}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
-                            loading="lazy"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                              e.target.parentElement.innerHTML = `
-                                <div class="w-full h-full flex flex-col items-center justify-center p-4">
-                                  <div class="w-16 h-16 bg-gradient-to-br from-amber-900/30 to-orange-900/30 rounded-full flex items-center justify-center mb-4">
-                                    <Palette class="w-8 h-8 text-white" />
-                                  </div>
-                                  <p class="text-white text-sm">تصویر طراحی</p>
-                                </div>
-                              `;
-                            }}
-                          />
+                    {/* Card Container - Consistent sizing */}
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
+                      {/* Loading skeleton */}
+                      {imageLoading[item.id] && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
+                          <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
+                      )}
 
-                        {/* گرادیان Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                      </div>
+                      {/* Image Container */}
+                      <div className="relative w-full h-full">
+                        <LazyLoadImage
+                          src={item.src || "/placeholder.jpg"}
+                          alt={item.displayTitle}
+                          effect="blur"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          afterLoad={() => handleImageLoad(item.id)}
+                          beforeLoad={() => handleImageStartLoad(item.id)}
+                        />
 
-                      {/* اطلاعات پایه */}
-                      <div className="absolute bottom-4 right-4 left-4">
-                        <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">
-                          {item.displayTitle}
-                        </h3>
-                        <div className="flex items-center justify-between text-white/90 text-sm">
-                          <div className="flex items-center gap-1">
-                            <Palette className="w-3 h-3" />
-                            <span className="truncate">
-                              {item.displayTechnique !== "نامشخص"
-                                ? item.displayTechnique
-                                : "طراحی"}
+                        {/* Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                        {/* Design Badge */}
+                        <div className="absolute top-4 left-4">
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 rounded-full shadow-lg">
+                            <Palette className="w-4 h-4 text-white" />
+                            <span className="text-white text-xs font-medium">
+                              DESIGN
                             </span>
                           </div>
-                          <span className="font-bold">{item.displayYear}</span>
                         </div>
-                        {item.SubCategory && (
-                          <span className="inline-block mt-2 px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white">
-                            {item.SubCategory.title}
-                          </span>
-                        )}
+
+                        {/* Content Overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-5">
+                          <div className="space-y-2">
+                            <h3 className="text-white font-bold text-lg line-clamp-2 leading-tight">
+                              {item.displayTitle}
+                            </h3>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-300 text-sm">
+                                  {item.displayYear}
+                                </span>
+                                {item.displayTechnique !== "Unknown" && (
+                                  <>
+                                    <span className="text-gray-400">•</span>
+                                    <span className="text-gray-300 text-sm line-clamp-1">
+                                      {item.displayTechnique}
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                              {item.displayClient !== "Unknown" && (
+                                <span className="px-2 py-1 bg-white/10 backdrop-blur-sm rounded-full text-xs text-white">
+                                  {item.displayClient}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
                 ))}
               </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-20"
-              >
-                <div className="text-6xl mb-6 opacity-50">🎨</div>
-                <p className="text-gray-500 text-xl">موردی یافت نشد.</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+            </AnimatePresence>
+
+            {/* Load More Button - Show after 6 items */}
+            {designProjects.length > 6 &&
+              visibleCount < designProjects.length && (
+                <div className="text-center mt-12">
+                  <button
+                    onClick={handleLoadMore}
+                    className="group px-8 py-3 bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-600 hover:to-cyan-500 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mx-auto"
+                  >
+                    <span>Load More Designs</span>
+                    <svg
+                      className="w-5 h-5 transform group-hover:translate-y-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                      />
+                    </svg>
+                  </button>
+                  <p className="text-gray-500 text-sm mt-3">
+                    Showing {visibleCount} of {designProjects.length} design
+                    works
+                  </p>
+                </div>
+              )}
+          </>
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+              <Palette className="text-gray-400 text-4xl" />
+            </div>
+            <p className="text-gray-500 text-xl font-medium">
+              No design projects found
+            </p>
+          </div>
+        )}
       </div>
+
+      {/* ================= STATS SECTION ================= */}
 
       {/* ================= MODAL ================= */}
       <AnimatePresence>
@@ -480,208 +406,94 @@ const DesignPage = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50"
           >
-            {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black/90 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/95 backdrop-blur-sm"
               onClick={closeModal}
             />
 
-            {/* Modal Content */}
             <div className="relative min-h-screen flex items-center justify-center p-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25 }}
-                className="relative bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col md:flex-row"
+                className="relative w-full max-w-6xl bg-white rounded-3xl overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}
                 <button
                   onClick={closeModal}
-                  className="absolute top-4 left-4 z-50 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl hover:bg-white hover:scale-110 transition-all duration-300 md:top-6 md:left-6"
+                  className="absolute top-6 right-6 z-50 w-14 h-14 bg-gray-800/90 hover:bg-gray-900 rounded-full flex items-center justify-center transition-colors group shadow-xl"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
                 </button>
 
-                {/* سمت چپ: تصویر */}
-                <div className="md:w-1/2 h-64 md:h-auto">
-                  <div className="relative w-full h-full">
-                    <img
-                      src={selectedItem.image}
-                      alt={selectedItem.displayTitle}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.parentElement.innerHTML = `
-                          <div class="w-full h-full bg-gradient-to-br from-amber-50 to-orange-50 flex flex-col items-center justify-center">
-                            <div class="w-20 h-20 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-full flex items-center justify-center mb-4">
-                              <Palette class="w-10 h-10 text-amber-600" />
-                            </div>
-                            <p class="text-amber-700 font-medium">تصویر طراحی</p>
-                          </div>
-                        `;
-                      }}
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                      <div className="text-white">
-                        <div className="text-sm opacity-90">سال طراحی</div>
-                        <div className="text-2xl font-bold">
-                          {selectedItem.displayYear}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                {/* Zoom Controls */}
+                <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                  <button
+                    onClick={handleZoomOut}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    disabled={zoomLevel <= 1}
+                  >
+                    <ZoomOut className="w-5 h-5 text-gray-700" />
+                  </button>
+                  <span className="text-gray-700 font-medium text-sm min-w-[60px] text-center">
+                    {Math.round(zoomLevel * 100)}%
+                  </span>
+                  <button
+                    onClick={handleZoomIn}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    disabled={zoomLevel >= 3}
+                  >
+                    <ZoomIn className="w-5 h-5 text-gray-700" />
+                  </button>
+                  {isZoomed && (
+                    <button
+                      onClick={handleZoomReset}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-2"
+                    >
+                      <Maximize2 className="w-5 h-5 text-gray-700" />
+                    </button>
+                  )}
                 </div>
 
-                {/* سمت راست: محتوا */}
-                <div className="md:w-1/2 p-6 md:p-8 overflow-y-auto">
-                  <div className="space-y-6">
-                    {/* Category Badge */}
-                    {selectedItem.SubCategory && (
-                      <div className="inline-block px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-bold mb-2">
-                        {selectedItem.SubCategory.title}
-                      </div>
-                    )}
-
-                    {/* عنوان */}
-                    <div>
-                      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-                        {selectedItem.displayTitle}
-                      </h2>
-                      <p className="text-gray-600 text-lg">
-                        {selectedItem.displayDescription}
-                      </p>
+                {/* Modal Content */}
+                <div className="p-6">
+                  {/* Image with Zoom */}
+                  <div className="relative rounded-xl overflow-hidden bg-gray-100 mb-6">
+                    <div
+                      className="overflow-auto cursor-zoom-in"
+                      style={{
+                        maxHeight: "70vh",
+                        transform: `scale(${zoomLevel})`,
+                        transformOrigin: "center",
+                        transition: "transform 0.3s ease",
+                      }}
+                      onClick={(e) => {
+                        if (zoomLevel === 1) handleZoomIn();
+                        else handleZoomReset();
+                      }}
+                    >
+                      <img
+                        src={selectedItem.src || "/placeholder.jpg"}
+                        alt={selectedItem.displayTitle}
+                        className="w-full h-auto"
+                        style={{
+                          minWidth: "100%",
+                          minHeight: "100%",
+                        }}
+                      />
                     </div>
 
-                    {/* جزئیات */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* ستون اول */}
-                      <div className="space-y-4">
-                        {selectedItem.displayYear &&
-                          selectedItem.displayYear !== "نامشخص" && (
-                            <div className="flex items-start gap-3">
-                              <Calendar className="w-5 h-5 text-amber-500 mt-1 flex-shrink-0" />
-                              <div>
-                                <div className="font-bold text-gray-700 mb-1">
-                                  سال طراحی
-                                </div>
-                                <div className="text-gray-600">
-                                  {selectedItem.displayYear}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                        {selectedItem.displayTechnique &&
-                          selectedItem.displayTechnique !== "نامشخص" && (
-                            <div className="flex items-start gap-3">
-                              <Palette className="w-5 h-5 text-amber-500 mt-1 flex-shrink-0" />
-                              <div>
-                                <div className="font-bold text-gray-700 mb-1">
-                                  تکنیک
-                                </div>
-                                <div className="text-gray-600">
-                                  {selectedItem.displayTechnique}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                        {selectedItem.displaySoftware &&
-                          selectedItem.displaySoftware !== "نامشخص" && (
-                            <div className="flex items-start gap-3">
-                              <Layers className="w-5 h-5 text-amber-500 mt-1 flex-shrink-0" />
-                              <div>
-                                <div className="font-bold text-gray-700 mb-1">
-                                  نرم‌افزار
-                                </div>
-                                <div className="text-gray-600">
-                                  {selectedItem.displaySoftware}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                      </div>
-
-                      {/* ستون دوم */}
-                      <div className="space-y-4">
-                        {selectedItem.displaySize &&
-                          selectedItem.displaySize !== "نامشخص" && (
-                            <div className="flex items-start gap-3">
-                              <Ruler className="w-5 h-5 text-amber-500 mt-1 flex-shrink-0" />
-                              <div>
-                                <div className="font-bold text-gray-700 mb-1">
-                                  اندازه
-                                </div>
-                                <div className="text-gray-600">
-                                  {selectedItem.displaySize}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                        {selectedItem.displayClient &&
-                          selectedItem.displayClient !== "نامشخص" && (
-                            <div className="flex items-start gap-3">
-                              <Users className="w-5 h-5 text-amber-500 mt-1 flex-shrink-0" />
-                              <div>
-                                <div className="font-bold text-gray-700 mb-1">
-                                  کارفرما
-                                </div>
-                                <div className="text-gray-600">
-                                  {selectedItem.displayClient}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                        {selectedItem.displayLocation &&
-                          selectedItem.displayLocation !== "نامشخص" && (
-                            <div className="flex items-start gap-3">
-                              <MapPin className="w-5 h-5 text-amber-500 mt-1 flex-shrink-0" />
-                              <div>
-                                <div className="font-bold text-gray-700 mb-1">
-                                  مکان
-                                </div>
-                                <div className="text-gray-600">
-                                  {selectedItem.displayLocation}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                      </div>
-                    </div>
-
-                    {/* توضیحات کامل */}
-                    {selectedItem.fullDescription && (
-                      <div className="pt-4 border-t border-gray-200">
-                        <h4 className="text-xl font-bold text-gray-800 mb-4">
-                          توضیحات کامل پروژه
-                        </h4>
-                        <p className="text-gray-700 leading-relaxed">
-                          {selectedItem.fullDescription}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* اطلاعات اضافی */}
-                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border border-amber-100">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">🎨</span>
-                        </div>
-                        <div>
-                          <div className="font-bold text-gray-800">
-                            پروژه طراحی
-                          </div>
-                          <div className="text-gray-600 text-sm">
-                            این پروژه بخشی از فعالیت‌های هنری حمیدرضا خواجه
-                            محمدی در زمینه طراحی و گرافیک است
-                          </div>
+                    {/* Zoom hint */}
+                    {zoomLevel === 1 && (
+                      <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-sm backdrop-blur-sm">
+                        <div className="flex items-center gap-2">
+                          <ZoomIn className="w-4 h-4" />
+                          <span>Click to zoom</span>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </motion.div>

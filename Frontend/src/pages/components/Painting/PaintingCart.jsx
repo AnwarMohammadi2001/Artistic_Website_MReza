@@ -66,9 +66,9 @@ const PaintingCart = ({ painting, openModal, itemVariants }) => {
 
   return (
     <motion.div
-      variants={itemVariants}
+     
       layout
-      className="group relative bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 cursor-pointer"
+      className="group relative bg-white rounded-md shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 cursor-pointer"
       onClick={() => openModal(painting)}
     >
       {/* Painting Image */}
@@ -100,13 +100,13 @@ const PaintingCart = ({ painting, openModal, itemVariants }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex items-center justify-center">
           <div className="transform translate-y-4 group-hover:translate-y-0 flex flex-col items-center transition-transform duration-300">
             <ZoomIn className="w-12 h-12 text-white" />
-            <p className="text-white mt-2 font-medium">مشاهده جزئیات</p>
+            <p className="text-white mt-2 font-medium">View</p>
           </div>
         </div>
       </div>
 
       {/* Painting Info */}
-      <div className="p-6">
+      {/* <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-800 group-hover:text-cyan-600 transition-colors line-clamp-1">
             {painting.title || "بدون عنوان"}
@@ -140,7 +140,7 @@ const PaintingCart = ({ painting, openModal, itemVariants }) => {
             </div>
           )}
         </div>
-      </div>
+      </div> */}
     </motion.div>
   );
 };

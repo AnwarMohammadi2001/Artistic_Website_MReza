@@ -13,16 +13,19 @@ import GeraphicPage from "./pages/GeraphicPage";
 import InterviewPage from "./pages/InterviewPage";
 import ExhibitionPage from "./pages/ExhibitionPage";
 import Contact from "./pages/Contact";
-import TheaterPage from "./pages/TheaterPage";
+import TheaterPage from "./pages/ChildrenPage";
 import MiscellaneousPage from "./pages/MiscellaneousPage";
 import DesignPage from "./pages/DesignPage";
 import AchievementsPage from "./pages/AchievementsPage";
+import ScrollToTop from "./components/ScrollToTop";
+import ChildrenPage from "./pages/ChildrenPage";
 
 
 function App() {
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Public pages */}
           <Route path="/" element={<MainLayout />}>
@@ -31,7 +34,7 @@ function App() {
             <Route path="/graphic" element={<GeraphicPage />} />
             <Route path="/interview" element={<InterviewPage />} />
             <Route path="/exhibition" element={<ExhibitionPage />} />
-            <Route path="/theater" element={<TheaterPage />} />
+            <Route path="/theater" element={<ChildrenPage />} />
             <Route path="/achivment" element={<AchievementsPage />} />
             <Route path="/miscellaneous" element={<MiscellaneousPage />} />
             <Route path="/design" element={<DesignPage />} />

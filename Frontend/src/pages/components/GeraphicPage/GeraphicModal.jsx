@@ -45,7 +45,7 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
         </button>
 
         {/* Modal Header */}
-        <div className="p-6 border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+        {/* <div className="p-6 border-gray-200 bg-gradient-to-r from-gray-50 to-white">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div>
               <h2 className="text-3xl font-bold text-gray-800 mb-2">
@@ -56,17 +56,17 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Modal Body */}
-        <div className="grid lg:grid-cols-2 p-6 gap-0 h-full">
+        <div className=" p-6 gap-0 h-full">
           {/* Main Image */}
           <div className="lg:col-span-1 relative min-h-[400px] lg:min-h-[350px]">
-            <div className="w-full h-full relative">
+            <div className="w-full h-[80vh] relative">
               <img
                 src={imageUrl}
                 alt={selectedItem.title || "تصویر پروژه"}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                 onError={(e) => {
                   console.error("Image failed to load:", imageUrl);
                   e.target.style.display = "none";
@@ -86,9 +86,9 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
           </div>
 
           {/* Details Sidebar */}
-          <div className="p-8 overflow-y-auto">
+          {/* <div className="p-8 overflow-y-auto">
             <div className="space-y-8">
-              {/* Description */}
+              
               <div>
                 <h4 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                   <BookOpen className="w-6 h-6 text-amber-600" />
@@ -99,7 +99,7 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
                 </p>
               </div>
 
-              {/* Specifications */}
+           
               <div className="space-y-4">
                 <h4 className="text-xl font-bold text-gray-800 mb-4">
                   مشخصات فنی
@@ -124,7 +124,7 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </motion.div>
     </div>
