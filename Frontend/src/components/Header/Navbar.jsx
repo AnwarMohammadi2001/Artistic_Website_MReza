@@ -89,8 +89,8 @@ const Navbar = () => {
     },
     {
       id: "theater",
-      name: "Theater",
-      path: "/theater",
+      name: "Children",
+      path: "/children",
     },
     {
       id: "achivment",

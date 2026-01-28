@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
-import { FaCloudUploadAlt, FaSave, FaImage, FaPenNib } from "react-icons/fa";
+import {
+  FaCloudUploadAlt,
+  FaSave,
+  FaImage,
+  FaPenNib,
+  FaVideo,
+  FaLink,
+} from "react-icons/fa";
 
 const AddProject = () => {
   const [categories, setCategories] = useState([]);
@@ -47,6 +54,12 @@ const AddProject = () => {
         subCategoryId: "",
       }));
     }
+
+    // اگر نوع مدیا تغییر کرد، پیش‌نمایش و فایل را پاک کن
+    if (name === "mediaType") {
+      setPreview(null);
+      setFile(null);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -66,12 +79,30 @@ const AddProject = () => {
       return;
     }
 
+    // اگر نوع مدیا ویدیو است، باید لینک وارد شده باشد
+    if (formData.mediaType === "video" && !formData.link) {
+      toast.warning("برای ویدیو، لینک الزامی است!");
+      return;
+    }
+
+    // اگر نوع مدیا عکس است، باید فایل آپلود شده باشد (اختیاری اما توصیه می‌شود)
+    if (formData.mediaType === "image" && !file) {
+      toast.info(
+        "آپلود تصویر توصیه می‌شود، اما می‌توانید بدون تصویر هم ادامه دهید.",
+      );
+      // میتوانید این خط را حذف کنید اگر می‌خواهید اجباری نباشد
+    }
+
     setLoading(true);
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
       data.append(key, formData[key]);
     });
-    if (file) data.append("image", file);
+
+    // فقط اگر فایل وجود دارد و نوع مدیا عکس است، فایل را اضافه کن
+    if (file && formData.mediaType === "image") {
+      data.append("image", file);
+    }
 
     try {
       await axiosInstance.post("/projects", data, {
@@ -134,7 +165,7 @@ const AddProject = () => {
                     value={formData.categoryId}
                     onChange={handleChange}
                     className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
-                    required // ✅ این اجباری است
+                    required
                   >
                     <option value="">انتخاب کنید...</option>
                     {categories.map((cat) => (
@@ -182,7 +213,7 @@ const AddProject = () => {
                     value={formData.title}
                     onChange={handleChange}
                     className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
-                    required // ✅ این اجباری است
+                    required
                   />
                 </div>
 
@@ -236,13 +267,21 @@ const AddProject = () => {
                     onChange={handleChange}
                     className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                   />
-                  <input
-                    placeholder="لینک (اختیاری)"
-                    name="link"
-                    value={formData.link}
-                    onChange={handleChange}
-                    className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
-                  />
+                  {/* فیلد لینک - اگر ویدیو است، اهمیت بیشتری دارد */}
+                  <div className="relative">
+                    <input
+                      placeholder="لینک (اختیاری)"
+                      name="link"
+                      value={formData.link}
+                      onChange={handleChange}
+                      className="flex-1 p-3 rounded-md w-full bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition pr-10"
+                    />
+                    {formData.mediaType === "video" && (
+                      <span className="absolute left-3 top-3 text-xs bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 px-2 py-1 rounded">
+                        برای ویدیو ضروری
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -277,7 +316,8 @@ const AddProject = () => {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md sticky top-6">
               <h3 className="font-bold mb-4 border-b pb-2 text-purple-600 flex items-center gap-2">
-                <FaImage /> تصویر یا ویدیو
+                {formData.mediaType === "image" ? <FaImage /> : <FaVideo />}
+                {formData.mediaType === "image" ? "تصویر" : "ویدیو"}
               </h3>
 
               <div className="mb-4">
@@ -293,33 +333,59 @@ const AddProject = () => {
                 </select>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center hover:bg-gray-50 transition relative">
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  accept={
-                    formData.mediaType === "image" ? "image/*" : "video/*"
-                  }
-                />
-                <div className="flex flex-col items-center justify-center text-gray-500">
-                  <FaCloudUploadAlt className="text-4xl mb-2 text-purple-500" />
-                  <p className="text-sm">برای انتخاب فایل کلیک کنید</p>
-                </div>
-              </div>
-
-              {preview && (
-                <div className="mt-4 rounded-xl overflow-hidden border border-gray-200">
-                  {formData.mediaType === "image" ? (
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      className="w-full h-auto object-cover"
+              {formData.mediaType === "image" ? (
+                <>
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 text-center hover:bg-gray-50 transition relative">
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      accept="image/*"
                     />
-                  ) : (
-                    <video src={preview} controls className="w-full h-auto" />
+                    <div className="flex flex-col items-center justify-center text-gray-500">
+                      <FaCloudUploadAlt className="text-4xl mb-2 text-purple-500" />
+                      <p className="text-sm">برای انتخاب تصویر کلیک کنید</p>
+                      <p className="text-xs text-gray-400 mt-1">(اختیاری)</p>
+                    </div>
+                  </div>
+
+                  {preview && (
+                    <div className="mt-4 rounded-xl overflow-hidden border border-gray-200">
+                      <img
+                        src={preview}
+                        alt="Preview"
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
                   )}
-                </div>
+                </>
+              ) : (
+                <>
+                  <div className="border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-xl p-6 text-center bg-blue-50 dark:bg-blue-900/20 transition">
+                    <div className="flex flex-col items-center justify-center text-gray-500">
+                      <FaLink className="text-4xl mb-2 text-blue-500" />
+                      <p className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                        برای ویدیو، لینک وارد کنید
+                      </p>
+                      <p className="text-xs text-gray-400 mt-2">
+                        لینک ویدیو را در قسمت "لینک" در مشخصات اثر وارد کنید
+                      </p>
+                    </div>
+                  </div>
+
+                  {formData.link && (
+                    <div className="mt-4">
+                      <div className="text-sm text-gray-500 mb-2">
+                        پیش‌نمایش لینک:
+                      </div>
+                      <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                        <div className="text-sm text-blue-500 dark:text-blue-400 break-all">
+                          {formData.link}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               <button

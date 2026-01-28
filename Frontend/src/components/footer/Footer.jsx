@@ -134,7 +134,7 @@ const Footer = () => {
     <footer className="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white pt-16 pb-8 px-4 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1541961017774-22349e4a1262?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('footer.jpeg')] bg-cover bg-center" />
       </div>
 
       {/* Top Gradient Border */}
@@ -170,8 +170,6 @@ const Footer = () => {
             <p className="text-gray-300 leading-relaxed text-lg max-w-2xl">
               {artist.bio}
             </p>
-
-      
           </motion.div>
 
           {/* Social Media Section */}
@@ -183,7 +181,7 @@ const Footer = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-white">Social Media</h3>
               </div>
-           
+
               <div className="space-y-3">
                 {artist.socialLinks.map((link, index) => (
                   <motion.a
@@ -219,7 +217,6 @@ const Footer = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-white">Contact Info</h3>
               </div>
-           
 
               <div className="space-y-4">
                 {/* WhatsApp */}
@@ -271,14 +268,10 @@ const Footer = () => {
                     </div>
                   </div>
                 </a>
-
-              
               </div>
             </div>
           </motion.div>
         </motion.div>
-
-
 
         {/* Divider */}
         <div className="border-t border-gray-700 pt-8 mb-8">
@@ -301,8 +294,6 @@ const Footer = () => {
             </div>
           </div>
         </div>
-
-       
       </div>
     </footer>
   );

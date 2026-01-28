@@ -33,7 +33,7 @@ IoIosArrowRoundDown
               <div className="relative overflow-hidden  shadow-2xl border border-gray-200/80 backdrop-blur-sm bg-gradient-to-br from-white/80 to-gray-50/80">
                 <div className="aspect-[3/4] relative overflow-hidden">
                   <img
-                    src="hero.jpeg"
+                    src="bio.jpg"
                     alt="Hamidreza Khajehmohammadi - Visual Artist and Art Director"
                     className="w-full h-full  object-contain transform group-hover:scale-105 transition-transform duration-700"
                     onLoad={() => setIsLoaded(true)}

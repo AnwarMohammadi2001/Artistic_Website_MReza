@@ -368,7 +368,7 @@ const ExhibitionPage = () => {
                       : "bg-white text-gray-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200"
                   }`}
                 >
-                  All Exhibitions 
+                  All Exhibitions
                 </button>
 
                 {/* Subcategory Buttons */}
@@ -414,29 +414,30 @@ const ExhibitionPage = () => {
                     onClick={() => openModal(item)}
                   >
                     {/* Card Container - Consistent sizing */}
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
+                    <div className="relative h-[300px] overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
                       {/* Loading skeleton */}
                       {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-lg z-10 flex items-center justify-center">
                           <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       )}
 
-                      {/* Media Container */}
-                      <div className="relative w-full h-full">
+                      {/* Media Container - FIXED: Full width/height */}
+                      <div className="relative w-full h-[300px]">
                         {item.isVideo ? (
                           <>
-                            {/* Video Thumbnail */}
+                            {/* Video Thumbnail - FIXED: Full container */}
                             <LazyLoadImage
                               src={item.thumbnail || "/placeholder.jpg"}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                              className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
 
-                           
+                            {/* Gradient overlay - FIXED: Cover entire media */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
 
                             {/* Play Button */}
                             <div className="absolute inset-0 flex items-center justify-center">
@@ -459,30 +460,17 @@ const ExhibitionPage = () => {
                           </>
                         ) : (
                           <>
-                            {/* Image Thumbnail */}
+                            {/* Image Thumbnail - FIXED: Full container */}
                             <LazyLoadImage
                               src={item.src || "/placeholder.jpg"}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                              className="w-full h-[300px] object-cover group-hover:scale-105 transition-all duration-500"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
-
-                            
-
-                            {/* Image Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full shadow-lg">
-                                <ImageIcon className="w-4 h-4 text-white" />
-                                <span className="text-white text-xs font-medium">
-                                  EXHIBITION
-                                </span>
-                              </div>
-                            </div>
                           </>
                         )}
-
                       </div>
                     </div>
                   </motion.div>
@@ -532,8 +520,6 @@ const ExhibitionPage = () => {
           </div>
         )}
       </div>
-
-     
 
       {/* ================= MODAL ================= */}
       <AnimatePresence>
@@ -590,7 +576,6 @@ const ExhibitionPage = () => {
                       />
                     </div>
                   )}
-
                 </div>
               </motion.div>
             </div>

@@ -180,7 +180,7 @@ const Contact = () => {
               {/* Artist Portrait */}
               <div className="aspect-[3/4] relative">
                 <img
-                  src="bio.jpeg"
+                  src="bio.jpg"
                   alt="Hamidreza Khajehmohammadi"
                   className="w-full  object-cover"
                 />

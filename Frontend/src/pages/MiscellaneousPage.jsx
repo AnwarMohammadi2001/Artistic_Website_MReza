@@ -525,7 +525,7 @@ const MiscellaneousPage = () => {
                     onClick={() => openModal(item)}
                   >
                     {/* Card Container - Square aspect ratio */}
-                    <div className="relative aspect-square overflow-hidden  rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div className="relative  overflow-hidden  rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500">
                       {/* Loading skeleton */}
                       {imageLoading[item.id] && (
                         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-xl z-10 flex items-center justify-center">

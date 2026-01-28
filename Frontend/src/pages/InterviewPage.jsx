@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
@@ -10,11 +10,11 @@ import {
   Maximize2,
   ZoomIn,
   ZoomOut,
+  Youtube,
 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import ReactImageZoom from "react-image-zoom";
 
 const InterviewPage = () => {
   /* ================= STATES ================= */
@@ -29,6 +29,39 @@ const InterviewPage = () => {
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [videoThumbnails, setVideoThumbnails] = useState({});
+  const videoRefs = useRef({});
+
+  // Function to extract YouTube video ID - نسخه بهبود یافته
+  const getYouTubeVideoId = (url) => {
+    if (!url) return null;
+
+    // الگوهای مختلف YouTube
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/,
+      /youtube\.com\/.*v=([^&]+)/,
+      /youtu\.be\/([^?]+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1].substring(0, 11); // YouTube IDs are always 11 characters
+      }
+    }
+
+    return null;
+  };
+
+  // Function to extract Vimeo video ID
+  const getVimeoVideoId = (url) => {
+    if (!url) return null;
+
+    const regExp = /(?:vimeo\.com\/|video\/)(\d+)/;
+    const match = url.match(regExp);
+    return match ? match[1] : null;
+  };
 
   // Function to get proper image URL
   const getImageUrl = (project) => {
@@ -62,12 +95,81 @@ const InterviewPage = () => {
       return `http://localhost:5000/${imageUrl}`;
     }
 
-    // Check link for videos
-    if (project.link) {
-      return project.link;
+    return "/placeholder.jpg";
+  };
+
+  // Function to get video thumbnail URL - نسخه بهبود یافته
+  const getVideoThumbnail = (project) => {
+    console.log("Getting thumbnail for project:", project.title, project.link);
+
+    // If project has a direct thumbnail
+    if (project.thumbnail) {
+      console.log("Using direct thumbnail:", project.thumbnail);
+      return project.thumbnail;
     }
 
-    return "/placeholder.jpg";
+    // If it's a YouTube link
+    if (project.link) {
+      const youtubeId = getYouTubeVideoId(project.link);
+      console.log("YouTube ID extracted:", youtubeId);
+
+      if (youtubeId) {
+        return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`;
+      }
+
+      // If it's a Vimeo link
+      const vimeoId = getVimeoVideoId(project.link);
+      if (vimeoId) {
+        return `https://vumbnail.com/${vimeoId}.jpg`;
+      }
+    }
+
+    // Default thumbnail
+    console.log("Using default thumbnail");
+    return "/video-placeholder.jpg";
+  };
+
+  // Function to capture video frame as thumbnail
+  const captureVideoFrame = (videoElement, id) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL("image/jpeg");
+      resolve(dataUrl);
+    });
+  };
+
+  // Handle video loaded metadata
+  const handleVideoLoaded = async (id, videoElement) => {
+    try {
+      // Seek to the beginning
+      videoElement.currentTime = 0;
+
+      // Wait for frame to be ready
+      await new Promise((resolve) => {
+        videoElement.addEventListener("seeked", resolve, { once: true });
+      });
+
+      // Capture frame
+      const thumbnailUrl = await captureVideoFrame(videoElement, id);
+
+      // Update thumbnails state
+      setVideoThumbnails((prev) => ({
+        ...prev,
+        [id]: thumbnailUrl,
+      }));
+
+      // Mark image as loaded
+      handleImageLoad(id);
+    } catch (error) {
+      console.error("Error capturing video frame:", error);
+      handleImageLoad(id);
+    }
   };
 
   /* ================= FETCH DATA ================= */
@@ -110,22 +212,36 @@ const InterviewPage = () => {
       const mappedInterviews = interviews.map((project) => {
         // Determine media type
         let type = "image";
-        if (
-          project.mediaType === "video" ||
-          project.link?.includes("youtube") ||
-          project.link?.includes("vimeo") ||
-          project.link?.includes(".mp4") ||
-          project.link?.includes(".mov") ||
-          project.link?.includes(".avi")
-        ) {
-          type = "video";
+        let hasYouTubeLink = false;
+
+        if (project.link) {
+          const youtubeId = getYouTubeVideoId(project.link);
+          const vimeoId = getVimeoVideoId(project.link);
+
+          if (
+            youtubeId ||
+            vimeoId ||
+            project.mediaType === "video" ||
+            project.link?.includes(".mp4") ||
+            project.link?.includes(".mov") ||
+            project.link?.includes(".avi") ||
+            project.link?.includes("youtube") ||
+            project.link?.includes("vimeo") ||
+            project.link?.includes("youtu.be")
+          ) {
+            type = "video";
+            hasYouTubeLink = !!youtubeId;
+          }
         }
 
         return {
           ...project,
           id: project.id,
           type: type,
-          src: getImageUrl(project),
+          src:
+            type === "image"
+              ? getImageUrl(project)
+              : getVideoThumbnail(project),
           displayTitle: project.title || "Untitled Interview",
           displayDescription:
             project.description ||
@@ -137,7 +253,11 @@ const InterviewPage = () => {
             "Unknown",
           displayOrganizer:
             project.organizer || project.exhibitionName || "Unknown",
-          // For consistent card sizes, all will have same aspect ratio
+          // Video specific properties
+          videoId: hasYouTubeLink ? getYouTubeVideoId(project.link) : null,
+          vimeoId: getVimeoVideoId(project.link),
+          videoUrl: project.link,
+          hasYouTubeLink: hasYouTubeLink,
           aspectRatio: "landscape",
         };
       });
@@ -169,7 +289,15 @@ const InterviewPage = () => {
       // Activate first subcategory
       if (uniqueSubs.length > 0) {
         setActiveSub(uniqueSubs[0].id);
-        filterBySubCategory(uniqueSubs[0]);
+        // مستقیماً فیلتر کنید
+        const filtered = mappedInterviews.filter((p) => {
+          if (!p.SubCategory) return false;
+          return (
+            p.SubCategory.id === uniqueSubs[0].id ||
+            p.SubCategory.title === uniqueSubs[0].title
+          );
+        });
+        setFilteredProjects(filtered);
       }
     } catch (error) {
       console.error("Error fetching interviews:", error);
@@ -352,8 +480,7 @@ const InterviewPage = () => {
                           : "bg-white text-gray-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200"
                       }`}
                     >
-                     
-                      {sub.title} 
+                      {sub.title}
                     </button>
                   );
                 })}
@@ -395,35 +522,101 @@ const InterviewPage = () => {
                       <div className="relative w-full h-full">
                         {item.type === "video" ? (
                           <>
-                            {/* Video Thumbnail */}
-                            <LazyLoadImage
-                              src={item.src || "/placeholder.jpg"}
-                              alt={item.displayTitle}
-                              effect="blur"
-                              className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
-                              afterLoad={() => handleImageLoad(item.id)}
-                              beforeLoad={() => handleImageStartLoad(item.id)}
-                            />
+                            {/* نمایش ویدیو برای استخراج فریم اول */}
+                            <div className="relative w-full h-full">
+                              <video
+                                ref={(el) => {
+                                  if (el && !videoRefs.current[item.id]) {
+                                    videoRefs.current[item.id] = el;
+                                  }
+                                }}
+                                muted
+                                preload="metadata"
+                                playsInline
+                                className="w-full h-full object-cover"
+                                onLoadedMetadata={async (e) => {
+                                  const videoElement = e.target;
+                                  try {
+                                    // Set current time to beginning
+                                    videoElement.currentTime = 0;
+                                  } catch (error) {
+                                    console.error(
+                                      "Error setting currentTime:",
+                                      error,
+                                    );
+                                  }
+                                }}
+                                onCanPlay={async (e) => {
+                                  const videoElement = e.target;
+                                  try {
+                                    // Pause immediately
+                                    videoElement.pause();
 
-                            {/* Video Overlay Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                                    // If we have a captured thumbnail, use it
+                                    if (videoThumbnails[item.id]) {
+                                      handleImageLoad(item.id);
+                                    } else {
+                                      // Try to capture thumbnail
+                                      await handleVideoLoaded(
+                                        item.id,
+                                        videoElement,
+                                      );
+                                    }
+                                  } catch (error) {
+                                    console.error("Error in canplay:", error);
+                                    handleImageLoad(item.id);
+                                  }
+                                }}
+                                onError={(e) => {
+                                  console.error("Video error:", e);
+                                  handleImageLoad(item.id);
+                                }}
+                              >
+                                <source src={item.videoUrl} type="video/mp4" />
+                              </video>
 
-                            {/* Play Button */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
-                                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full flex items-center justify-center shadow-lg">
-                                  <Play className="w-6 h-6 text-white ml-1" />
+                              {/* نمایش thumbnail اگر وجود دارد */}
+                              {videoThumbnails[item.id] ? (
+                                <img
+                                  src={videoThumbnails[item.id]}
+                                  alt={item.displayTitle}
+                                  className="absolute inset-0 w-full h-full object-cover"
+                                />
+                              ) : (
+                                // Fallback image
+                                <LazyLoadImage
+                                  src={item.src || "/video-placeholder.jpg"}
+                                  alt={item.displayTitle}
+                                  effect="blur"
+                                  className="w-full h-full object-cover"
+                                  afterLoad={() => handleImageLoad(item.id)}
+                                  beforeLoad={() =>
+                                    handleImageStartLoad(item.id)
+                                  }
+                                />
+                              )}
+
+                              {/* Play Button */}
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+                                  <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
+                                    {item.hasYouTubeLink ? (
+                                      <Youtube className="w-6 h-6 text-white" />
+                                    ) : (
+                                      <Play className="w-6 h-6 text-white ml-1" />
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
 
-                            {/* Video Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full shadow-lg">
-                                <Film className="w-4 h-4 text-white" />
-                                <span className="text-white text-xs font-medium">
-                                  VIDEO
-                                </span>
+                              {/* Video Badge */}
+                              <div className="absolute top-4 left-4">
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
+                                  <Film className="w-3 h-3 text-white" />
+                                  <span className="text-white text-xs font-bold">
+                                    {item.hasYouTubeLink ? "YOUTUBE" : "VIDEO"}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </>
@@ -444,9 +637,9 @@ const InterviewPage = () => {
 
                             {/* Image Badge */}
                             <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 rounded-full shadow-lg">
-                                <ImageIcon className="w-4 h-4 text-white" />
-                                <span className="text-white text-xs font-medium">
+                              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
+                                <ImageIcon className="w-3 h-3 text-white" />
+                                <span className="text-white text-xs font-bold">
                                   IMAGE
                                 </span>
                               </div>
@@ -454,12 +647,18 @@ const InterviewPage = () => {
                           </>
                         )}
 
-                        {/* Content Overlay - Same for both */}
-                        <div className="absolute bottom-0 left-0 right-0 p-5">
+                        {/* Content Overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
                           <div className="space-y-2">
-                          
-                            <div className="flex items-center justify-between">
-                           
+                            <h3 className="text-white font-bold text-lg truncate text-center">
+                              {item.displayTitle}
+                            </h3>
+                            <div className="flex items-center justify-center gap-4">
+                              {item.displayYear && (
+                                <span className="text-gray-200 text-sm">
+                                  {item.displayYear}
+                                </span>
+                              )}
                               {item.SubCategory && (
                                 <span className="px-2 py-1 bg-white/10 backdrop-blur-sm rounded-full text-xs text-white">
                                   {item.SubCategory.title}
@@ -572,16 +771,44 @@ const InterviewPage = () => {
                 <div className="p-6">
                   {selectedItem.type === "video" ? (
                     <div className="aspect-video rounded-xl overflow-hidden bg-black mb-6">
-                      <video
-                        key={selectedItem.id}
-                        controls
-                        autoPlay
-                        className="w-full h-full"
-                        controlsList="nodownload"
-                      >
-                        <source src={selectedItem.src} type="video/mp4" />
-                        Your browser does not support the video tag.
-                      </video>
+                      {selectedItem.hasYouTubeLink ? (
+                        // YouTube Embed
+                        <iframe
+                          key={selectedItem.id}
+                          src={`https://www.youtube.com/embed/${selectedItem.videoId}?autoplay=1&rel=0&modestbranding=1`}
+                          title={selectedItem.displayTitle}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      ) : selectedItem.vimeoId ? (
+                        // Vimeo Embed
+                        <iframe
+                          key={selectedItem.id}
+                          src={`https://player.vimeo.com/video/${selectedItem.vimeoId}?autoplay=1&title=0&byline=0&portrait=0`}
+                          title={selectedItem.displayTitle}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="autoplay; fullscreen; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      ) : (
+                        // Direct video file
+                        <video
+                          key={selectedItem.id}
+                          controls
+                          autoPlay
+                          className="w-full h-full"
+                          controlsList="nodownload"
+                        >
+                          <source
+                            src={selectedItem.videoUrl}
+                            type="video/mp4"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                     </div>
                   ) : (
                     <div className="relative rounded-xl overflow-hidden bg-gray-100 mb-6">
@@ -620,8 +847,6 @@ const InterviewPage = () => {
                       )}
                     </div>
                   )}
-
-              
                 </div>
               </motion.div>
             </div>

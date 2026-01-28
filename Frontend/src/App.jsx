@@ -19,6 +19,7 @@ import DesignPage from "./pages/DesignPage";
 import AchievementsPage from "./pages/AchievementsPage";
 import ScrollToTop from "./components/ScrollToTop";
 import ChildrenPage from "./pages/ChildrenPage";
+import PageNotFound from "./pages/PageNotFound";
 
 
 function App() {
@@ -34,7 +35,7 @@ function App() {
             <Route path="/graphic" element={<GeraphicPage />} />
             <Route path="/interview" element={<InterviewPage />} />
             <Route path="/exhibition" element={<ExhibitionPage />} />
-            <Route path="/theater" element={<ChildrenPage />} />
+            <Route path="/children" element={<ChildrenPage />} />
             <Route path="/achivment" element={<AchievementsPage />} />
             <Route path="/miscellaneous" element={<MiscellaneousPage />} />
             <Route path="/design" element={<DesignPage />} />
@@ -44,6 +45,7 @@ function App() {
           {/* Auth pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/*" element={<PageNotFound />} />
 
           {/* Protected Dashboard */}
           <Route

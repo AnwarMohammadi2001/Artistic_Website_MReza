@@ -192,7 +192,7 @@ const BiographySection = () => {
               <div className="relative overflow-hidden rounded-2xl shadow-2xl border border-gray-200/80">
                 <div className="aspect-[4/5] relative overflow-hidden">
                   <img
-                    src="bio.jpeg"
+                    src="hero.jpeg"
                     alt="Hamidreza Khajehmohammadi in his studio"
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                   />
