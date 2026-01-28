@@ -15,7 +15,6 @@ const Project = sequelize.define("Project", {
   date: { type: DataTypes.STRING, allowNull: true },
   duration: { type: DataTypes.STRING, allowNull: true },
   link: { type: DataTypes.STRING, allowNull: true },
-
   mediaType: {
     type: DataTypes.ENUM("image", "video"),
     defaultValue: "image",

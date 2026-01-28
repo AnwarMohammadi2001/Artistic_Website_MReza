@@ -112,7 +112,7 @@ const GeraphicCart = ({ item, itemVariants, viewMode, openModal }) => {
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        {/* <div className="p-6">
           <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-cyan-600 transition-colors line-clamp-1">
             {item.title || "بدون عنوان"}
           </h3>
@@ -130,7 +130,7 @@ const GeraphicCart = ({ item, itemVariants, viewMode, openModal }) => {
           <p className="text-gray-700 text-sm mb-4 line-clamp-2">
             {item.description || item.fullDescription || "بدون توضیحات"}
           </p>
-        </div>
+        </div> */}
       </>
     </div>
   );

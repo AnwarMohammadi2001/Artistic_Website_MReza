@@ -19,8 +19,9 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { FaChild } from "react-icons/fa";
 
-const AchievementsPage = () => {
+const ChildrenPage = () => {
   /* ================= STATES ================= */
   const [loading, setLoading] = useState(true);
   const [achievementProjects, setAchievementProjects] = useState([]);
@@ -135,20 +136,7 @@ const AchievementsPage = () => {
         if (!p.Category || !p.Category.title) return false;
 
         const categoryTitle = p.Category.title.toLowerCase().trim();
-        const possibleNames = [
-          "دستاورد",
-          "دستاوردها",
-          "achievement",
-          "achievements",
-          "افتخارات",
-          "جوایز",
-          "تقدیر",
-          "award",
-          "prize",
-          "honor",
-          "trophy",
-          "medal",
-        ];
+        const possibleNames = ["children"];
 
         return possibleNames.some((name) => categoryTitle.includes(name));
       });
@@ -318,8 +306,8 @@ const AchievementsPage = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/ac.JPG')] bg-cover bg-center" />
-          <div className="absolute inset-0 bg-black/80" />
+          <div className="absolute inset-0 bg-[url('child.jpg')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-black/70" />
         </div>
 
         <div className="relative z-10 container mx-auto px-4 py-20 md:py-24">
@@ -330,22 +318,44 @@ const AchievementsPage = () => {
             className="text-center text-white"
           >
             <div className="inline-flex items-center gap-3 mb-6">
+              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-full">
+                <FaChild className="w-6 h-6" />
+              </div>
               <span className="px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium">
-                Achievements Collection
+                Children & Youth Programs
               </span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              Awards & Honors
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-cyan-300 mt-3">
-                Hamidreza Khajehmohammadi
+              Creative Journey with
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-purple-300 mt-3">
+                Children of Afghanistan
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl max-w-3xl mx-auto text-gray-200 leading-relaxed mb-10">
-              A collection of awards, honors, certificates, and achievements
-              spanning four decades of artistic career
+              Educational and artistic programs designed to nurture creativity,
+              preserve cultural heritage, and empower young minds across
+              Afghanistan
             </p>
+
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center gap-6 mt-12">
+              <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">
+                  {achievementProjects.length}+
+                </div>
+                <div className="text-sm opacity-90">Activities & Programs</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">1000+</div>
+                <div className="text-sm opacity-90">Children Impacted</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl">
+                <div className="text-3xl font-bold">15+</div>
+                <div className="text-sm opacity-90">Cities in Afghanistan</div>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -354,17 +364,18 @@ const AchievementsPage = () => {
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-            <span className="bg-gradient-to-r from-amber-600 to-cyan-600 bg-clip-text text-transparent">
-              Honors in Art Journey
+            <span className="bg-gradient-to-r from-cyan-600 to-purple-600 bg-clip-text text-transparent">
+              Empowering Young Creativity
             </span>
           </h2>
 
-          <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-cyan-400 rounded-full mx-auto mb-8"></div>
+          <div className="w-24 h-1 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full mx-auto mb-8"></div>
 
           <p className="text-lg text-gray-700 leading-relaxed mb-10 max-w-3xl mx-auto">
-            These achievements represent the recognition and honors received
-            throughout four decades of dedicated artistic work, exhibitions, and
-            cultural contributions.
+            Through dedicated programs and workshops, Hamidreza Khajehmohammadi
+            has been actively involved in creating educational and artistic
+            opportunities for children across Afghanistan, focusing on creative
+            expression, cultural preservation, and skill development.
           </p>
 
           {/* ================= CATEGORY FILTER BUTTONS ================= */}
@@ -386,8 +397,7 @@ const AchievementsPage = () => {
                       : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200 hover:border-amber-200"
                   }`}
                 >
-                  
-                  All Achievements 
+                  All Achievements
                 </button>
 
                 {/* Subcategory Buttons */}
@@ -403,7 +413,7 @@ const AchievementsPage = () => {
                           : "bg-white text-gray-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200"
                       }`}
                     >
-                      {sub.title} 
+                      {sub.title}
                     </button>
                   );
                 })}
@@ -433,11 +443,11 @@ const AchievementsPage = () => {
                     onClick={() => openModal(item)}
                   >
                     {/* Card Container - Square aspect ratio */}
-                    <div className="relative aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
+                    <div className="relative  overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
                       {/* Loading skeleton */}
                       {imageLoading[item.id] && (
                         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
-                          <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                          <div className="w-10 h-10  border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       )}
 
@@ -452,8 +462,6 @@ const AchievementsPage = () => {
                           beforeLoad={() => handleImageStartLoad(item.id)}
                         />
 
-                    
-
                         {/* Category Badge */}
                         <div className="absolute top-4 left-4">
                           <div
@@ -465,9 +473,6 @@ const AchievementsPage = () => {
                             </span>
                           </div>
                         </div>
-
-
-                      
                       </div>
                     </div>
                   </motion.div>
@@ -505,8 +510,6 @@ const AchievementsPage = () => {
           </div>
         )}
       </div>
-
-    
 
       {/* ================= ACHIEVEMENT MODAL ================= */}
       <AnimatePresence>
@@ -606,8 +609,6 @@ const AchievementsPage = () => {
                       </div>
                     )}
                   </div>
-
-                
                 </div>
               </motion.div>
             </div>
@@ -618,4 +619,4 @@ const AchievementsPage = () => {
   );
 };
 
-export default AchievementsPage;
+export default ChildrenPage;
