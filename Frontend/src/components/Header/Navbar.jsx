@@ -78,13 +78,8 @@ const Navbar = () => {
       path: "/interview",
     },
     {
-      id: "design",
-      name: "Design",
-      path: "/design",
-    },
-    {
       id: "exhibition",
-      name: "Exhibition",
+      name: "Exhibitions & Awards",
       path: "/exhibition",
     },
     {
@@ -178,7 +173,9 @@ const Navbar = () => {
                   }`}
                 ></span>
               </button>
-              <p className="md:hidden text-gray-50 font-bold text-2xl">Hamid Reza Khaje Mohammadi</p>
+              <p className="md:hidden text-gray-50 font-bold text-2xl">
+                Hamid Reza Khaje Mohammadi
+              </p>
             </div>
           </div>
         </div>
@@ -195,9 +192,6 @@ const Navbar = () => {
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <div className="flex flex-col">
               <h2 className="text-2xl font-bold text-gray-800">Menu</h2>
-              <p className="text-sm text-gray-500 mt-1">
-                Hamid Reza Khaje Mohammadi
-              </p>
             </div>
             <button
               onClick={closeMenu}
@@ -210,7 +204,7 @@ const Navbar = () => {
 
           {/* Mobile Menu List */}
           <div className="flex-1 overflow-y-auto p-6">
-            <ul className="space-y-3">
+            <ul className="space-y-1">
               {menuItems.map((item, index) => {
                 const isActive =
                   activeSection === item.id || isActivePath(item.path);
@@ -236,24 +230,6 @@ const Navbar = () => {
                 );
               })}
             </ul>
-
-            {/* Contact Information */}
-            <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-              <h4 className="font-semibold text-gray-700 mb-2">
-                Contact Information
-              </h4>
-              <p className="text-sm text-gray-600">
-                Email: info@khajemohammadi.art
-              </p>
-              <p className="text-sm text-gray-600">Phone: 021-12345678</p>
-            </div>
-          </div>
-
-          {/* Mobile Menu Footer */}
-          <div className="p-6 border-t border-gray-200">
-            <p className="text-center text-gray-500 text-sm">
-              © {new Date().getFullYear()} All rights reserved
-            </p>
           </div>
         </div>
       </div>

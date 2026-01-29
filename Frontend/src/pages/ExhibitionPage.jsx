@@ -300,8 +300,8 @@ const ExhibitionPage = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/ex.JPG')] bg-cover bg-center" />
-          <div className="absolute inset-0 bg-black/80" />
+          <div className="absolute inset-0 bg-[url('/ex.jpeg')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-black/60" />
         </div>
 
         <div className="relative z-10 container mx-auto px-4 py-20 md:py-24">

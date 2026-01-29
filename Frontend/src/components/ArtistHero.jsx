@@ -44,8 +44,6 @@ IoIosArrowRoundDown
                     ARTIST
                   </div>
                 </div>
-
-               
               </div>
 
               {/* Decorative Elements */}
@@ -63,8 +61,6 @@ IoIosArrowRoundDown
             className={`order-1 lg:order-2 transition-all duration-1000 pr-5 ${isLoaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}
           >
             <div className="text-center lg:text-left space-y-6 lg:space-y-8 lg:pl-8">
-           
-
               {/* Name and Title */}
               <div className=" mt-5">
                 <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
@@ -76,24 +72,18 @@ IoIosArrowRoundDown
 
                 <div className="relative inline-block">
                   <h2 className="text-xl md:text-lg lg:text-xl font-semibold text-cyan-600 mt-4 lg:mt-6">
-                    Visual Artist and Art Director
+                    Painter • Graphic Designer • Writer • Human Rights Activist
                   </h2>
-                  <div className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
                 </div>
               </div>
 
               {/* Biography Text */}
               <div className="max-w-2xl mx-auto flex flex-col items-center  lg:mx-0">
-                <p className="text-lg md:text-lg text-gray-700 leading-relaxed lg:leading-loose">
-                  Hamidreza Khajehmohammadi is an Iranian visual artist,
-                  painter, and graphic designer with over 30 years of
-                  experience. He holds a Bachelor’s degree in Graphic Design and
-                  a First-Class Artistic Degree (equivalent to a doctorate). He
-                  has illustrated over forty children’s books and exhibited his
-                  work internationally. A Peace Artist and children’s rights
-                  advocate, he has taught art at Iranian universities and
-                  continues humanitarian art programs for children and
-                  war-affected communities in Afghanistan.
+                <p className="text-lg md:text-2xl font-bold text-gray-700 leading-relaxed lg:leading-loose">
+                  An Iranian artist and asylum seeker with over 30 years of
+                  professional experience in art, education, and human rights
+                  advocacy.
                 </p>
                 <button className="px-4 py-2 w-fit cursor-pointer hover:scale-102 transition-all duration-300 bg-cyan-600 flex items-center gap-x-2 rounded-full text-gray-50">
                   Read More About Me{" "}
@@ -155,7 +145,6 @@ IoIosArrowRoundDown
               </div>
 
               {/* Action Buttons */}
-          
             </div>
           </div>
         </div>

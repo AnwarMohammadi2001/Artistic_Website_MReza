@@ -9,58 +9,58 @@ const Biography = () => {
 
   const items = [
     {
-      img: "p/ach.JPG",
+      img: "ac.JPG",
       title: "Achievements",
       path: "/achivment",
       gradient: "from-amber-400 to-amber-300",
       hoverGradient: "from-amber-500 to-amber-400",
     },
     {
-      img: "p/design.JPG",
-      title: "Design",
-      path: "/design",
+      img: "ch.jpg",
+      title: "Children",
+      path: "/children",
       gradient: "from-cyan-400 to-cyan-300",
       hoverGradient: "from-cyan-500 to-cyan-400",
     },
     {
-      img: "p/garaphic.jpg",
+      img: "p/gh.jpg",
       title: "Graphic",
       path: "/graphic",
       gradient: "from-purple-400 to-purple-300",
       hoverGradient: "from-purple-500 to-purple-400",
     },
     {
-      img: "p/inter.JPG",
+      img: "p/pain.jpg",
       title: "Painting",
       path: "/painting",
       gradient: "from-rose-400 to-rose-300",
       hoverGradient: "from-rose-500 to-rose-400",
     },
     {
-      img: "p/mot.JPG",
+      img: "p/inter.JPG",
       title: "Interview",
       path: "/interview",
       gradient: "from-emerald-400 to-emerald-300",
       hoverGradient: "from-emerald-500 to-emerald-400",
     },
     {
-      img: "p/painting.JPG",
+      img: "p/mt.jpg",
       title: "Miscellaneous",
       path: "/miscellaneous",
       gradient: "from-indigo-400 to-indigo-300",
       hoverGradient: "from-indigo-500 to-indigo-400",
     },
     {
-      img: "p/tet.JPG",
+      img: "cover.jpg",
       title: "Exhibition",
       path: "/exhibition",
       gradient: "from-orange-400 to-orange-300",
       hoverGradient: "from-orange-500 to-orange-400",
     },
     {
-      img: "p/view.jpg",
-      title: "Theater",
-      path: "/theater",
+      img: "p/ach1.jpg",
+      title: "Achievements",
+      path: "/achivment",
       gradient: "from-teal-400 to-teal-300",
       hoverGradient: "from-teal-500 to-teal-400",
     },
@@ -79,9 +79,7 @@ const Biography = () => {
             <div className="inline-flex items-center gap-4 mb-4">
               <div className="w-10 h-1 bg-gradient-to-r from-amber-400 to-cyan-400 rounded-full"></div>
               <h3 className="text-3xl md:text-4xl font-bold text-gray-700">
-                <span className="bg-">
-                  My Art Gallery
-                </span>
+                <span className="bg-">My Art Gallery</span>
               </h3>
               <div className="w-10 h-1 bg-gradient-to-r from-cyan-400 to-amber-400 rounded-full"></div>
             </div>
@@ -117,15 +115,6 @@ const Biography = () => {
 
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
-                    {/* Category Badge */}
-                    <div className="absolute top-4 left-4">
-                      <span
-                        className={`px-4 py-1.5 bg-gradient-to-r ${item.hoverGradient} text-white text-sm font-semibold rounded-full shadow-lg`}
-                      >
-                        {item.title}
-                      </span>
-                    </div>
                   </div>
 
                   {/* Content Area */}
@@ -183,8 +172,6 @@ const Biography = () => {
               </Link>
             ))}
           </div>
-
-        
         </div>
       </div>
     </div>
