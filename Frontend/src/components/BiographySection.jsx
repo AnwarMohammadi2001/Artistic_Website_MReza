@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   FaPalette,
   FaBook,
@@ -7,28 +7,53 @@ import {
   FaUsers,
   FaGlobe,
   FaHandsHelping,
+  FaPlay,
+  FaPause,
+  FaVolumeUp,
+  FaVolumeMute,
 } from "react-icons/fa";
 import { IoIosArrowRoundUp } from "react-icons/io";
 
 const BiographySection = () => {
   const [expanded, setExpanded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
+  const [showVideoControls, setShowVideoControls] = useState(false);
+  const videoRef = useRef(null);
+
+  const toggleVideoPlay = () => {
+    if (videoRef.current) {
+      if (videoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setVideoPlaying(!videoPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setVideoMuted(!videoMuted);
+    }
+  };
 
   const biographyText = `
-    Hamidreza Khajehmohammadi is an Iranian visual artist—painter, graphic designer, and illustrator of children's and young adult books—with more than three decades of professional experience in art creation and art education. Owing to his sustained efforts in defending children's rights, he is also recognized as a Peace Artist and children's rights activist, and is regarded as one of the well-known figures in the field of art education for children and adolescents in Iran.
+  Hamidreza Khajehmohammadi is an Iranian visual artist (painter, graphic designer, and illustrator of children's and young adult books) with more than three decades of professional experience in artistic creation, art education, and cultural, social, and humanitarian activities. Due to his continuous engagement in the fields of child rights, peace education, and working with children and adolescents, he is widely recognized as a "Peace Artist" and a child rights advocate, and is regarded as one of the prominent figures in children's art and art education in Iran.
+He holds a Bachelor's degree in Graphic Design from the University of Art in Tehran and has been awarded both the "Second-Class Artistic Degree" (equivalent to a Master's degree) and the "First-Class Artistic Degree" (equivalent to a Doctorate) by the Iranian Artists Evaluation Council. Hamidreza Khajehmohammadi served for fifteen years as an art professor at Iranian art universities, including the University of Art in Tehran and the Islamic Azad University in Tehran and Mashhad. Alongside his academic teaching, he played an active role in academic and cultural development, as well as in defending students' professional rights and freedom of expression.
 
-    He holds a Bachelor's degree in Graphic Design from the University of Art in Tehran and has been awarded the Second-Class Artistic Degree (equivalent to a bachelor's degree) and the First-Class Artistic Degree (equivalent to a doctorate) by the Iranian Artists Evaluation Council. Hamidreza Khajehmohammadi taught art for fifteen years at Iranian art universities and, alongside his academic teaching, played an active role in cultural development as well as in advocating for students' educational and professional rights.
+He is the founder and managing director of the "Khajehmohammadi Cultural and Artistic Institute," officially licensed by Iran's Ministry of Culture and Islamic Guidance, and also served as the director of a specialized watercolor painting school. Within these institutions, he organized extensive educational programs, specialized workshops, cultural and artistic forums, and activities focused on freedom of expression and the defense of human rights. He is also the founder and director of a "Social Counseling Center with a Child Art Therapy Approach," licensed by the State Welfare Organization of Iran, and collaborated closely with the Institute for the Intellectual Development of Children and Young Adults (Kanoon).
 
-    He is the founder and managing director of the Khajehmohammadi Cultural and Artistic Institute, officially licensed by Iran's Ministry of Culture and Islamic Guidance, and also served as the director of a Watercolor Painting School. Within these institutions, he organized extensive activities including art education programs, specialized classes and workshops, and cultural and artistic forums focused on freedom of expression, culture, art, and human rights. He also established and managed a Social Counseling Center with a focus on Children's Art Therapy, licensed by the Iranian State Welfare Organization. Additionally, he collaborated with the Institute for the Intellectual Development of Children and Young Adults in Iran.
+Hamidreza Khajehmohammadi has illustrated more than forty titles of children's and young adult books and has created dozens of posters, graphic works, and paintings. His works have been exhibited in numerous national and international exhibitions and have received various awards and certificates of appreciation. A number of his artworks are held in private and institutional collections in Iran and abroad. 
+Many of his child and adolescent students have won dozens of gold, silver, and bronze medals at prestigious international children's painting biennials in different countries, reflecting the profound educational and formative impact of his work.
+His artistic practice is not confined to a single medium or discipline; it also encompasses architectural design and sketching, urban elements, sculpture, children's theater, writing, and music. This interdisciplinary approach is a defining characteristic of his artistic journey.
 
-    Hamidreza Khajehmohammadi has illustrated more than forty children's and young adult books and has created dozens of posters and other graphic works. His artworks have been exhibited in numerous national and international exhibitions and have received recognition and awards. Some of his works are preserved in artistic collections and museums in Iran and abroad. His child and adolescent students have won gold, silver, and bronze medals in dozens of prestigious international children's art biennials in various countries—an achievement that reflects his significant impact on nurturing the new generation of Iranian artists.
+Due to his political background and his cultural, artistic, and human rights activities, Hamidreza Khajehmohammadi faced professional restrictions and a ban on his activities in Iran, and in 2016 (1395 in the Iranian calendar) he was forced to leave the country. After entering Afghanistan, he registered with the Office of the United Nations High Commissioner for Refugees (UNHCR) and has been officially recognized as a refugee. Over nearly ten years of residence in Afghanistan, as an artist at risk, he has continued his artistic, educational, and humanitarian activities despite harsh conditions, insecurity, and ongoing threats.
 
-    His artistic practice is not confined to a single medium or discipline; it also encompasses architectural design and sketching, urban architectural elements, sculpture, children's theater, writing, and music. This interdisciplinary approach is one of the defining characteristics of his artistic career.
+In Afghanistan, he is also known as a "Peace Artist" and has carried out more than thirty free educational and artistic programs for children, adolescents, war-affected and marginalized families, as well as women. Part of his painting work during this period reflects his lived experience of displacement, insecurity, and deep human and human rights concerns, particularly in the field of children's rights.
 
-    Due to his political background and cultural and human rights activities, Hamidreza Khajehmohammadi faced professional restrictions in Iran and was forced to leave the country in 2016. After relocating to Afghanistan, he registered with and was officially recognized as a refugee by the Office of the United Nations High Commissioner for Refugees (UNHCR). During nearly ten years of residence in Afghanistan, despite severe hardships and security threats, he has continued his artistic, educational, and humanitarian activities.
-
-    In Afghanistan, he is also known as a "Peace Artist" and has carried out more than thirty free artistic and educational initiatives for children, adolescents, and underprivileged and war-affected families. A portion of his paintings from this period reflects his lived experience in Afghanistan and his deep humanitarian and human rights concerns.
-
-    Hamidreza Khajehmohammadi was born in Mashhad, Iran, and today, at the age of 68, he is an artist with a lifetime of experience, knowledge, and human commitment—viewing art as a tool for education, peacebuilding, the defense of children's rights, and human dignity.
+Hamidreza Khajehmohammadi was born in Mashhad, Iran, and today, at the age of 68, he is an artist with a lifetime of experience, knowledge, and human commitment, who views art as a tool for education, peacebuilding, the defense of children's rights, and the preservation of human dignity. This website has been designed to introduce a selection of his artistic and educational activities and to facilitate professional communication with international cultural, artistic, and human rights institutions.
   `;
 
   const keyAchievements = [
@@ -99,7 +124,7 @@ const BiographySection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Left Column - Biography Text */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-md shadow-xl border  border-gray-100 overflow-hidden p-6 md:p-8">
+            <div className="bg-white rounded-md shadow-xl border border-gray-100 overflow-hidden p-6 md:p-8">
               {/* Bio Header */}
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">
@@ -184,46 +209,158 @@ const BiographySection = () => {
             </div>
           </div>
 
-          {/* Right Column - Image and Highlights */}
-          <div className="space-y-8">
-            {/* Main Image Card */}
-            <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-r from-amber-200/50 to-cyan-200/50 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-              <div className="relative overflow-hidden rounded-2xl shadow-2xl border border-gray-200/80">
-                <div className="aspect-[4/5] relative overflow-hidden">
-                  <img
-                    src="hero.jpeg"
-                    alt="Hamidreza Khajehmohammadi in his studio"
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 via-transparent to-transparent"></div>
-                  <div className="absolute bottom-6 left-6">
-                    <div className="text-white font-bold text-lg">
-                      In Studio
-                    </div>
-                    <div className="text-white/80 text-sm">
-                      Artistic Process
-                    </div>
-                  </div>
-                </div>
+          {/* Right Column - Image and Video */}
+          <div className="flex flex-col gap-6">
+            {/* Image Card */}
+            <div className="group relative overflow-hidden rounded-xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-500">
+              <img
+                src="her1.JPG"
+                alt="Hamidreza in studio"
+                className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="text-white font-semibold text-lg">
+                  Studio Session
+                </p>
+                <p className="text-gray-200 text-sm">Artist at work</p>
               </div>
             </div>
 
-            {/* Timeline Highlights */}
+            {/* Video Card with Player Controls - No overlay initially */}
+            <div
+              className="relative overflow-hidden rounded-xl shadow-lg border border-gray-200 group"
+              onMouseEnter={() => setShowVideoControls(true)}
+              onMouseLeave={() => setShowVideoControls(false)}
+            >
+              <video
+                ref={videoRef}
+                src="hero.mp4"
+                muted={videoMuted}
+                preload="metadata"
+                playsInline
+                className="w-full h-64 object-cover"
+                onLoadedMetadata={(e) => {
+                  e.currentTarget.currentTime = 0.1;
+                }}
+                onPlay={() => setVideoPlaying(true)}
+                onPause={() => setVideoPlaying(false)}
+              />
+
+              {/* Play button overlay - only when video is paused */}
+              {!videoPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-transparent to-transparent">
+                  <button
+                    onClick={toggleVideoPlay}
+                    className="bg-white/90 hover:bg-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 transform"
+                  >
+                    <FaPlay className="text-gray-900 ml-1" size={24} />
+                  </button>
+                </div>
+              )}
+
+              {/* Video Controls Overlay - Show on hover or when video is playing */}
+              {(showVideoControls || videoPlaying) && (
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent transition-opacity duration-300">
+                  {/* Top status bar */}
+                  <div className="absolute top-0 left-0 right-0 p-3 flex justify-between items-center">
+                    <div className="flex items-center gap-2 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
+                      <div
+                        className={`w-2 h-2 rounded-full ${videoPlaying ? "bg-emerald-400" : "bg-amber-400"}`}
+                      ></div>
+                      <span>{videoPlaying ? "Playing" : "Paused"}</span>
+                      <span className="text-gray-300">•</span>
+                      <span>{videoMuted ? "Muted" : "Sound on"}</span>
+                    </div>
+
+                    {/* Mute/Unmute Button */}
+                    <button
+                      onClick={toggleMute}
+                      className="bg-black/70 hover:bg-black/90 text-white p-2 rounded-full shadow-lg transition-all duration-300 hover:scale-110"
+                    >
+                      {videoMuted ? (
+                        <FaVolumeMute size={18} />
+                      ) : (
+                        <FaVolumeUp size={18} />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Center play/pause button */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <button
+                      onClick={toggleVideoPlay}
+                      className="bg-white/90 hover:bg-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110"
+                    >
+                      {videoPlaying ? (
+                        <FaPause className="text-gray-900" size={24} />
+                      ) : (
+                        <FaPlay className="text-gray-900 ml-1" size={24} />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Bottom controls */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-white font-semibold">
+                          Artistic Journey
+                        </p>
+                        <p className="text-gray-300 text-sm">Watch the story</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={toggleVideoPlay}
+                          className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-lg transition-colors"
+                        >
+                          {videoPlaying ? (
+                            <FaPause size={16} />
+                          ) : (
+                            <FaPlay size={16} />
+                          )}
+                        </button>
+                        <button
+                          onClick={toggleMute}
+                          className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-lg transition-colors"
+                        >
+                          {videoMuted ? (
+                            <FaVolumeMute size={16} />
+                          ) : (
+                            <FaVolumeUp size={16} />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Always visible play indicator when video is not playing */}
+              {!videoPlaying && !showVideoControls && (
+                <div className="absolute bottom-4 right-4">
+                  <div className="bg-black/60 text-white px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                    <FaPlay size={12} />
+                    <span>Click to play</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-        <div className="bg-white rounded-md shadow-sm border mt-5 border-gray-100 p-6">
+
+        {/* Timeline Section */}
+        <div className="bg-white rounded-md shadow-sm border mt-8 border-gray-100 p-6">
           <h4 className="text-xl font-bold text-center md:text-start text-gray-900 mb-6 pb-3 border-b border-gray-100">
             Career Timeline
           </h4>
-          <div className=" flex justify-center md:justify-between gap-5 flex-wrap items-center">
+          <div className="flex justify-center md:justify-between gap-5 flex-wrap items-center">
             {[
               {
                 year: "1990s",
                 event: "Teaching at Iranian universities",
                 color: "bg-amber-100 text-amber-700",
               },
-           
               {
                 year: "2010",
                 event: "First-class artistic degree awarded",

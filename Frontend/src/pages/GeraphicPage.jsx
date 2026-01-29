@@ -2,13 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { motion, AnimatePresence } from "framer-motion";
 
-import {
-  FaPalette,
-  FaSpinner,
-  FaBrush,
-  FaArrowDown,
-  FaFilter,
-} from "react-icons/fa";
+import { FaPalette, FaSpinner, FaBrush, FaArrowDown } from "react-icons/fa";
 import GeraphicModal from "./components/GeraphicPage/GeraphicModal";
 import GraphicCard from "./components/GeraphicPage/GeraphicCart";
 
@@ -16,9 +10,6 @@ const GraphicPage = () => {
   /* ================= STATES ================= */
   const [loading, setLoading] = useState(true);
   const [graphicProjects, setGraphicProjects] = useState([]);
-  const [filteredProjects, setFilteredProjects] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(9);
@@ -60,34 +51,6 @@ const GraphicPage = () => {
       console.log("Graphic projects:", graphic.length);
 
       setGraphicProjects(graphic);
-      setFilteredProjects(graphic);
-
-      // Extract subcategories
-      const subs = graphic
-        .map((p) => p.SubCategory)
-        .filter((s) => s && (s.id || s.title))
-        .map((s) => ({
-          id: s.id || s.title,
-          title: s.title,
-          count: graphic.filter(
-            (p) =>
-              p.SubCategory &&
-              (p.SubCategory.id === s.id || p.SubCategory.title === s.title),
-          ).length,
-        }));
-
-      // Remove duplicates
-      const uniqueSubs = Array.from(
-        new Map(subs.map((s) => [s.id, s])).values(),
-      );
-
-      setSubCategories(uniqueSubs);
-
-      // Activate first subcategory
-      if (uniqueSubs.length > 0) {
-        setActiveSub(uniqueSubs[0].id);
-        filterBySubCategory(uniqueSubs[0]);
-      }
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -95,27 +58,9 @@ const GraphicPage = () => {
     }
   };
 
-  /* ================= FILTER BY SUB CATEGORY ================= */
-  const filterBySubCategory = useCallback(
-    (sub) => {
-      if (!sub) return;
-
-      setActiveSub(sub.id);
-      setVisibleCount(9);
-
-      const filtered = graphicProjects.filter((p) => {
-        if (!p.SubCategory) return false;
-        return p.SubCategory.id === sub.id || p.SubCategory.title === sub.title;
-      });
-
-      setFilteredProjects(filtered);
-    },
-    [graphicProjects],
-  );
-
   /* ================= LOAD MORE ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, graphicProjects.length));
   };
 
   /* ================= MODAL ================= */
@@ -220,60 +165,35 @@ const GraphicPage = () => {
 
           <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-cyan-400 rounded-full mx-auto mb-8"></div>
 
-          <p className="text-lg text-gray-700 leading-relaxed mb-10 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-700 leading-relaxed mb-6 max-w-3xl mx-auto">
             The graphic works of Hamidreza Khajehmohammadi represent a unique
             fusion of Persian artistic heritage with contemporary design
             principles. Each poster, logo, and illustration tells a story,
             conveys a message, or captures an emotion through carefully crafted
             visual elements.
           </p>
-
-          {/* ================= FILTER SECTION ================= */}
-          {subCategories.length > 0 && (
-            <div className="mb-12">
-              <div className="flex items-center justify-center gap-2 mb-6">
-                <FaFilter className="text-gray-600" />
-                <h3 className="text-xl font-semibold text-gray-700">
-                  Filter by Category
-                </h3>
-              </div>
-              <div className="flex flex-wrap justify-center gap-3">
-                {subCategories.map((sub) => {
-                  const isActive = activeSub === sub.id;
-                  return (
-                    <button
-                      key={sub.id}
-                      onClick={() => filterBySubCategory(sub)}
-                      className={`px-6 py-2.5 rounded-full font-medium transition-all duration-300 flex items-center gap-2 ${
-                        isActive
-                          ? "bg-gradient-to-r from-cyan-500 to-cyan-400 text-white shadow-lg"
-                          : "bg-white text-gray-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200"
-                      }`}
-                    >
-                  
-                      {sub.title} 
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
       {/* ================= GRAPHIC WORKS GRID ================= */}
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
-        {filteredProjects.length > 0 ? (
+        {graphicProjects.length > 0 ? (
           <>
-            <AnimatePresence mode="wait">
+            <div className="mb-8 text-center">
+           
+              <p className="text-gray-600 mt-2">
+                All graphic design projects in one collection
+              </p>
+            </div>
+
+            <AnimatePresence>
               <motion.div
-                key={activeSub}
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8"
               >
-                {filteredProjects.slice(0, visibleCount).map((item) => (
+                {graphicProjects.slice(0, visibleCount).map((item) => (
                   <motion.div key={item.id} variants={itemVariants}>
                     <div className="relative">
                       {/* Loading skeleton */}
@@ -295,8 +215,8 @@ const GraphicPage = () => {
             </AnimatePresence>
 
             {/* Load More Button - Show after 9 items */}
-            {filteredProjects.length > 9 &&
-              visibleCount < filteredProjects.length && (
+            {graphicProjects.length > 9 &&
+              visibleCount < graphicProjects.length && (
                 <div className="text-center mt-12">
                   <button
                     onClick={handleLoadMore}
@@ -306,7 +226,7 @@ const GraphicPage = () => {
                     <FaArrowDown className="transform group-hover:translate-y-1 transition-transform" />
                   </button>
                   <p className="text-gray-500 text-sm mt-3">
-                    Showing {visibleCount} of {filteredProjects.length} graphic
+                    Showing {visibleCount} of {graphicProjects.length} graphic
                     works
                   </p>
                 </div>
@@ -318,14 +238,11 @@ const GraphicPage = () => {
               <FaPalette className="text-gray-400 text-4xl" />
             </div>
             <p className="text-gray-500 text-xl font-medium">
-              No graphic works found in this category
+              No graphic works found
             </p>
-            <p className="text-gray-400 mt-2">Please select another category</p>
           </div>
         )}
       </div>
-
-     
 
       {/* ================= MODAL ================= */}
       <AnimatePresence>
@@ -340,7 +257,10 @@ const GraphicPage = () => {
               className="fixed inset-0 bg-black/50 backdrop-blur-sm"
               onClick={closeModal}
             ></div>
-            <GeraphicModal selectedItem={selectedItem} closeModal={closeModal} />
+            <GeraphicModal
+              selectedItem={selectedItem}
+              closeModal={closeModal}
+            />
           </motion.div>
         )}
       </AnimatePresence>

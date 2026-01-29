@@ -9,7 +9,6 @@ const Printing = () => {
   /* ================= STATES ================= */
   const [loading, setLoading] = useState(true);
   const [paintingProjects, setPaintingProjects] = useState([]);
-  const [afghanistanProjects, setAfghanistanProjects] = useState([]);
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [activeSub, setActiveSub] = useState(null);
@@ -65,21 +64,13 @@ const Printing = () => {
       const res = await axiosInstance.get("/projects");
       const projects = res.data || [];
 
-      // Separate Afghanistan and other paintings
-      const afgPaintings = [];
-      const otherPaintings = [];
-
-      projects.forEach((project) => {
-        if (!project.Category || !project.Category.title) return;
+      // Filter painting projects only
+      const paintingProjectsList = projects.filter((project) => {
+        if (!project.Category || !project.Category.title) return false;
 
         const categoryTitle = project.Category.title.toLowerCase().trim();
 
-        // Check if it's an Afghanistan painting
-        if (categoryTitle.includes("afghanistan")) {
-          afgPaintings.push(project);
-        }
-        // Check if it's a painting (excluding Afghanistan)
-        else if (
+        return (
           categoryTitle.includes("نقاشی") ||
           categoryTitle.includes("painting") ||
           categoryTitle.includes("paintings") ||
@@ -89,27 +80,25 @@ const Printing = () => {
           categoryTitle.includes("نگارگری") ||
           categoryTitle.includes("abstract") ||
           categoryTitle.includes("oil") ||
-          categoryTitle.includes("watercolor")
-        ) {
-          otherPaintings.push(project);
-        }
+          categoryTitle.includes("watercolor") ||
+          categoryTitle.includes("افغانستان") ||
+          categoryTitle.includes("afghanistan")
+        );
       });
 
-      console.log("Afghanistan paintings:", afgPaintings);
-      console.log("Other paintings:", otherPaintings.length);
+      console.log("Painting projects:", paintingProjectsList.length);
 
-      setAfghanistanProjects(afgPaintings);
-      setPaintingProjects(otherPaintings);
-      setFilteredProjects(otherPaintings);
+      setPaintingProjects(paintingProjectsList);
+      setFilteredProjects(paintingProjectsList);
 
-      // Extract unique subcategories from other paintings
-      const subs = otherPaintings
+      // Extract unique subcategories
+      const subs = paintingProjectsList
         .map((p) => p.SubCategory)
         .filter((s) => s && (s.id || s.title))
         .map((s) => ({
           id: s.id || s.title,
           title: s.title,
-          count: otherPaintings.filter(
+          count: paintingProjectsList.filter(
             (p) =>
               p.SubCategory &&
               (p.SubCategory.id === s.id || p.SubCategory.title === s.title),
@@ -194,6 +183,17 @@ const Printing = () => {
     },
   };
 
+  /* ================= CHECK IF ACTIVE CATEGORY IS AFGHANISTAN ================= */
+  const isAfghanistanCategory = () => {
+    if (!activeSub) return false;
+    const activeCategory = subCategories.find((sub) => sub.id === activeSub);
+    return (
+      activeCategory &&
+      (activeCategory.title.toLowerCase().includes("افغانستان") ||
+        activeCategory.title.toLowerCase().includes("afghanistan"))
+    );
+  };
+
   /* ================= LOADING ================= */
   if (loading) {
     return (
@@ -265,7 +265,7 @@ const Printing = () => {
 
           {/* ================= SUB CATEGORIES FILTER ================= */}
           {subCategories.length > 0 && (
-            <div className="mb-12">
+            <div className="">
               <h3 className="text-xl font-semibold text-gray-700 mb-6">
                 Browse by Category
               </h3>
@@ -282,7 +282,6 @@ const Printing = () => {
                           : "bg-white text-gray-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200"
                       }`}
                     >
-                  
                       {sub.title}
                     </button>
                   );
@@ -293,8 +292,80 @@ const Printing = () => {
         </div>
       </div>
 
+      {/* ================= AFGHANISTAN DESCRIPTION SECTION ================= */}
+      {isAfghanistanCategory() && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="container mx-auto px-4 pb-8"
+        >
+          <div className="bg-white max-w-7xl mx-auto rounded-md shadow-xl border border-gray-100 p-8 md:px-10">
+            <div className="flex items-center gap-3 mb-6">
+              <h3 className="text-2xl font-bold text-gray-700">
+                Human Rights in Afghanistan
+              </h3>
+            </div>
+
+            <div className="space-y-6 max-w-7xl mx-auto text-gray-700 leading-relaxed">
+              <p className="text-lg">
+                Paintings Created with a Focus on Human Rights in Afghanistan
+                The series of paintings I have created under the theme of Human
+                Rights in Afghanistan is the result of my lived experience,
+                direct observation, and my human and artistic response to the
+                social and humanitarian conditions of this country. These works
+                address—indirectly and symbolically—issues such as the suicide
+                of girls and women, child marriage, structural violence against
+                women, poverty, drug trafficking, social repression, and various
+                forms of violations of human dignity; realities that constitute
+                part of everyday life in Afghanistan today. This body of work is
+                based on three main components: 1. The use of abstract and
+                multi-layered lines, signs, and forms rooted in talismans,
+                popular prayer writings, and traditional symbols. In these
+                paintings, such elements are employed solely as a visual
+                language, detached from their original ritualistic or religious
+                functions. For me, these forms serve as tools to express fear,
+                silence, suppression, and hidden human trauma—experiences that
+                often cannot be articulated directly. 2. Inspiration drawn from
+                the symbols and aesthetic traditions of Afghan folk culture,
+                particularly the motifs and decorations found in the textiles
+                and handicrafts created by Afghan women. Artistic practices such
+                as embroidery, mirror embroidery, khamak embroidery, carpet
+                weaving, and traditional needlework have not only shaped the
+                visual language of these works but also represent, to me, signs
+                of silent resistance, feminine identity, and the struggle for
+                survival under harsh social conditions. 3. An indirect
+                engagement with the artistic legacy of Master Kamāl al-Dīn
+                Behzād, the prominent painter of the Herat School during the
+                Timurid period. I have drawn inspiration from his use of color
+                contrasts, flat surfaces, geometric structures, compositional
+                balance, and his profound social attention to the everyday lives
+                of ordinary people. Behzād’s works, now recognized as
+                authoritative cultural and historical documents, demonstrate
+                that painting can go beyond aesthetics to carry meaning,
+                narrative, and social responsibility. Together, these three
+                components form the conceptual framework for artworks that
+                address human rights violations in Afghanistan. These paintings
+                are not direct representations of specific events, but rather
+                artistic, human, and ethical responses to violence,
+                discrimination, and suffering—particularly that imposed on women
+                and children. Creating and presenting these works under
+                conditions of insecurity, displacement, and vulnerability has
+                involved serious human rights and security concerns for me.
+                Nevertheless, this collection represents part of my ongoing
+                effort to artistically document human suffering, to defend human
+                dignity, and to draw the attention of the international
+                community to the human rights situation in Afghanistan—an effort
+                that cannot be sustained without access to a safe and secure
+                environment.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* ================= PAINTINGS GRID ================= */}
-      <div className="container  px-4 max-w-7xl mx-auto pb-12 md:pb-20">
+      <div className="container px-4 max-w-7xl mx-auto pb-12 md:pb-20">
         {filteredProjects.length > 0 ? (
           <>
             <AnimatePresence mode="wait">
@@ -363,180 +434,6 @@ const Printing = () => {
           </div>
         )}
       </div>
-
-      {/* ================= AFGHANISTAN PAINTINGS SECTION ================= */}
-      {afghanistanProjects.length > 0 && (
-        <div className="bg-gradient-to-b from-white to-rose-50/30 py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12 md:mb-16">
-              <div className="inline-flex items-center gap-4 mb-6">
-                <div className="w-10 h-1 bg-gradient-to-r from-amber-400 to-rose-400 rounded-full"></div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
-                  <span className="bg-gradient-to-r from-amber-600 to-rose-600 bg-clip-text text-transparent">
-                    Afghanistan Series
-                  </span>
-                </h2>
-                <div className="w-10 h-1 bg-gradient-to-r from-rose-400 to-amber-400 rounded-full"></div>
-              </div>
-              <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-                A collection created during my years in Afghanistan (
-                {afghanistanProjects.length} paintings)
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-start">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="bg-white rounded-md shadow-xl border border-gray-100 p-8 md:p-10"
-              >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-gradient-to-br from-rose-100 to-rose-50 rounded-xl">
-                    <FaPalette className="text-rose-600 text-2xl" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-800">
-                    Human Rights in Afghanistan
-                  </h3>
-                </div>
-
-                <div className="space-y-6 text-gray-700 leading-relaxed">
-                  <p className="text-lg">
-                    The paintings I have created under the theme of Human Rights
-                    in Afghanistan are based on three key elements:
-                  </p>
-
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3 p-4 bg-amber-50/50 rounded-md">
-                      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-amber-500 to-amber-400 rounded-full flex items-center justify-center text-white font-bold">
-                        1
-                      </div>
-                      <p>
-                        I used abstract and ambiguous lines and shapes derived
-                        from traditional talismanic symbols and popular prayer
-                        writings, solely as formal visual elements, detached
-                        from their original function.
-                      </p>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-4 bg-rose-50/50 rounded-md">
-                      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-rose-500 to-rose-400 rounded-full flex items-center justify-center text-white font-bold">
-                        2
-                      </div>
-                      <p>
-                        I was also influenced by the symbolism of Afghan folk
-                        culture, particularly the rich decorative patterns and
-                        traditional motifs found in the textiles and handicrafts
-                        created by Afghan women artists.
-                      </p>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-4 bg-purple-50/50 rounded-md">
-                      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-400 rounded-full flex items-center justify-center text-white font-bold">
-                        3
-                      </div>
-                      <p>
-                        An indirect engagement with the artistic heritage of
-                        Master Kamāl al-Dīn Behzād, the genius of painting
-                        history who worked within the Herat School of Miniature
-                        Painting during the Timurid period.
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="pt-4 border-t border-gray-100 italic text-rose-700">
-                    These three elements have been the primary sources of
-                    inspiration for my paintings addressing human rights issues
-                    in Afghanistan.
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Afghanistan Paintings Grid */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="grid grid-cols-2 gap-4 md:gap-6"
-              >
-                {afghanistanProjects.slice(0, 4).map((painting) => {
-                  const imageUrl = getImageUrl(painting);
-
-                  return (
-                    <div
-                      key={painting.id}
-                      className="group relative overflow-hidden rounded-md bg-white shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-100"
-                    >
-                      <div className="aspect-square relative overflow-hidden">
-                        {imageLoading[`afg-${painting.id}`] && (
-                          <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse z-10 flex items-center justify-center">
-                            <FaSpinner className="text-gray-400 animate-spin text-2xl" />
-                          </div>
-                        )}
-
-                        {/* Lazy loaded image with proper URL */}
-                        <img
-                          src={imageUrl}
-                          alt={painting.title || "Afghanistan Painting"}
-                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                          onLoad={() => handleImageLoad(`afg-${painting.id}`)}
-                          onLoadStart={() =>
-                            handleImageStartLoad(`afg-${painting.id}`)
-                          }
-                          loading="lazy"
-                        />
-
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                          <h4 className="text-white font-bold text-lg truncate">
-                            {painting.title || "Untitled"}
-                          </h4>
-                          {painting.year && (
-                            <div className="flex items-center justify-between mt-2">
-                              <span className="text-white/90 text-sm">
-                                {painting.year}
-                              </span>
-                              {painting.medium && (
-                                <span className="text-white/90 text-sm truncate ml-2">
-                                  {painting.medium}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </motion.div>
-            </div>
-
-            {afghanistanProjects.length > 4 && (
-              <div className="text-center mt-12">
-                <button className="group px-8 py-3 bg-gradient-to-r from-rose-500 to-rose-400 hover:from-rose-600 hover:to-rose-500 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mx-auto">
-                  <span>
-                    View All Afghanistan Paintings ({afghanistanProjects.length}
-                    )
-                  </span>
-                  <svg
-                    className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* ================= MODAL ================= */}
       <AnimatePresence>
