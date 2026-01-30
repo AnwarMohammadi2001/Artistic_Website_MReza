@@ -23,6 +23,8 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const MiscellaneousPage = () => {
   /* ================= STATES ================= */
@@ -115,9 +117,9 @@ const MiscellaneousPage = () => {
         return project.mainImage;
       }
       if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
+        return `${BASE_URL}${project.mainImage}`;
       }
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
     if (project.images && project.images.length > 0 && project.images[0].url) {
@@ -126,9 +128,9 @@ const MiscellaneousPage = () => {
         return imageUrl;
       }
       if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
+        return `${BASE_URL}${imageUrl}`;
       }
-      return `http://localhost:5000/${imageUrl}`;
+      return `${BASE_URL}/${imageUrl}`;
     }
 
     return "/placeholder.jpg";
@@ -161,32 +163,10 @@ const MiscellaneousPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
-      const miscCategories = [
-        "متفرقه",
-        "miscellaneous",
-        "other",
-        "دیگر",
-        "موزیک",
-        "موسیقی",
-        "music",
-        "کتاب",
-        "book",
-        "فیلم",
-        "movie",
-        "بازی",
-        "game",
-        "آشپزی",
-        "cooking",
-        "سفر",
-        "travel",
-        "تکنولوژی",
-        "technology",
-        "سبک زندگی",
-        "lifestyle",
-      ];
+      const miscCategories = ["متفرقه", "miscellaneous"];
 
       const misc = projects.filter((p) => {
         if (!p.Category || !p.Category.title) return false;
@@ -404,7 +384,7 @@ const MiscellaneousPage = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/25.JPG')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[url('/25.jpg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-black/80" />
         </div>
 

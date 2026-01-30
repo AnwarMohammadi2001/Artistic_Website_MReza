@@ -8,9 +8,6 @@ import Logout from "../pages/dashboard/Logout";
 
 const MainContent = ({ activeComponent }) => {
   switch (activeComponent) {
-    case "dashboard":
-      return <Dashboard />;
-
     case "categories":
       return <CategoryManager />;
 
@@ -25,7 +22,7 @@ const MainContent = ({ activeComponent }) => {
 
     default:
       // نکته مهم: اینجا نباید DashboardPage را برگردانید چون باعث حلقه می‌شود
-      return <Dashboard />;
+      return <CategoryManager />;
   }
 };
 

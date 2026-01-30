@@ -3,7 +3,7 @@ import { IoIosArrowRoundDown } from "react-icons/io";
 
 const ArtistHero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-IoIosArrowRoundDown
+  IoIosArrowRoundDown;
   useEffect(() => {
     setIsLoaded(true);
   }, []);
@@ -31,7 +31,7 @@ IoIosArrowRoundDown
               {/* Image Frame */}
               <div className="absolute -inset-4 bg-gradient-to-r from-amber-200/50 to-cyan-200/50 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
               <div className="relative overflow-hidden  shadow-2xl border border-gray-200/80 backdrop-blur-sm bg-gradient-to-br from-white/80 to-gray-50/80">
-                <div className="aspect-[3/4] relative overflow-hidden">
+                <div className="relative overflow-hidden">
                   <img
                     src="bio.jpg"
                     alt="Hamidreza Khajehmohammadi - Visual Artist and Art Director"

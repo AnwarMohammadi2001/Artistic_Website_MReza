@@ -1,7 +1,7 @@
 import { BookOpen, Calendar, Palette, X } from 'lucide-react';
 import {motion} from  "framer-motion";
 import React from 'react'
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const GeraphicModal = ({ selectedItem, closeModal }) => {
     const getImageUrl = () => {
       if (!selectedItem.mainImage) return null;
@@ -13,16 +13,16 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
 
       // Check if it starts with /uploads/
       if (selectedItem.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${selectedItem.mainImage}`;
+        return `${BASE_URL}${selectedItem.mainImage}`;
       }
 
       // If it's just a filename
       if (selectedItem.mainImage.includes("uploads")) {
-        return `http://localhost:5000/${selectedItem.mainImage}`;
+        return `${BASE_URL}/${selectedItem.mainImage}`;
       }
 
       // Default case
-      return `http://localhost:5000/uploads/projects/${selectedItem.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${selectedItem.mainImage}`;
     };
 
     const imageUrl = getImageUrl();

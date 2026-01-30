@@ -9,10 +9,17 @@ import {
   Film,
   Image as ImageIcon,
   Filter,
+  Youtube,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  ChevronDown,
 } from "lucide-react";
 import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ExhibitionPage = () => {
   /* ================= STATES ================= */
@@ -25,63 +32,27 @@ const ExhibitionPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const [imageLoading, setImageLoading] = useState({});
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [isZoomed, setIsZoomed] = useState(false);
 
-  // Function to get proper media URL
-  const getMediaUrl = (project) => {
-    if (!project) return "/placeholder.jpg";
+  // Function to extract YouTube video ID
+  const getYouTubeVideoId = (url) => {
+    if (!url) return null;
 
-    // Check mainImage first
-    if (project.mainImage) {
-      if (project.mainImage.startsWith("http")) {
-        return project.mainImage;
-      }
+    const match = url.match(
+      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/,
+    );
 
-      if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
-      }
-
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
-    }
-
-    // Check images array
-    if (project.images && project.images.length > 0 && project.images[0].url) {
-      const imageUrl = project.images[0].url;
-
-      if (imageUrl.startsWith("http")) {
-        return imageUrl;
-      }
-
-      if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
-      }
-
-      return `http://localhost:5000/${imageUrl}`;
-    }
-
-    // Check link (could be YouTube or other video)
-    if (project.link) {
-      return project.link;
-    }
-
-    return "/placeholder.jpg";
+    return match ? match[1].substring(0, 11) : null;
   };
 
-  // Function to extract YouTube thumbnail
-  const getYouTubeThumbnail = (url) => {
-    if (!url || !url.includes("youtube") || !url.includes("v=")) {
-      return null;
-    }
+  // Function to extract Vimeo video ID
+  const getVimeoVideoId = (url) => {
+    if (!url) return null;
 
-    try {
-      const videoId = url.split("v=")[1];
-      const ampersandPosition = videoId.indexOf("&");
-      if (ampersandPosition !== -1) {
-        return `https://img.youtube.com/vi/${videoId.substring(0, ampersandPosition)}/hqdefault.jpg`;
-      }
-      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-    } catch (error) {
-      return null;
-    }
+    const regExp = /(?:vimeo\.com\/|video\/)(\d+)/;
+    const match = url.match(regExp);
+    return match ? match[1] : null;
   };
 
   // Function to check if URL is YouTube
@@ -94,6 +65,72 @@ const ExhibitionPage = () => {
     );
   };
 
+  // Function to check if URL is Vimeo
+  const isVimeoLink = (url) => {
+    return url && url.includes("vimeo.com");
+  };
+
+  // Function to get video thumbnail URL
+  const getVideoThumbnail = (project) => {
+    if (!project) return "/video-placeholder.jpg";
+
+    // If project has a direct thumbnail
+    if (project.thumbnail) {
+      return project.thumbnail;
+    }
+
+    // If it's a YouTube link
+    if (project.link) {
+      const youtubeId = getYouTubeVideoId(project.link);
+      if (youtubeId) {
+        return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+      }
+
+      // If it's a Vimeo link
+      const vimeoId = getVimeoVideoId(project.link);
+      if (vimeoId) {
+        return `https://vumbnail.com/${vimeoId}.jpg`;
+      }
+    }
+
+    return "/video-placeholder.jpg";
+  };
+
+  // Function to get proper media URL
+  const getMediaUrl = (project) => {
+    if (!project) return "/placeholder.jpg";
+
+    // Check mainImage first
+    if (project.mainImage) {
+      if (project.mainImage.startsWith("http")) {
+        return project.mainImage;
+      }
+
+      if (project.mainImage.startsWith("/uploads/")) {
+        return `${BASE_URL}${project.mainImage}`;
+      }
+
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
+    }
+
+    // Check images array
+    if (project.images && project.images.length > 0 && project.images[0].url) {
+      const imageUrl = project.images[0].url;
+
+      if (imageUrl.startsWith("http")) {
+        return imageUrl;
+      }
+
+      if (imageUrl.startsWith("/uploads/")) {
+        return `${BASE_URL}${imageUrl}`;
+      }
+
+      return `${BASE_URL}/${imageUrl}`;
+    }
+
+    return "/placeholder.jpg";
+  };
+
   /* ================= FETCH DATA ================= */
   useEffect(() => {
     fetchProjects();
@@ -102,7 +139,7 @@ const ExhibitionPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter exhibition projects
@@ -110,16 +147,7 @@ const ExhibitionPage = () => {
         if (!p.Category || !p.Category.title) return false;
 
         const categoryTitle = p.Category.title.toLowerCase().trim();
-        const possibleNames = [
-          "نمایشگاه",
-          "exhibition",
-          "exhibitions",
-          "گالری",
-          "gallery",
-          "نمایش",
-          "show",
-          "expo",
-        ];
+        const possibleNames = ["نمایشگاه", "exhibition"];
 
         return possibleNames.some((name) => categoryTitle.includes(name));
       });
@@ -128,19 +156,34 @@ const ExhibitionPage = () => {
 
       // Map projects to proper format
       const mappedExhibitions = exhibitions.map((project) => {
+        // Determine media type
+        let type = "image";
+        let hasYouTubeLink = false;
+        let hasVimeoLink = false;
+        let videoId = null;
+        let vimeoId = null;
+
+        if (project.link) {
+          videoId = getYouTubeVideoId(project.link);
+          vimeoId = getVimeoVideoId(project.link);
+
+          if (videoId || vimeoId || project.mediaType === "video") {
+            type = "video";
+            hasYouTubeLink = !!videoId;
+            hasVimeoLink = !!vimeoId;
+          }
+        }
+
         const mediaUrl = getMediaUrl(project);
-        const isVideo =
-          isYouTubeLink(mediaUrl) || project.mediaType === "video";
-        const thumbnail = isYouTubeLink(mediaUrl)
-          ? getYouTubeThumbnail(mediaUrl)
-          : mediaUrl;
+        const thumbnail =
+          type === "video" ? getVideoThumbnail(project) : mediaUrl;
 
         return {
           ...project,
           id: project.id,
+          type: type,
           src: mediaUrl,
           thumbnail: thumbnail,
-          isVideo: isVideo,
           displayTitle: project.title || "Untitled Exhibition",
           displayYear:
             project.date ||
@@ -149,7 +192,12 @@ const ExhibitionPage = () => {
           displayLocation: project.location || "Unknown",
           displayOrganizer:
             project.organizer || project.exhibitionName || "Unknown",
-          // Consistent aspect ratio for all cards
+          // Video specific properties
+          videoId: videoId,
+          vimeoId: vimeoId,
+          videoUrl: project.link,
+          hasYouTubeLink: hasYouTubeLink,
+          hasVimeoLink: hasVimeoLink,
           aspectRatio: "landscape",
         };
       });
@@ -217,13 +265,33 @@ const ExhibitionPage = () => {
   const openModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
+    setZoomLevel(1);
+    setIsZoomed(false);
     document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setSelectedItem(null);
     setIsModalOpen(false);
+    setZoomLevel(1);
+    setIsZoomed(false);
     document.body.style.overflow = "auto";
+  };
+
+  /* ================= ZOOM CONTROLS ================= */
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.25, 3));
+    setIsZoomed(true);
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.25, 1));
+    if (zoomLevel <= 1.25) setIsZoomed(false);
+  };
+
+  const handleZoomReset = () => {
+    setZoomLevel(1);
+    setIsZoomed(false);
   };
 
   /* ================= LAZY LOADING ================= */
@@ -233,34 +301,6 @@ const ExhibitionPage = () => {
 
   const handleImageStartLoad = (id) => {
     setImageLoading((prev) => ({ ...prev, [id]: true }));
-  };
-
-  /* ================= YOUTUBE EMBED ================= */
-  const getYouTubeEmbedUrl = (url) => {
-    if (!url || !url.includes("youtube")) return url;
-
-    try {
-      let videoId = "";
-
-      // Handle different YouTube URL formats
-      if (url.includes("youtu.be/")) {
-        videoId = url.split("youtu.be/")[1];
-      } else if (url.includes("youtube.com/watch")) {
-        const urlParams = new URLSearchParams(new URL(url).search);
-        videoId = urlParams.get("v");
-      } else if (url.includes("youtube.com/embed/")) {
-        videoId = url.split("embed/")[1];
-      }
-
-      // Clean up video ID (remove any extra parameters)
-      if (videoId && videoId.includes("?")) {
-        videoId = videoId.split("?")[0];
-      }
-
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
-    } catch (error) {
-      return url;
-    }
   };
 
   /* ================= ANIMATION ================= */
@@ -413,62 +453,61 @@ const ExhibitionPage = () => {
                     className="group relative cursor-pointer"
                     onClick={() => openModal(item)}
                   >
-                    {/* Card Container - Consistent sizing */}
-                    <div className="relative h-[300px] overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
+                    {/* Card Container */}
+                    <div className="relative overflow-hidden rounded-md shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
                       {/* Loading skeleton */}
                       {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-lg z-10 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
                           <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                         </div>
                       )}
 
-                      {/* Media Container - FIXED: Full width/height */}
-                      <div className="relative w-full h-[300px]">
-                        {item.isVideo ? (
-                          <>
-                            {/* Video Thumbnail - FIXED: Full container */}
+                      {/* Media Container */}
+                      <div className="relative w-full">
+                        {item.type === "video" ? (
+                          <div className="relative w-full h-full">
                             <LazyLoadImage
-                              src={item.thumbnail || "/placeholder.jpg"}
+                              src={item.thumbnail}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                              className="w-full h-full object-cover"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
 
-                            {/* Gradient overlay - FIXED: Cover entire media */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
-
                             {/* Play Button */}
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
-                                <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                                  <Play className="w-6 h-6 text-white ml-1" />
+                              <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+                                <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
+                                  <Youtube className="w-6 h-6 text-white" />
                                 </div>
                               </div>
                             </div>
-
-                            {/* Video Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 rounded-full shadow-lg">
-                                <Film className="w-4 h-4 text-white" />
-                                <span className="text-white text-xs font-medium">
-                                  VIDEO
-                                </span>
-                              </div>
-                            </div>
-                          </>
+                          </div>
                         ) : (
                           <>
-                            {/* Image Thumbnail - FIXED: Full container */}
+                            {/* Image Thumbnail */}
                             <LazyLoadImage
                               src={item.src || "/placeholder.jpg"}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full h-[300px] object-cover group-hover:scale-105 transition-all duration-500"
+                              className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-500"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
+
+                            {/* Image Overlay Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                            {/* Image Badge */}
+                            <div className="absolute top-4 left-4">
+                              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
+                                <ImageIcon className="w-3 h-3 text-white" />
+                                <span className="text-white text-xs font-bold">
+                                  IMAGE
+                                </span>
+                              </div>
+                            </div>
                           </>
                         )}
                       </div>
@@ -478,7 +517,7 @@ const ExhibitionPage = () => {
               </motion.div>
             </AnimatePresence>
 
-            {/* Load More Button - Show after 6 items */}
+            {/* Load More Button */}
             {filteredProjects.length > 6 &&
               visibleCount < filteredProjects.length && (
                 <div className="text-center mt-12">
@@ -487,19 +526,7 @@ const ExhibitionPage = () => {
                     className="group px-8 py-3 bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-600 hover:to-cyan-500 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mx-auto"
                   >
                     <span>Load More Exhibitions</span>
-                    <svg
-                      className="w-5 h-5 transform group-hover:translate-y-1 transition-transform"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                      />
-                    </svg>
+                    <ChevronDown className="transform group-hover:translate-y-1 transition-transform" />
                   </button>
                   <p className="text-gray-500 text-sm mt-3">
                     Showing {visibleCount} of {filteredProjects.length}{" "}
@@ -552,28 +579,115 @@ const ExhibitionPage = () => {
                   <X className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
                 </button>
 
+                {/* Zoom Controls for Images */}
+                {selectedItem.type === "image" && (
+                  <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                    <button
+                      onClick={handleZoomOut}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      disabled={zoomLevel <= 1}
+                    >
+                      <ZoomOut className="w-5 h-5 text-gray-700" />
+                    </button>
+                    <span className="text-gray-700 font-medium text-sm min-w-[60px] text-center">
+                      {Math.round(zoomLevel * 100)}%
+                    </span>
+                    <button
+                      onClick={handleZoomIn}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      disabled={zoomLevel >= 3}
+                    >
+                      <ZoomIn className="w-5 h-5 text-gray-700" />
+                    </button>
+                    {isZoomed && (
+                      <button
+                        onClick={handleZoomReset}
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-2"
+                      >
+                        <Maximize2 className="w-5 h-5 text-gray-700" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 {/* Modal Content */}
                 <div className="p-6">
-                  {selectedItem.isVideo ? (
-                    // YouTube Video Player
+                  {selectedItem.type === "video" ? (
                     <div className="aspect-video rounded-xl overflow-hidden bg-black mb-6">
-                      <iframe
-                        src={getYouTubeEmbedUrl(selectedItem.src)}
-                        title={selectedItem.displayTitle}
-                        className="w-full h-full"
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
+                      {selectedItem.hasYouTubeLink ? (
+                        // YouTube Embed
+                        <iframe
+                          key={selectedItem.id}
+                          src={`https://www.youtube.com/embed/${selectedItem.videoId}?autoplay=1&rel=0&modestbranding=1`}
+                          title={selectedItem.displayTitle}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      ) : selectedItem.vimeoId ? (
+                        // Vimeo Embed
+                        <iframe
+                          key={selectedItem.id}
+                          src={`https://player.vimeo.com/video/${selectedItem.vimeoId}?autoplay=1&title=0&byline=0&portrait=0`}
+                          title={selectedItem.displayTitle}
+                          className="w-full h-full"
+                          frameBorder="0"
+                          allow="autoplay; fullscreen; picture-in-picture"
+                          allowFullScreen
+                        ></iframe>
+                      ) : (
+                        // Direct video file
+                        <video
+                          key={selectedItem.id}
+                          controls
+                          autoPlay
+                          className="w-full h-full"
+                          controlsList="nodownload"
+                        >
+                          <source
+                            src={selectedItem.videoUrl}
+                            type="video/mp4"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                     </div>
                   ) : (
-                    // Image Display
-                    <div className="rounded-xl overflow-hidden bg-gray-100 mb-6">
-                      <img
-                        src={selectedItem.src || "/placeholder.jpg"}
-                        alt={selectedItem.displayTitle}
-                        className="w-full max-h-[70vh] object-contain mx-auto"
-                      />
+                    <div className="relative rounded-xl overflow-hidden bg-gray-100 mb-6">
+                      <div
+                        className="overflow-auto cursor-zoom-in"
+                        style={{
+                          maxHeight: "70vh",
+                          transform: `scale(${zoomLevel})`,
+                          transformOrigin: "center",
+                          transition: "transform 0.3s ease",
+                        }}
+                        onClick={(e) => {
+                          if (zoomLevel === 1) handleZoomIn();
+                          else handleZoomReset();
+                        }}
+                      >
+                        <img
+                          src={selectedItem.src || "/placeholder.jpg"}
+                          alt={selectedItem.displayTitle}
+                          className="w-full h-auto"
+                          style={{
+                            minWidth: "100%",
+                            minHeight: "100%",
+                          }}
+                        />
+                      </div>
+
+                      {/* Zoom hint */}
+                      {zoomLevel === 1 && (
+                        <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-sm backdrop-blur-sm">
+                          <div className="flex items-center gap-2">
+                            <ZoomIn className="w-4 h-4" />
+                            <span>Click to zoom</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

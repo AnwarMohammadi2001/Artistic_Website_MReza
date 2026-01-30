@@ -9,7 +9,7 @@ const Biography = () => {
 
   const items = [
     {
-      img: "ac.JPG",
+      img: "ac.jpg",
       title: "Achievements",
       path: "/achivment",
       gradient: "from-amber-400 to-amber-300",
@@ -37,7 +37,7 @@ const Biography = () => {
       hoverGradient: "from-rose-500 to-rose-400",
     },
     {
-      img: "p/inter.JPG",
+      img: "p/inter.jpg",
       title: "Interview",
       path: "/interview",
       gradient: "from-emerald-400 to-emerald-300",

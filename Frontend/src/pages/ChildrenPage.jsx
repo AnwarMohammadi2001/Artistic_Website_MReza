@@ -20,6 +20,8 @@ import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { FaChild } from "react-icons/fa";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ChildrenPage = () => {
   /* ================= STATES ================= */
@@ -46,10 +48,10 @@ const ChildrenPage = () => {
       }
 
       if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
+        return `${BASE_URL}${project.mainImage}`;
       }
 
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
     // Check images array
@@ -61,10 +63,10 @@ const ChildrenPage = () => {
       }
 
       if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
+        return `${BASE_URL}${imageUrl}`;
       }
 
-      return `http://localhost:5000/${imageUrl}`;
+      return `${BASE_URL}/${imageUrl}`;
     }
 
     return "/placeholder.jpg";
@@ -128,7 +130,7 @@ const ChildrenPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter achievement projects

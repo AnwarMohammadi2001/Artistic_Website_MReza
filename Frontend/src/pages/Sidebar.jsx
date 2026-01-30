@@ -38,12 +38,6 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
 
   const allMenuItems = [
     {
-      name: "داشبورد",
-      value: "dashboard",
-      icon: <MdDashboardCustomize className="text-green-500" />,
-      adminOnly: false,
-    },
-    {
       name: "مدیریت دسته‌ها",
       value: "categories",
       icon: <MdCategory className="text-orange-500" />,

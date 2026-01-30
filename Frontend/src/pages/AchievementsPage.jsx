@@ -19,6 +19,8 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AchievementsPage = () => {
   /* ================= STATES ================= */
@@ -45,10 +47,10 @@ const AchievementsPage = () => {
       }
 
       if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
+        return `${BASE_URL}${project.mainImage}`;
       }
 
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
     // Check images array
@@ -60,10 +62,10 @@ const AchievementsPage = () => {
       }
 
       if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
+        return `${BASE_URL}${imageUrl}`;
       }
 
-      return `http://localhost:5000/${imageUrl}`;
+      return `${BASE_URL}/${imageUrl}`;
     }
 
     return "/placeholder.jpg";
@@ -127,7 +129,7 @@ const AchievementsPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter achievement projects
@@ -140,14 +142,6 @@ const AchievementsPage = () => {
           "دستاوردها",
           "achievement",
           "achievements",
-          "افتخارات",
-          "جوایز",
-          "تقدیر",
-          "award",
-          "prize",
-          "honor",
-          "trophy",
-          "medal",
         ];
 
         return possibleNames.some((name) => categoryTitle.includes(name));
@@ -318,7 +312,7 @@ const AchievementsPage = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/ac.JPG')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[url('/ac.jpg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-black/80" />
         </div>
 
@@ -386,8 +380,7 @@ const AchievementsPage = () => {
                       : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200 hover:border-amber-200"
                   }`}
                 >
-                  
-                  All Achievements 
+                  All Achievements
                 </button>
 
                 {/* Subcategory Buttons */}
@@ -403,7 +396,7 @@ const AchievementsPage = () => {
                           : "bg-white text-gray-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200"
                       }`}
                     >
-                      {sub.title} 
+                      {sub.title}
                     </button>
                   );
                 })}
@@ -452,8 +445,6 @@ const AchievementsPage = () => {
                           beforeLoad={() => handleImageStartLoad(item.id)}
                         />
 
-                    
-
                         {/* Category Badge */}
                         <div className="absolute top-4 left-4">
                           <div
@@ -465,9 +456,6 @@ const AchievementsPage = () => {
                             </span>
                           </div>
                         </div>
-
-
-                      
                       </div>
                     </div>
                   </motion.div>
@@ -505,8 +493,6 @@ const AchievementsPage = () => {
           </div>
         )}
       </div>
-
-    
 
       {/* ================= ACHIEVEMENT MODAL ================= */}
       <AnimatePresence>
@@ -606,8 +592,6 @@ const AchievementsPage = () => {
                       </div>
                     )}
                   </div>
-
-                
                 </div>
               </motion.div>
             </div>

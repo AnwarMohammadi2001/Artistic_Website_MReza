@@ -4,6 +4,8 @@ import axiosInstance from "../utils/axiosInstance";
 import PaintingCart from "./components/Painting/PaintingCart";
 import PaintingModal from "./components/Painting/PaintingModal";
 import { FaPalette, FaSpinner } from "react-icons/fa";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Printing = () => {
   /* ================= STATES ================= */
@@ -28,10 +30,10 @@ const Printing = () => {
       }
 
       if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
+        return `${BASE_URL}${project.mainImage}`;
       }
 
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
     // Check if project has images array
@@ -43,10 +45,10 @@ const Printing = () => {
       }
 
       if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
+        return `${BASE_URL}${imageUrl}`;
       }
 
-      return `http://localhost:5000/${imageUrl}`;
+      return `${BASE_URL}/${imageUrl}`;
     }
 
     // Default placeholder
@@ -61,7 +63,7 @@ const Printing = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter painting projects only
@@ -75,12 +77,6 @@ const Printing = () => {
           categoryTitle.includes("painting") ||
           categoryTitle.includes("paintings") ||
           categoryTitle.includes("نقاشي") ||
-          categoryTitle.includes("رنگ‌روغن") ||
-          categoryTitle.includes("آبرنگ") ||
-          categoryTitle.includes("نگارگری") ||
-          categoryTitle.includes("abstract") ||
-          categoryTitle.includes("oil") ||
-          categoryTitle.includes("watercolor") ||
           categoryTitle.includes("افغانستان") ||
           categoryTitle.includes("afghanistan")
         );
@@ -189,8 +185,8 @@ const Printing = () => {
     const activeCategory = subCategories.find((sub) => sub.id === activeSub);
     return (
       activeCategory &&
-      (activeCategory.title.toLowerCase().includes("افغانستان") ||
-        activeCategory.title.toLowerCase().includes("afghanistan"))
+      (activeCategory.title.toLowerCase().includes("فعالیت ها در افغانستان") ||
+        activeCategory.title.toLowerCase().includes("activities in afghanistan"))
     );
   };
 
@@ -211,7 +207,7 @@ const Printing = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden ">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/25.JPG')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[url('/25.jpg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-black/80" />
         </div>
 

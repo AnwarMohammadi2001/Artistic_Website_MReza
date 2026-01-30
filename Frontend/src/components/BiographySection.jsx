@@ -180,11 +180,11 @@ Hamidreza Khajehmohammadi was born in Mashhad, Iran, and today, at the age of 68
             </div>
 
             {/* Key Achievements Grid */}
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
               {keyAchievements.map((achievement, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-md p-5 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="bg-white rounded-md px-5 py-8 md:py-5 border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="flex items-start gap-3">
                     <div className="p-3 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-sm">
@@ -214,7 +214,7 @@ Hamidreza Khajehmohammadi was born in Mashhad, Iran, and today, at the age of 68
             {/* Image Card */}
             <div className="group relative overflow-hidden rounded-xl shadow-lg border border-gray-200 hover:shadow-2xl transition-all duration-500">
               <img
-                src="her1.JPG"
+                src="her1.jpg"
                 alt="Hamidreza in studio"
                 className="w-full h-64 object-cover transform group-hover:scale-105 transition-transform duration-700"
               />
