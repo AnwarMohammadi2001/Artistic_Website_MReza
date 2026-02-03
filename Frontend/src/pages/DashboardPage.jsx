@@ -9,7 +9,7 @@ const DashboardPage = () => {
   const { user } = useContext(AuthContext);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-100">
+    <div dir="rtl" className="flex h-screen w-full overflow-hidden bg-gray-100">
       {/* سایدبار سمت چپ */}
       <Sidebar
         activeComponent={activeComponent}
@@ -20,7 +20,7 @@ const DashboardPage = () => {
       <div className="flex flex-col flex-1 h-screen overflow-hidden">
         <DashboardTopBar />
         
-        <main className="flex-1 overflow-y-auto dark:bg-gray-700 bg-gray-100 p-4">
+        <main className="flex-1 bg-gray-200 overflow-y-auto md:p-6">
           <MainContent activeComponent={activeComponent} />
         </main>
       </div>

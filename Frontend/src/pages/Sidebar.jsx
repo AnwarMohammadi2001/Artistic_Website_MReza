@@ -49,6 +49,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
 
   const allMenuItems = [
     {
+<<<<<<< HEAD
       name: "داشبورد",
       value: "dashboard",
       icon: <MdDashboardCustomize className="text-green-500" />,
@@ -96,6 +97,8 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
       value: "miscellaneous",
       icon: <MdCategory className="text-gray-500" />,
 =======
+=======
+>>>>>>> Anwar
       name: "مدیریت دسته‌ها",
       value: "categories",
       icon: <MdCategory className="text-orange-500" />,

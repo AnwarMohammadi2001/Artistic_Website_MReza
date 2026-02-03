@@ -1,8 +1,8 @@
-import axios from "axios";
+import { Api } from "@mui/icons-material";import axios from "axios";
 
 // ✅ اگر روی لوکال هستید، این آدرس استفاده می‌شود
 // برای پروداکشن، خودکار آدرس دوم را می‌گیرد (اگر Env ست شده باشد)
-const BASE_URL = "http://localhost:5000/api"; 
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 // یا اگر می‌خواهید دستی تغییر دهید:
 // const BASE_URL = "https://backend.tet-soft.com/api";
 

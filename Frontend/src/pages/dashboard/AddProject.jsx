@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import {
   FaCloudUploadAlt,
@@ -9,6 +8,8 @@ import {
   FaVideo,
   FaLink,
 } from "react-icons/fa";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const AddProject = () => {
   const [categories, setCategories] = useState([]);
@@ -35,10 +36,16 @@ const AddProject = () => {
   const [file, setFile] = useState(null);
 
   useEffect(() => {
-    axiosInstance
-      .get("/categories")
-      .then((res) => setCategories(res.data))
-      .catch((err) => console.error(err));
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/api/categories`);
+        setCategories(res.data);
+      } catch (err) {
+        console.error("خطا در دریافت دسته‌ها:", err);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   const handleChange = (e) => {
@@ -105,7 +112,7 @@ const AddProject = () => {
     }
 
     try {
-      await axiosInstance.post("/projects", data, {
+      await axios.post(`${BASE_URL}/api/projects`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success("پروژه با موفقیت ثبت شد!");
@@ -137,7 +144,7 @@ const AddProject = () => {
 
   return (
     <div
-      className="p-6 min-h-screen bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans"
+      className="p-6 min-h-screen  bg-gray-100 rounded-md dark:bg-gray-900 text-gray-800 dark:text-gray-100 font-sans"
       dir="rtl"
     >
       <div className=" mx-auto">
@@ -218,7 +225,7 @@ const AddProject = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
+                  {/* <input
                     placeholder="تکنیک (اختیاری)"
                     name="technique"
                     value={formData.technique}
@@ -266,9 +273,9 @@ const AddProject = () => {
                     value={formData.duration}
                     onChange={handleChange}
                     className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
-                  />
+                  /> */}
                   {/* فیلد لینک - اگر ویدیو است، اهمیت بیشتری دارد */}
-                  <div className="relative">
+                  <div className="relative col-span-2">
                     <input
                       placeholder="لینک (اختیاری)"
                       name="link"
@@ -287,7 +294,7 @@ const AddProject = () => {
             </div>
 
             {/* توضیحات - اختیاری */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
+            {/* <div className="bg-white dark:bg-gray-800 p-6 rounded-md shadow-md">
               <h3 className="font-bold mb-4 border-b pb-2 text-green-600">
                 توضیحات (اختیاری)
               </h3>
@@ -309,7 +316,7 @@ const AddProject = () => {
                   className="flex-1 p-3  rounded-md w-full  bg-gray-200 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-cyan-700 outline-none transition"
                 ></textarea>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* آپلود فایل - اختیاری */}

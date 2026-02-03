@@ -15,7 +15,8 @@ import {
 import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const InterviewPage = () => {
   /* ================= STATES ================= */
   const [loading, setLoading] = useState(true);
@@ -25,7 +26,7 @@ const InterviewPage = () => {
   const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -36,22 +37,17 @@ const InterviewPage = () => {
   const getYouTubeVideoId = (url) => {
     if (!url) return null;
 
-    // الگوهای مختلف YouTube
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-      /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/,
-      /youtube\.com\/.*v=([^&]+)/,
-      /youtu\.be\/([^?]+)/,
-    ];
+    const match = url.match(
+      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/,
+    );
 
-    for (const pattern of patterns) {
-      const match = url.match(pattern);
-      if (match && match[1]) {
-        return match[1].substring(0, 11); // YouTube IDs are always 11 characters
-      }
-    }
-
-    return null;
+    return match ? match[1].substring(0, 11) : null;
+  };
+  const getYouTubeThumbnail = (url) => {
+    const id = getYouTubeVideoId(url);
+    return id
+      ? `https://img.youtube.com/vi/${id}/maxresdefault.jpg`
+      : "/video-placeholder.jpg";
   };
 
   // Function to extract Vimeo video ID
@@ -74,25 +70,25 @@ const InterviewPage = () => {
       }
 
       if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
+        return `${BASE_URL}${project.mainImage}`;
       }
 
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
     // Check images array
     if (project.images && project.images.length > 0 && project.images[0].url) {
       const imageUrl = project.images[0].url;
 
-      if (imageUrl.startsWith("http")) {
+      if (imageUrl.startsWith("https")) {
         return imageUrl;
       }
 
       if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
+        return `${BASE_URL}${imageUrl}`;
       }
 
-      return `http://localhost:5000/${imageUrl}`;
+      return `${BASE_URL}/${imageUrl}`;
     }
 
     return "/placeholder.jpg";
@@ -180,7 +176,7 @@ const InterviewPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter interview projects
@@ -188,20 +184,7 @@ const InterviewPage = () => {
         if (!p.Category || !p.Category.title) return false;
 
         const categoryTitle = p.Category.title.toLowerCase().trim();
-        const possibleNames = [
-          "مصاحبه",
-          "interview",
-          "interviews",
-          "گفتگو",
-          "صحبت",
-          "media",
-          "رسانه",
-          "تلویزیون",
-          "رادیو",
-          "گفت‌وگو",
-          "talk",
-          "conversation",
-        ];
+        const possibleNames = ["مصاحبه", "interview"];
 
         return possibleNames.some((name) => categoryTitle.includes(name));
       });
@@ -312,7 +295,7 @@ const InterviewPage = () => {
       if (!sub) return;
 
       setActiveSub(sub.id);
-      setVisibleCount(6);
+      setVisibleCount(9);
 
       const filtered = interviewProjects.filter((p) => {
         if (!p.SubCategory) return false;
@@ -326,7 +309,7 @@ const InterviewPage = () => {
 
   /* ================= LOAD MORE ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 6, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
   };
 
   /* ================= MODAL ================= */
@@ -408,7 +391,7 @@ const InterviewPage = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/int.JPG')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[url('/int.jpg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-black/80" />
         </div>
 
@@ -441,7 +424,7 @@ const InterviewPage = () => {
       </div>
 
       {/* ================= INTRODUCTION SECTION ================= */}
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="container mx-auto px-4 pt-12 ">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
             <span className="bg-gradient-to-r from-amber-600 to-cyan-600 bg-clip-text text-transparent">
@@ -491,7 +474,7 @@ const InterviewPage = () => {
       </div>
 
       {/* ================= INTERVIEWS GRID ================= */}
-      <div className="container mx-auto px-4 pb-12 md:pb-20">
+      <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {filteredProjects.length > 0 ? (
           <>
             <AnimatePresence mode="wait">
@@ -510,7 +493,7 @@ const InterviewPage = () => {
                     onClick={() => openModal(item)}
                   >
                     {/* Card Container - Consistent sizing */}
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
+                    <div className="relative   overflow-hidden rounded-md shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
                       {/* Loading skeleton */}
                       {imageLoading[item.id] && (
                         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
@@ -519,107 +502,27 @@ const InterviewPage = () => {
                       )}
 
                       {/* Media Container */}
-                      <div className="relative w-full h-full">
+                      <div className="relative w-full h-[300px] overflow-hidden">
                         {item.type === "video" ? (
-                          <>
-                            {/* نمایش ویدیو برای استخراج فریم اول */}
-                            <div className="relative w-full h-full">
-                              <video
-                                ref={(el) => {
-                                  if (el && !videoRefs.current[item.id]) {
-                                    videoRefs.current[item.id] = el;
-                                  }
-                                }}
-                                muted
-                                preload="metadata"
-                                playsInline
-                                className="w-full h-full object-cover"
-                                onLoadedMetadata={async (e) => {
-                                  const videoElement = e.target;
-                                  try {
-                                    // Set current time to beginning
-                                    videoElement.currentTime = 0;
-                                  } catch (error) {
-                                    console.error(
-                                      "Error setting currentTime:",
-                                      error,
-                                    );
-                                  }
-                                }}
-                                onCanPlay={async (e) => {
-                                  const videoElement = e.target;
-                                  try {
-                                    // Pause immediately
-                                    videoElement.pause();
+                          <div className="relative w-full h-full">
+                            <LazyLoadImage
+                              src={getYouTubeThumbnail(item.videoUrl)}
+                              alt={item.displayTitle}
+                              effect="blur"
+                              className="w-full  h-[300px] object-cover"
+                              afterLoad={() => handleImageLoad(item.id)}
+                              beforeLoad={() => handleImageStartLoad(item.id)}
+                            />
 
-                                    // If we have a captured thumbnail, use it
-                                    if (videoThumbnails[item.id]) {
-                                      handleImageLoad(item.id);
-                                    } else {
-                                      // Try to capture thumbnail
-                                      await handleVideoLoaded(
-                                        item.id,
-                                        videoElement,
-                                      );
-                                    }
-                                  } catch (error) {
-                                    console.error("Error in canplay:", error);
-                                    handleImageLoad(item.id);
-                                  }
-                                }}
-                                onError={(e) => {
-                                  console.error("Video error:", e);
-                                  handleImageLoad(item.id);
-                                }}
-                              >
-                                <source src={item.videoUrl} type="video/mp4" />
-                              </video>
-
-                              {/* نمایش thumbnail اگر وجود دارد */}
-                              {videoThumbnails[item.id] ? (
-                                <img
-                                  src={videoThumbnails[item.id]}
-                                  alt={item.displayTitle}
-                                  className="absolute inset-0 w-full h-full object-cover"
-                                />
-                              ) : (
-                                // Fallback image
-                                <LazyLoadImage
-                                  src={item.src || "/video-placeholder.jpg"}
-                                  alt={item.displayTitle}
-                                  effect="blur"
-                                  className="w-full h-full object-cover"
-                                  afterLoad={() => handleImageLoad(item.id)}
-                                  beforeLoad={() =>
-                                    handleImageStartLoad(item.id)
-                                  }
-                                />
-                              )}
-
-                              {/* Play Button */}
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
-                                  <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
-                                    {item.hasYouTubeLink ? (
-                                      <Youtube className="w-6 h-6 text-white" />
-                                    ) : (
-                                      <Play className="w-6 h-6 text-white ml-1" />
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Video Badge */}
-                              <div className="absolute top-4 left-4">
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
-                                  <Film className="w-3 h-3 text-white" />
-                                  <span className="text-white text-xs font-bold">
-                                    {item.hasYouTubeLink ? "YOUTUBE" : "VIDEO"}
-                                  </span>
+                            {/* Play Button */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+                                <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
+                                  <Youtube className="w-6 h-6 text-white" />
                                 </div>
                               </div>
                             </div>
-                          </>
+                          </div>
                         ) : (
                           <>
                             {/* Image Thumbnail */}
@@ -627,7 +530,7 @@ const InterviewPage = () => {
                               src={item.src || "/placeholder.jpg"}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              className="w-full  group-hover:scale-105 h-[300px] object-cover transition-transform duration-500"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
@@ -636,37 +539,8 @@ const InterviewPage = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
                             {/* Image Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
-                                <ImageIcon className="w-3 h-3 text-white" />
-                                <span className="text-white text-xs font-bold">
-                                  IMAGE
-                                </span>
-                              </div>
-                            </div>
                           </>
                         )}
-
-                        {/* Content Overlay */}
-                        <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
-                          <div className="space-y-2">
-                            <h3 className="text-white font-bold text-lg truncate text-center">
-                              {item.displayTitle}
-                            </h3>
-                            <div className="flex items-center justify-center gap-4">
-                              {item.displayYear && (
-                                <span className="text-gray-200 text-sm">
-                                  {item.displayYear}
-                                </span>
-                              )}
-                              {item.SubCategory && (
-                                <span className="px-2 py-1 bg-white/10 backdrop-blur-sm rounded-full text-xs text-white">
-                                  {item.SubCategory.title}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -719,13 +593,13 @@ const InterviewPage = () => {
               onClick={closeModal}
             />
 
-            <div className="relative min-h-screen flex items-center justify-center p-4">
+            <div className="relative min-h-screen flex items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25 }}
-                className="relative w-full max-w-6xl bg-white rounded-3xl overflow-hidden shadow-2xl"
+                className="relative w-full max-w-6xl bg-white rounded-lg overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}
@@ -738,7 +612,7 @@ const InterviewPage = () => {
 
                 {/* Zoom Controls for Images */}
                 {selectedItem.type === "image" && (
-                  <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                  <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 shadow-lg">
                     <button
                       onClick={handleZoomOut}
                       className="p-2 hover:bg-gray-100 rounded-full transition-colors"

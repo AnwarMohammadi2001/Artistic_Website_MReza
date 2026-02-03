@@ -1,7 +1,7 @@
 import { Calendar, ZoomIn } from "lucide-react";
 import { motion } from "framer-motion";
 import React from "react";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const GeraphicCart = ({ item, itemVariants, viewMode, openModal }) => {
   // Construct image URL directly like in Projects component
   const getImageUrl = () => {
@@ -14,16 +14,16 @@ const GeraphicCart = ({ item, itemVariants, viewMode, openModal }) => {
 
     // Check if it starts with /uploads/
     if (item.mainImage.startsWith("/uploads/")) {
-      return `http://localhost:5000${item.mainImage}`;
+      return `${BASE_URL}${item.mainImage}`;
     }
 
     // If it's just a filename
     if (item.mainImage.includes("uploads")) {
-      return `http://localhost:5000/${item.mainImage}`;
+      return `${BASE_URL}/${item.mainImage}`;
     }
 
     // Default case
-    return `http://localhost:5000/uploads/projects/${item.mainImage}`;
+    return `${BASE_URL}/uploads/projects/${item.mainImage}`;
   };
 
   const imageUrl = getImageUrl();

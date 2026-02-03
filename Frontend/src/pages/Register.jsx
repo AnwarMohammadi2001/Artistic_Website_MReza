@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/auth/register", form);
+      await axios.post(`${BASE_URL}/api/auth/register`, form);
       toast.success("User registered successfully!");
       setForm({ email: "", password: "", isAdmin: false });
       navigate("/login"); // redirect to login

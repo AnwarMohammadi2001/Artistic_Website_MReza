@@ -9,7 +9,7 @@ const Biography = () => {
 
   const items = [
     {
-      img: "ac.JPG",
+      img: "ac.jpg",
       title: "Achievements",
       path: "/achivment",
       gradient: "from-amber-400 to-amber-300",
@@ -37,7 +37,7 @@ const Biography = () => {
       hoverGradient: "from-rose-500 to-rose-400",
     },
     {
-      img: "p/inter.JPG",
+      img: "p/inter.jpg",
       title: "Interview",
       path: "/interview",
       gradient: "from-emerald-400 to-emerald-300",
@@ -84,7 +84,10 @@ const Biography = () => {
               <div className="w-10 h-1 bg-gradient-to-r from-cyan-400 to-amber-400 rounded-full"></div>
             </div>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              Explore my artwork across different categories and styles
+              This collection includes visual documents, sample works, and
+              records of my professional, artistic, educational, academic, and
+              cultural activities in Iran and Afghanistan, developed over a
+              period of more than three decades.
             </p>
           </div>
 

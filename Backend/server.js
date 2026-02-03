@@ -18,6 +18,7 @@ import authRoutes from "./routes/authRoutes.js";
 
 import projectRoutes from "./routes/projectRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
+import emailRoutes from "./routes/emailRoutes.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -73,6 +74,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/contact", emailRoutes);
 
 // ✅ 404 Handler (این را اضافه کنید تا بفهمیم چه آدرسی اشتباه است)
 app.use((req, res, next) => {

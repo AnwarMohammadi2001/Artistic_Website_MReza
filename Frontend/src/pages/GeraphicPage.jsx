@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axiosInstance from "../utils/axiosInstance";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { FaPalette, FaSpinner, FaBrush, FaArrowDown } from "react-icons/fa";
 import GeraphicModal from "./components/GeraphicPage/GeraphicModal";
 import GraphicCard from "./components/GeraphicPage/GeraphicCart";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const GraphicPage = () => {
   /* ================= STATES ================= */
@@ -23,34 +24,24 @@ const GraphicPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter graphic projects
-      const graphic = projects.filter((p) => {
-        if (!p.Category || !p.Category.title) return false;
+      const graphic = projects
+        .filter((p) => {
+          if (!p.Category || !p.Category.title) return false;
 
-        const categoryTitle = p.Category.title.toLowerCase().trim();
-        const possibleNames = [
-          "گرافیک",
-          "graphic",
-          "graphics",
-          "طراحی گرافیک",
-          "graphic design",
-          "poster",
-          "پوستر",
-          "logo",
-          "لوگو",
-          "illustration",
-          "تصویرسازی",
-        ];
+          const categoryTitle = p.Category.title.toLowerCase().trim();
+          const possibleNames = ["گرافیک", "graphic"];
 
-        return possibleNames.some((name) => categoryTitle.includes(name));
-      });
-
-      console.log("Graphic projects:", graphic.length);
+          return possibleNames.some((name) => categoryTitle.includes(name));
+        })
+        .reverse(); // ✅ اینجا جای درستشه
 
       setGraphicProjects(graphic);
+
+      console.log("Graphic projects:", graphic.length);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -122,7 +113,7 @@ const GraphicPage = () => {
       {/* ================= HERO SECTION ================= */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[url('/gr.JPG')] bg-cover bg-center" />
+          <div className="absolute inset-0 bg-[url('/gr.jpg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-black/60" />
         </div>
 
@@ -179,13 +170,6 @@ const GraphicPage = () => {
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {graphicProjects.length > 0 ? (
           <>
-            <div className="mb-8 text-center">
-           
-              <p className="text-gray-600 mt-2">
-                All graphic design projects in one collection
-              </p>
-            </div>
-
             <AnimatePresence>
               <motion.div
                 variants={containerVariants}

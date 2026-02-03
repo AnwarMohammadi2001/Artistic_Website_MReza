@@ -20,6 +20,8 @@ import axiosInstance from "../utils/axiosInstance";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { FaChild } from "react-icons/fa";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ChildrenPage = () => {
   /* ================= STATES ================= */
@@ -46,10 +48,10 @@ const ChildrenPage = () => {
       }
 
       if (project.mainImage.startsWith("/uploads/")) {
-        return `http://localhost:5000${project.mainImage}`;
+        return `${BASE_URL}${project.mainImage}`;
       }
 
-      return `http://localhost:5000/uploads/projects/${project.mainImage}`;
+      return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
     // Check images array
@@ -61,10 +63,10 @@ const ChildrenPage = () => {
       }
 
       if (imageUrl.startsWith("/uploads/")) {
-        return `http://localhost:5000${imageUrl}`;
+        return `${BASE_URL}${imageUrl}`;
       }
 
-      return `http://localhost:5000/${imageUrl}`;
+      return `${BASE_URL}/${imageUrl}`;
     }
 
     return "/placeholder.jpg";
@@ -128,7 +130,7 @@ const ChildrenPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.get("/projects");
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter achievement projects
@@ -457,22 +459,12 @@ const ChildrenPage = () => {
                           src={item.src || "/placeholder.jpg"}
                           alt={item.displayTitle}
                           effect="blur"
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="w-full h-[300px] object-cover group-hover:scale-110 transition-transform duration-700"
                           afterLoad={() => handleImageLoad(item.id)}
                           beforeLoad={() => handleImageStartLoad(item.id)}
                         />
 
-                        {/* Category Badge */}
-                        <div className="absolute top-4 left-4">
-                          <div
-                            className={`flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r ${item.categoryColor} rounded-full shadow-lg`}
-                          >
-                            {item.icon}
-                            <span className="text-white text-xs font-medium">
-                              AWARD
-                            </span>
-                          </div>
-                        </div>
+                     
                       </div>
                     </div>
                   </motion.div>

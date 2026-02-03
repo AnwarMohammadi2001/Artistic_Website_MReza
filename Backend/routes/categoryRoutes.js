@@ -1,66 +1,30 @@
 import express from "express";
-
-import authMiddleware from "../middleware/authMiddleware.js";
+import {
+  createCategory,
+  getAllCategories,
+  getCategoryById,
+  updateCategory,
+  deleteCategory,
+  createSubCategory,
+  getAllSubCategories,
+  getSubCategoryById,
+  updateSubCategory,
+  deleteSubCategory,
+} from "../controllers/categoryController.js";
 
 const router = express.Router();
 
-// 📌 Mock categories (فعلاً)
-const categories = [
-  { id: 1, name: "نقاشی" },
-  { id: 2, name: "طراحی" },
-  { id: 3, name: "خوشنویسی" },
-];
+/* CATEGORY */
+router.post("/", createCategory);
+router.get("/", getAllCategories);
+router.get("/:id", getCategoryById);
+router.put("/:id", updateCategory);
+router.delete("/:id", deleteCategory);
 
-// 📌 Public routes
-router.get("/", (req, res) => {
-  res.json(categories); // ✅ آرایه
-});
-
-router.get("/:id", (req, res) => {
-  const category = categories.find((c) => c.id === Number(req.params.id));
-
-  if (!category) {
-    return res.status(404).json({ message: "کتگوری پیدا نشد" });
-  }
-
-  res.json(category);
-});
-
-// 📌 Protected routes
-router.post("/", authMiddleware, (req, res) => {
-  const newCategory = {
-    id: categories.length + 1,
-    name: req.body.name,
-  };
-
-  categories.push(newCategory);
-  res.status(201).json(newCategory);
-});
-
-router.put("/:id", authMiddleware, (req, res) => {
-  const category = categories.find((c) => c.id === Number(req.params.id));
-
-  if (!category) {
-    return res.status(404).json({ message: "کتگوری پیدا نشد" });
-  }
-
-  category.name = req.body.name;
-  res.json(category);
-});
-
-router.delete("/:id", authMiddleware, (req, res) => {
-  const index = categories.findIndex((c) => c.id === Number(req.params.id));
-
-  if (index === -1) {
-    return res.status(404).json({ message: "کتگوری پیدا نشد" });
-  }
-
-  categories.splice(index, 1);
-  res.json({ message: "کتگوری حذف شد" });
-});
-
-
-
-
-
+/* SUB CATEGORY */
+router.post("/sub", createSubCategory);
+router.get("/sub", getAllSubCategories);
+router.get("/sub/:id", getSubCategoryById);
+router.put("/sub/:id", updateSubCategory);
+router.delete("/sub/:id", deleteSubCategory);
 

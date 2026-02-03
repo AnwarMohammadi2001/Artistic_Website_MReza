@@ -17,7 +17,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { toast } from "react-toastify";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -26,36 +28,49 @@ const Contact = () => {
     subject: "",
     message: "",
   });
+    const [loading, setLoading] = useState(false);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeField, setActiveField] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+ const handleChange = (e) => {
+   setFormData({
+     ...formData,
+     [e.target.name]: e.target.value,
+   });
+ };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+ const handleSubmit = async (e) => {
+   e.preventDefault();
+   setLoading(true);
 
-    setTimeout(() => {
-      console.log("Form submitted:", formData);
-      setIsSubmitting(false);
-      setIsSubmitted(true);
+   try {
+     const res = await axios.post(`${BASE_URL}/api/contact`, formData, {
+       headers: { "Content-Type": "application/json" },
+       timeout: 10000, // 10 second timeout
+     });
 
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-      });
+     if (res.data.success) {
+       toast.success(res.data.message);
+       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+     } else {
+       toast.error(res.data.message || "Failed to send message");
+     }
+   } catch (err) {
+     console.error("Contact form error:", err);
 
-      setTimeout(() => setIsSubmitted(false), 5000);
-    }, 1500);
-  };
+     if (err.response?.data?.message) {
+       toast.error(err.response.data.message);
+     } else if (err.code === "ECONNABORTED") {
+       toast.error("Request timeout. Please try again.");
+     } else {
+       toast.error("Failed to send message. Please try again later.");
+     }
+   } finally {
+     setLoading(false);
+   }
+ };
 
   const contactInfo = [
     {
@@ -176,13 +191,13 @@ const Contact = () => {
             className="relative"
           >
             {/* Portrait Container */}
-            <div className="relative rounded-2xl overflow-hidden  shadow-2xl">
+            <div className="relative rounded-lg h-[600px] overflow-hidden  shadow-2xl">
               {/* Artist Portrait */}
-              <div className="aspect-[3/4] relative">
+              <div className=" relative">
                 <img
                   src="bio.jpg"
                   alt="Hamidreza Khajehmohammadi"
-                  className="w-full  object-cover"
+                  className="w-full object-contain"
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -361,6 +376,7 @@ const Contact = () => {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.6 }}
+                        type="submit"
                         disabled={isSubmitting}
                         className={`w-full flex items-center justify-center gap-3 py-4 rounded-xl font-bold text-lg transition-all duration-300 ${
                           isSubmitting

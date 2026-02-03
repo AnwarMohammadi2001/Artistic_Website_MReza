@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { FaTrash, FaEdit, FaEye, FaFilter, FaTimes } from "react-icons/fa";
 import Swal from "sweetalert2";
-
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -20,14 +20,14 @@ const Projects = () => {
     setLoading(true);
     try {
       // دریافت پروژه‌ها (با فیلتر دسته‌بندی)
-      const projRes = await axiosInstance.get(
-        `/projects${selectedCat ? `?categoryId=${selectedCat}` : ""}`
+      const projRes = await axios.get(
+        `${BASE_URL}/api/projects${selectedCat ? `?categoryId=${selectedCat}` : ""}`,
       );
       setProjects(projRes.data);
 
       // دریافت لیست دسته‌ها برای فیلتر (فقط بار اول)
       if (categories.length === 0) {
-        const catRes = await axiosInstance.get("/categories");
+        const catRes = await axios.get(`${BASE_URL}/api/categories`);
         setCategories(catRes.data);
       }
     } catch (err) {
@@ -51,7 +51,7 @@ const Projects = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axiosInstance.delete(`/projects/${id}`);
+          await axios.delete(`${BASE_URL}/api/projects/${id}`);
           toast.success("پروژه با موفقیت حذف شد");
           // حذف از استیت بدون رفرش
           setProjects(projects.filter((p) => p.id !== id));
@@ -69,7 +69,7 @@ const Projects = () => {
 
   return (
     <div
-      className="p-6 min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-white font-sans"
+      className="p-6 min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white font-sans"
       dir="rtl"
     >
       {/* Header & Filter */}
@@ -247,7 +247,7 @@ const Projects = () => {
 
               {/* Actions */}
               <div className="col-span-2 flex gap-2 justify-center w-full">
-                <button
+                {/* <button
                   className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
                   title="مشاهده"
                 >
@@ -258,7 +258,7 @@ const Projects = () => {
                   title="ویرایش"
                 >
                   <FaEdit />
-                </button>
+                </button> */}
                 <button
                   onClick={() => handleDelete(project.id)}
                   className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
