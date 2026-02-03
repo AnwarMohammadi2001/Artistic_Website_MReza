@@ -9,7 +9,7 @@ const ArtistHero = () => {
   }, []);
 
   return (
-    <div className="relative md:h-[90vh] min-h-[600px] overflow-hidden bg-gradient-to-br from-amber-50 via-white to-cyan-50">
+    <div className="relative md:h-[90vh] min-h-[600px] p-4 md:p-10 overflow-hidden bg-gradient-to-br from-amber-50 via-white to-cyan-50">
       {/* Background Decorations */}
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute top-10 left-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
@@ -30,19 +30,17 @@ const ArtistHero = () => {
             <div className="relative group">
               {/* Image Frame */}
               <div className="absolute -inset-4 bg-gradient-to-r from-amber-200/50 to-cyan-200/50 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-              <div className="relative overflow-hidden  shadow-2xl border border-gray-200/80 backdrop-blur-sm bg-gradient-to-br from-white/80 to-gray-50/80">
-                <div className="relative overflow-hidden">
+              <div className="relative overflow-hidden  shadow-2xl border rounded-lg border-gray-200/80 backdrop-blur-sm bg-gradient-to-br from-white/80 to-gray-50/80">
+                <div className="relative overflow-hidden rounded-lg">
                   <img
-                    src="bio.jpg"
+                    src="hero.jpeg"
                     alt="Hamidreza Khajehmohammadi - Visual Artist and Art Director"
-                    className="w-full h-full  object-contain transform group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full  object-contain transform group-hover:scale-105 rounded-lg transition-transform duration-700"
                     onLoad={() => setIsLoaded(true)}
                   />
                   {/* Image Overlay Effect */}
                   <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent"></div>
-                  <div className="absolute top-4 left-4 px-3 py-1.5 bg-gradient-to-r from-amber-500 to-amber-400 rounded-full text-xs font-bold text-white shadow-lg">
-                    ARTIST
-                  </div>
+               
                 </div>
               </div>
 
@@ -62,8 +60,8 @@ const ArtistHero = () => {
           >
             <div className="text-center lg:text-left space-y-6 lg:space-y-8 lg:pl-8">
               {/* Name and Title */}
-              <div className=" mt-5">
-                <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
+              <div className=" mt-10 md:mt-5">
+                <h1 className="text-xl md:text-5xl lg:text-5xl font-bold text-gray-900 leading-tight">
                   <span className="block">Hamidreza</span>
                   <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-700 mt-2">
                     Khajehmohammadi
@@ -85,7 +83,7 @@ const ArtistHero = () => {
                   professional experience in art, education, and human rights
                   advocacy.
                 </p>
-                <button className="px-4 py-2 w-fit cursor-pointer hover:scale-102 transition-all duration-300 bg-cyan-600 flex items-center gap-x-2 rounded-full text-gray-50">
+                <button className="px-4 py-2 w-fit cursor-pointer mt-5 hover:scale-102 transition-all duration-300 bg-cyan-600 flex items-center gap-x-2 rounded-full text-gray-50">
                   Read More About Me{" "}
                   <span>
                     <IoIosArrowRoundDown size={24} />
@@ -126,11 +124,11 @@ const ArtistHero = () => {
 
                         <div className="relative z-10">
                           <div
-                            className={`text-4xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
+                            className={`text-xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
                           >
                             {stat.value}
                           </div>
-                          <div className="text-gray-700 font-medium text-sm md:text-base mt-2">
+                          <div className="text-gray-700 font-medium text-xs md:text-base mt-2">
                             {stat.label}
                           </div>
                         </div>

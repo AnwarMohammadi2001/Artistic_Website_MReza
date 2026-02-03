@@ -459,22 +459,12 @@ const ChildrenPage = () => {
                           src={item.src || "/placeholder.jpg"}
                           alt={item.displayTitle}
                           effect="blur"
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="w-full h-[300px] object-cover group-hover:scale-110 transition-transform duration-700"
                           afterLoad={() => handleImageLoad(item.id)}
                           beforeLoad={() => handleImageStartLoad(item.id)}
                         />
 
-                        {/* Category Badge */}
-                        <div className="absolute top-4 left-4">
-                          <div
-                            className={`flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r ${item.categoryColor} rounded-full shadow-lg`}
-                          >
-                            {item.icon}
-                            <span className="text-white text-xs font-medium">
-                              AWARD
-                            </span>
-                          </div>
-                        </div>
+                     
                       </div>
                     </div>
                   </motion.div>

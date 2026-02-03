@@ -1,6 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, Palette, Ruler, User, X, MapPin, Award } from "lucide-react";
+import AnimatedModal from "../../../components/common/AnimatedModal.jsx";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const PaintingModal = ({ closeModal, selectedPainting }) => {
   // Get image URL
@@ -15,16 +17,16 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
 
     // Check if it starts with /uploads/
     if (selectedPainting.mainImage.startsWith("/uploads/")) {
-      return `http://localhost:5000${selectedPainting.mainImage}`;
+      return `${BASE_URL}${selectedPainting.mainImage}`;
     }
 
     // If it's just a filename
     if (selectedPainting.mainImage.includes("uploads")) {
-      return `http://localhost:5000/${selectedPainting.mainImage}`;
+      return `${BASE_URL}/${selectedPainting.mainImage}`;
     }
 
     // Default case
-    return `http://localhost:5000/uploads/projects/${selectedPainting.mainImage}`;
+    return `${BASE_URL}/uploads/projects/${selectedPainting.mainImage}`;
   };
 
   const imageUrl = getImageUrl();
@@ -80,29 +82,13 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
   };
 
   return (
-    <div className="fixed inset-0  z-50 overflow-y-auto">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/20 backdrop-blur-sm"
-        onClick={closeModal}
-      ></div>
-
-      {/* Modal Content */}
-      <div className="relative max-h-screen flex items-center justify-center p-4">
+    <AnimatedModal isOpen={true} onClose={closeModal} maxWidth="max-w-5xl">
+      <div className="relative max-h-screen flex items-center justify-center">
         <div
-       
-          className="relative bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+          className="relative   w-full max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close Button */}
-          <button
-            onClick={closeModal}
-            className="absolute top-4 left-4 z-50 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors hover:scale-110"
-          >
-            <X className="w-6 h-6" />
-          </button>
-
-          <div className=" gap-8 p-6 md:p-8">
+          <div className=" gap-8 p-4">
             {/* Left Column - Image */}
             <div className="mb-8 md:mb-0">
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden h-[400px] md:h-full">
@@ -290,7 +276,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
           </div>
         </div>
       </div>
-    </div>
+    </AnimatedModal>
   );
 };
 

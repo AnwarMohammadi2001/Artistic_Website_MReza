@@ -24,22 +24,24 @@ const GraphicPage = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-     const res = await axios.get(`${BASE_URL}/api/projects`);
+      const res = await axios.get(`${BASE_URL}/api/projects`);
       const projects = res.data || [];
 
       // Filter graphic projects
-      const graphic = projects.filter((p) => {
-        if (!p.Category || !p.Category.title) return false;
+      const graphic = projects
+        .filter((p) => {
+          if (!p.Category || !p.Category.title) return false;
 
-        const categoryTitle = p.Category.title.toLowerCase().trim();
-        const possibleNames = ["گرافیک", "graphic"];
+          const categoryTitle = p.Category.title.toLowerCase().trim();
+          const possibleNames = ["گرافیک", "graphic"];
 
-        return possibleNames.some((name) => categoryTitle.includes(name));
-      });
-
-      console.log("Graphic projects:", graphic.length);
+          return possibleNames.some((name) => categoryTitle.includes(name));
+        })
+        .reverse(); // ✅ اینجا جای درستشه
 
       setGraphicProjects(graphic);
+
+      console.log("Graphic projects:", graphic.length);
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -168,12 +170,6 @@ const GraphicPage = () => {
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {graphicProjects.length > 0 ? (
           <>
-            <div className="mb-8 text-center">
-              <p className="text-gray-600 mt-2">
-                All graphic design projects in one collection
-              </p>
-            </div>
-
             <AnimatePresence>
               <motion.div
                 variants={containerVariants}

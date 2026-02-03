@@ -16,7 +16,7 @@ const Printing = () => {
   const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
 
   // Function to get proper image URL
@@ -123,7 +123,7 @@ const Printing = () => {
   const handleSubCategory = useCallback(
     (sub) => {
       setActiveSub(sub.id);
-      setVisibleCount(8);
+      setVisibleCount(9);
 
       const filtered = paintingProjects.filter((p) => {
         if (!p.SubCategory) return false;
@@ -150,7 +150,7 @@ const Printing = () => {
 
   /* ================= LAZY LOADING ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 8, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
   };
 
   const handleImageLoad = (id) => {
@@ -186,7 +186,9 @@ const Printing = () => {
     return (
       activeCategory &&
       (activeCategory.title.toLowerCase().includes("فعالیت ها در افغانستان") ||
-        activeCategory.title.toLowerCase().includes("activities in afghanistan"))
+        activeCategory.title
+          .toLowerCase()
+          .includes("activities in afghanistan"))
     );
   };
 
@@ -440,10 +442,6 @@ const Printing = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50"
           >
-            <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-              onClick={closeModal}
-            ></div>
             <PaintingModal
               selectedPainting={selectedItem}
               closeModal={closeModal}

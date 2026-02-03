@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { PiSignIn } from "react-icons/pi";
+import { CiLogin } from "react-icons/ci";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -122,7 +123,7 @@ const Navbar = () => {
         }`}
       >
         <div className="max-w-7xl py-3 mx-auto px-4">
-          <div className="flex items-center justify-center">
+          <div className="flex items-center md:justify-center">
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center justify-center gap-x-8">
               {menuItems.map((item) => {
@@ -173,7 +174,7 @@ const Navbar = () => {
                   }`}
                 ></span>
               </button>
-              <p className="md:hidden text-gray-50 font-bold text-2xl">
+              <p className="md:hidden text-gray-50 font-bold text-lg">
                 Hamid Reza Khaje Mohammadi
               </p>
             </div>
@@ -189,13 +190,21 @@ const Navbar = () => {
       >
         <div className="flex flex-col h-full">
           {/* Mobile Menu Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-bold text-gray-800">Menu</h2>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center gap-x-5">
+              <Link
+                to="/login"
+                className="w-10 h-10 flex items-center justify-center rounded-full  hover:bg-red-100 text-gray-700 bg-gray-200 hover:text-red-600 transition-colors"
+                aria-label="Close menu"
+              >
+                <span className="text-2xl">
+                  <CiLogin />
+                </span>
+              </Link>
             </div>
             <button
               onClick={closeMenu}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-600 transition-colors"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 hover:bg-red-100 text-gray-700 hover:text-red-600 transition-colors"
               aria-label="Close menu"
             >
               <span className="text-2xl">×</span>
@@ -213,10 +222,10 @@ const Navbar = () => {
                   <li key={index}>
                     <Link
                       to={item.path}
-                      className={`flex items-center p-4 rounded-xl transition-all
+                      className={`flex items-center p-4 rounded-md border-b transition-all
                         ${
                           isActive
-                            ? `${"text-amber-600"} shadow-md border-r-4}`
+                            ? `${"text-amber-600"} shadow-sm border-r-4}`
                             : "hover:bg-gray-100 text-gray-700 hover:text-gray-900"
                         }`}
                       onClick={closeMenu}

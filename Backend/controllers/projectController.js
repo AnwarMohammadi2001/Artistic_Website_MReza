@@ -113,7 +113,7 @@ export const getProjects = async (req, res) => {
         { model: Category, attributes: ["title"] },
         { model: SubCategory, attributes: ["title"] },
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "ASC"]],
     });
 
     res.json(projects);

@@ -26,7 +26,7 @@ const InterviewPage = () => {
   const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -295,7 +295,7 @@ const InterviewPage = () => {
       if (!sub) return;
 
       setActiveSub(sub.id);
-      setVisibleCount(6);
+      setVisibleCount(9);
 
       const filtered = interviewProjects.filter((p) => {
         if (!p.SubCategory) return false;
@@ -309,7 +309,7 @@ const InterviewPage = () => {
 
   /* ================= LOAD MORE ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 6, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
   };
 
   /* ================= MODAL ================= */
@@ -502,7 +502,7 @@ const InterviewPage = () => {
                       )}
 
                       {/* Media Container */}
-                      <div className="relative w-full h-full">
+                      <div className="relative w-full h-[300px] overflow-hidden">
                         {item.type === "video" ? (
                           <div className="relative w-full h-full">
                             <LazyLoadImage
@@ -530,7 +530,7 @@ const InterviewPage = () => {
                               src={item.src || "/placeholder.jpg"}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full  group-hover:scale-105 transition-transform duration-500"
+                              className="w-full  group-hover:scale-105 h-[300px] object-cover transition-transform duration-500"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
@@ -539,14 +539,6 @@ const InterviewPage = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
                             {/* Image Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
-                                <ImageIcon className="w-3 h-3 text-white" />
-                                <span className="text-white text-xs font-bold">
-                                  IMAGE
-                                </span>
-                              </div>
-                            </div>
                           </>
                         )}
                       </div>
@@ -601,13 +593,13 @@ const InterviewPage = () => {
               onClick={closeModal}
             />
 
-            <div className="relative min-h-screen flex items-center justify-center p-4">
+            <div className="relative min-h-screen flex items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", damping: 25 }}
-                className="relative w-full max-w-6xl bg-white rounded-3xl overflow-hidden shadow-2xl"
+                className="relative w-full max-w-6xl bg-white rounded-lg overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close Button */}
@@ -620,7 +612,7 @@ const InterviewPage = () => {
 
                 {/* Zoom Controls for Images */}
                 {selectedItem.type === "image" && (
-                  <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                  <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 shadow-lg">
                     <button
                       onClick={handleZoomOut}
                       className="p-2 hover:bg-gray-100 rounded-full transition-colors"

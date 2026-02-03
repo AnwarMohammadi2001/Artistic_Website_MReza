@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -44,7 +44,7 @@ const LoginPage = () => {
       </p>
 
       {/* Form */}
-      <form className="w-full max-w-sm mt-6 space-y-6" onSubmit={handleLogin}>
+      <form className="w-full flex flex-col  max-w-sm mt-6 space-y-6" onSubmit={handleLogin}>
         {/* Email */}
         <div className="relative">
           <input
@@ -95,7 +95,6 @@ const LoginPage = () => {
         </div>
 
         {/* Forgot Password */}
-      
 
         {/* Login Button */}
         <button
@@ -104,6 +103,12 @@ const LoginPage = () => {
         >
           ورود
         </button>
+        <Link
+          to="/"
+          className="w-full bg-black text-center px-5 dark:bg-gray-700 cursor-pointer hover:scale-103 text-white font-bold py-3 rounded-full transition-all duration-300"
+        >
+          برگشت به صفحه اصلی
+        </Link>
       </form>
     </div>
   );

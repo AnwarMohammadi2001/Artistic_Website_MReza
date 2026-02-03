@@ -30,7 +30,7 @@ const ExhibitionPage = () => {
   const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -239,7 +239,7 @@ const ExhibitionPage = () => {
   const filterBySubCategory = useCallback(
     (subId) => {
       setActiveSub(subId);
-      setVisibleCount(6);
+      setVisibleCount(9);
 
       if (subId === null) {
         setFilteredProjects(exhibitionProjects);
@@ -258,7 +258,7 @@ const ExhibitionPage = () => {
 
   /* ================= LOAD MORE ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 6, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
   };
 
   /* ================= MODAL ================= */
@@ -470,7 +470,7 @@ const ExhibitionPage = () => {
                               src={item.thumbnail}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full h-full object-cover"
+                              className="w-full h-[300px] object-cover"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
@@ -491,7 +491,8 @@ const ExhibitionPage = () => {
                               src={item.src || "/placeholder.jpg"}
                               alt={item.displayTitle}
                               effect="blur"
-                              className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-500"
+                              className="max-w-full
+                               h-[300px] object-cover group-hover:scale-105 transition-transform duration-500"
                               afterLoad={() => handleImageLoad(item.id)}
                               beforeLoad={() => handleImageStartLoad(item.id)}
                             />
@@ -500,14 +501,6 @@ const ExhibitionPage = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 
                             {/* Image Badge */}
-                            <div className="absolute top-4 left-4">
-                              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/70 backdrop-blur-sm rounded-lg">
-                                <ImageIcon className="w-3 h-3 text-white" />
-                                <span className="text-white text-xs font-bold">
-                                  IMAGE
-                                </span>
-                              </div>
-                            </div>
                           </>
                         )}
                       </div>

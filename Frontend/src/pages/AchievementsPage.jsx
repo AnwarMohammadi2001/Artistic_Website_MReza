@@ -31,7 +31,7 @@ const AchievementsPage = () => {
   const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -211,7 +211,7 @@ const AchievementsPage = () => {
   const filterBySubCategory = useCallback(
     (subId) => {
       setActiveSub(subId);
-      setVisibleCount(8);
+      setVisibleCount(9);
 
       if (subId === null) {
         setFilteredProjects(achievementProjects);
@@ -230,7 +230,7 @@ const AchievementsPage = () => {
 
   /* ================= LOAD MORE ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 8, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
   };
 
   /* ================= MODAL ================= */
@@ -444,18 +444,6 @@ const AchievementsPage = () => {
                           afterLoad={() => handleImageLoad(item.id)}
                           beforeLoad={() => handleImageStartLoad(item.id)}
                         />
-
-                        {/* Category Badge */}
-                        <div className="absolute top-4 left-4">
-                          <div
-                            className={`flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r ${item.categoryColor} rounded-full shadow-lg`}
-                          >
-                            {item.icon}
-                            <span className="text-white text-xs font-medium">
-                              AWARD
-                            </span>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </motion.div>
