@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../utils/axiosInstance";
 import PaintingCart from "./components/Painting/PaintingCart";
@@ -18,12 +19,13 @@ const Printing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
+  const [lastActiveSub, setLastActiveSub] = useState(null); // برای جلوگیری از بارگذاری مجدد
+  const gridRef = useRef(null);
 
   // Function to get proper image URL
   const getImageUrl = (project) => {
     if (!project) return "/placeholder.jpg";
 
-    // Check if project has mainImage
     if (project.mainImage) {
       if (project.mainImage.startsWith("http")) {
         return project.mainImage;
@@ -36,7 +38,6 @@ const Printing = () => {
       return `${BASE_URL}/uploads/projects/${project.mainImage}`;
     }
 
-    // Check if project has images array
     if (project.images && project.images.length > 0 && project.images[0].url) {
       const imageUrl = project.images[0].url;
 
@@ -51,7 +52,6 @@ const Printing = () => {
       return `${BASE_URL}/${imageUrl}`;
     }
 
-    // Default placeholder
     return "/placeholder.jpg";
   };
 
@@ -108,9 +108,22 @@ const Printing = () => {
 
       setSubCategories(uniqueSubs);
 
-      // Activate first subcategory if exists
+      // همیشه اولین دسته را فعال کن
       if (uniqueSubs.length > 0) {
-        setActiveSub(uniqueSubs[0].id);
+        const firstSubId = uniqueSubs[0].id;
+        setActiveSub(firstSubId);
+        setLastActiveSub(firstSubId);
+
+        // فیلتر کردن بر اساس اولین دسته
+        const filtered = paintingProjectsList.filter((p) => {
+          if (!p.SubCategory) return false;
+          return (
+            p.SubCategory.id === firstSubId ||
+            p.SubCategory.title === uniqueSubs[0].title
+          );
+        });
+
+        setFilteredProjects(filtered);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -122,7 +135,19 @@ const Printing = () => {
   /* ================= FILTER BY SUB CATEGORY ================= */
   const handleSubCategory = useCallback(
     (sub) => {
+      // اگر روی همان دسته فعال کلیک شد، کاری نکن
+      if (activeSub === sub.id) {
+        return;
+      }
+
+      // اگر قبلاً این دسته فعال بود، فقط حالت فعال را تغییر بده و فیلتر نکن
+      if (lastActiveSub === sub.id) {
+        setActiveSub(sub.id);
+        return;
+      }
+
       setActiveSub(sub.id);
+      setLastActiveSub(sub.id);
       setVisibleCount(9);
 
       const filtered = paintingProjects.filter((p) => {
@@ -132,7 +157,7 @@ const Printing = () => {
 
       setFilteredProjects(filtered);
     },
-    [paintingProjects],
+    [paintingProjects, activeSub, lastActiveSub],
   );
 
   /* ================= MODAL ================= */
@@ -148,9 +173,15 @@ const Printing = () => {
     document.body.style.overflow = "auto";
   };
 
-  /* ================= LAZY LOADING ================= */
   const handleLoadMore = () => {
     setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
+
+    setTimeout(() => {
+      gridRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }, 200);
   };
 
   const handleImageLoad = (id) => {
@@ -338,7 +369,7 @@ const Printing = () => {
                 Timurid period. I have drawn inspiration from his use of color
                 contrasts, flat surfaces, geometric structures, compositional
                 balance, and his profound social attention to the everyday lives
-                of ordinary people. Behzād’s works, now recognized as
+                of ordinary people. Behzād's works, now recognized as
                 authoritative cultural and historical documents, demonstrate
                 that painting can go beyond aesthetics to carry meaning,
                 narrative, and social responsibility. Together, these three
@@ -363,39 +394,46 @@ const Printing = () => {
       )}
 
       {/* ================= PAINTINGS GRID ================= */}
+      {/* ================= PAINTINGS GRID ================= */}
       <div className="container px-4 max-w-7xl mx-auto pb-12 md:pb-20">
         {filteredProjects.length > 0 ? (
           <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSub}
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8"
-              >
-                {filteredProjects.slice(0, visibleCount).map((item) => (
-                  <motion.div key={item.id} variants={itemVariants}>
-                    <div className="relative">
-                      {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
-                          <FaSpinner className="text-gray-400 animate-spin text-2xl" />
-                        </div>
-                      )}
-                      <PaintingCart
-                        painting={item}
-                        openModal={openModal}
-                        onImageLoad={() => handleImageLoad(item.id)}
-                        onImageStartLoad={() => handleImageStartLoad(item.id)}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8"
+            >
+              {/* همه آیتم‌ها را رندر کن اما انیمیشن فقط برای اولین بار */}
+              {filteredProjects.slice(0, visibleCount).map((item, index) => (
+                <motion.div
+                  key={`${item.id}-${index}`} // کلید منحصر به فرد
+                  variants={index < 9 ? itemVariants : {}} // فقط ۹ آیتم اول انیمیشن
+                  initial={index >= 9 ? { opacity: 1, y: 0 } : "hidden"}
+                  animate={index >= 9 ? { opacity: 1, y: 0 } : "visible"}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="relative">
+                    {imageLoading[item.id] && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
+                        <FaSpinner className="text-gray-400 animate-spin text-2xl" />
+                      </div>
+                    )}
+                    <PaintingCart
+                      painting={item}
+                      openModal={openModal}
+                      onImageLoad={() => handleImageLoad(item.id)}
+                      onImageStartLoad={() => handleImageStartLoad(item.id)}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
             {visibleCount < filteredProjects.length && (
-              <div className="text-center mt-12">
+              <div ref={gridRef} className="text-center mt-12">
+                {" "}
+                {/* gridRef اینجا */}
                 <button
                   onClick={handleLoadMore}
                   className="group px-8 py-3 bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-600 hover:to-cyan-500 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center gap-2 mx-auto"
@@ -434,18 +472,31 @@ const Printing = () => {
       </div>
 
       {/* ================= MODAL ================= */}
+      {/* ================= MODAL ================= */}
       <AnimatePresence>
         {isModalOpen && selectedItem && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
           >
-            <PaintingModal
-              selectedPainting={selectedItem}
-              closeModal={closeModal}
+            {/* Backdrop با افکت بلور */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+              onClick={closeModal}
             />
+
+            {/* محتوای مودال */}
+            <div className="relative z-[10000] max-w-7xl max-h-[90vh] w-full overflow-auto">
+              <PaintingModal
+                selectedPainting={selectedItem}
+                closeModal={closeModal}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

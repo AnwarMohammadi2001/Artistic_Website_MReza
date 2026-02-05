@@ -167,36 +167,38 @@ const GraphicPage = () => {
       </div>
 
       {/* ================= GRAPHIC WORKS GRID ================= */}
+      {/* ================= GRAPHIC WORKS GRID ================= */}
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {graphicProjects.length > 0 ? (
           <>
-            <AnimatePresence>
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8"
-              >
-                {graphicProjects.slice(0, visibleCount).map((item) => (
-                  <motion.div key={item.id} variants={itemVariants}>
-                    <div className="relative">
-                      {/* Loading skeleton */}
-                      {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
-                          <FaSpinner className="text-gray-400 animate-spin text-2xl" />
-                        </div>
-                      )}
-                      <GraphicCard
-                        item={item}
-                        openModal={openModal}
-                        onImageLoad={() => handleImageLoad(item.id)}
-                        onImageStartLoad={() => handleImageStartLoad(item.id)}
-                      />
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
+              {graphicProjects.slice(0, visibleCount).map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index >= 9 ? (index - 9) * 0.05 : index * 0.05,
+                  }}
+                >
+                  <div className="relative">
+                    {/* Loading skeleton */}
+                    {imageLoading[item.id] && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
+                        <FaSpinner className="text-gray-400 animate-spin text-2xl" />
+                      </div>
+                    )}
+                    <GraphicCard
+                      item={item}
+                      openModal={openModal}
+                      onImageLoad={() => handleImageLoad(item.id)}
+                      onImageStartLoad={() => handleImageStartLoad(item.id)}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
 
             {/* Load More Button - Show after 9 items */}
             {graphicProjects.length > 9 &&

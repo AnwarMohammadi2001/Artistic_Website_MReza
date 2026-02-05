@@ -35,7 +35,7 @@ const MiscellaneousPage = () => {
   const [activeSub, setActiveSub] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(9);
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -273,7 +273,7 @@ const MiscellaneousPage = () => {
   const filterBySubCategory = useCallback(
     (subId) => {
       setActiveSub(subId);
-      setVisibleCount(8);
+      setVisibleCount(9);
 
       if (subId === null || subId === "all") {
         setFilteredProjects(miscProjects);
@@ -302,7 +302,7 @@ const MiscellaneousPage = () => {
 
   /* ================= LOAD MORE ================= */
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 8, filteredProjects.length));
+    setVisibleCount((prev) => Math.min(prev + 9, filteredProjects.length));
   };
 
   /* ================= MODAL FUNCTIONS ================= */
@@ -486,52 +486,53 @@ const MiscellaneousPage = () => {
       </div>
 
       {/* ================= PROJECTS GRID ================= */}
+      {/* ================= PROJECTS GRID ================= */}
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {filteredProjects.length > 0 ? (
           <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSub}
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8"
-              >
-                {filteredProjects.slice(0, visibleCount).map((item) => (
-                  <motion.div
-                    key={item.id}
-                    variants={itemVariants}
-                    className="group relative cursor-pointer"
-                    onClick={() => openModal(item)}
-                  >
-                    {/* Card Container - Square aspect ratio */}
-                    <div className="relative  overflow-hidden  rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500">
-                      {/* Loading skeleton */}
-                      {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-xl z-10 flex items-center justify-center">
-                          <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                      )}
-
-                      {/* Image Container - FIXED: Add relative to parent */}
-                      <div className="relative w-full h-full">
-                        <LazyLoadImage
-                          src={item.src || "/placeholder.jpg"}
-                          alt={item.displayTitle}
-                          effect="blur"
-                          className=" w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                          afterLoad={() => handleImageLoad(item.id)}
-                          beforeLoad={() => handleImageStartLoad(item.id)}
-                        />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
+              {filteredProjects.slice(0, visibleCount).map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index >= 9 ? (index - 9) * 0.05 : index * 0.05,
+                  }}
+                  className="group relative cursor-pointer"
+                  onClick={() => openModal(item)}
+                >
+                  {/* Card Container */}
+                  <div className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500">
+                    {/* Loading skeleton */}
+                    {imageLoading[item.id] && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-xl z-10 flex items-center justify-center">
+                        <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                       </div>
+                    )}
+
+                    {/* Image Container */}
+                    <div className="relative w-full h-[300px]">
+                      <LazyLoadImage
+                        src={item.src || "/placeholder.jpg"}
+                        alt={item.displayTitle}
+                        effect="blur"
+                        className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-700"
+                        afterLoad={() => handleImageLoad(item.id)}
+                        beforeLoad={() => handleImageStartLoad(item.id)}
+                      />
+
+                      {/* Overlay Gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
                     </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
 
             {/* Load More Button */}
-            {filteredProjects.length > 8 &&
+            {filteredProjects.length > 9 &&
               visibleCount < filteredProjects.length && (
                 <div className="text-center mt-12">
                   <button

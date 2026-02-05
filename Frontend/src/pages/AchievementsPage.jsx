@@ -407,52 +407,53 @@ const AchievementsPage = () => {
       </div>
 
       {/* ================= ACHIEVEMENTS GRID ================= */}
+      {/* ================= ACHIEVEMENTS GRID ================= */}
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {filteredProjects.length > 0 ? (
           <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSub}
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8"
-              >
-                {filteredProjects.slice(0, visibleCount).map((item) => (
-                  <motion.div
-                    key={item.id}
-                    variants={itemVariants}
-                    className="group relative cursor-pointer"
-                    onClick={() => openModal(item)}
-                  >
-                    {/* Card Container - Square aspect ratio */}
-                    <div className="relative aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
-                      {/* Loading skeleton */}
-                      {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
-                          <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                      )}
-
-                      {/* Image Container */}
-                      <div className="relative w-full h-full">
-                        <LazyLoadImage
-                          src={item.src || "/placeholder.jpg"}
-                          alt={item.displayTitle}
-                          effect="blur"
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          afterLoad={() => handleImageLoad(item.id)}
-                          beforeLoad={() => handleImageStartLoad(item.id)}
-                        />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
+              {filteredProjects.slice(0, visibleCount).map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index >= 9 ? (index - 9) * 0.05 : index * 0.05,
+                  }}
+                  className="group relative cursor-pointer"
+                  onClick={() => openModal(item)}
+                >
+                  {/* Card Container - Square aspect ratio */}
+                  <div className="relative h-[300px] overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
+                    {/* Loading skeleton */}
+                    {imageLoading[item.id] && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-xl z-10 flex items-center justify-center">
+                        <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                    )}
 
-            {/* Load More Button - Show after 8 items */}
-            {filteredProjects.length > 8 &&
+                    {/* Image Container */}
+                    <div className="relative w-full h-full">
+                      <LazyLoadImage
+                        src={item.src || "/placeholder.jpg"}
+                        alt={item.displayTitle}
+                        effect="blur"
+                        className="w-full h-[300px] object-cover group-hover:scale-110 transition-transform duration-700"
+                        afterLoad={() => handleImageLoad(item.id)}
+                        beforeLoad={() => handleImageStartLoad(item.id)}
+                      />
+
+                      {/* Overlay Gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Load More Button - Show after 9 items */}
+            {filteredProjects.length > 9 &&
               visibleCount < filteredProjects.length && (
                 <div className="text-center mt-12">
                   <button
@@ -514,7 +515,7 @@ const AchievementsPage = () => {
                 </button>
 
                 {/* Zoom Controls */}
-                <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg">
+                <div className="absolute top-6 left-6 z-50 flex items-center gap-2 bg-white/10 rounded-full px-4 py-2 shadow-lg">
                   <button
                     onClick={handleZoomOut}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -549,7 +550,7 @@ const AchievementsPage = () => {
                     <div
                       className="overflow-auto cursor-zoom-in"
                       style={{
-                        maxHeight: "60vh",
+                        maxHeight: "80vh",
                         transform: `scale(${zoomLevel})`,
                         transformOrigin: "center",
                         transition: "transform 0.3s ease",
@@ -562,7 +563,7 @@ const AchievementsPage = () => {
                       <img
                         src={selectedItem.src || "/placeholder.jpg"}
                         alt={selectedItem.displayTitle}
-                        className="w-full h-auto"
+                        className="w-full h-[500px] object-contain md:h-[600px]"
                         style={{
                           minWidth: "100%",
                           minHeight: "100%",
