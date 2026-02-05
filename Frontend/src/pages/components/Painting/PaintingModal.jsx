@@ -85,7 +85,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
     <AnimatedModal isOpen={true} onClose={closeModal} maxWidth="max-w-5xl">
       <div className="relative max-h-screen flex items-center justify-center">
         <div
-          className="relative   w-full max-h-[90vh] overflow-y-auto"
+          className="relative max-h-[90vh] "
           onClick={(e) => e.stopPropagation()}
         >
           <div className=" gap-8 p-4">
@@ -96,7 +96,7 @@ const PaintingModal = ({ closeModal, selectedPainting }) => {
                   <img
                     src={imageUrl}
                     alt={selectedPainting.title || "تصویر نقاشی"}
-                    className="w-full h-full object-contain"
+                    className="w-fit h-[500px] object-contain"
                     onError={(e) => {
                       e.target.style.display = "none";
                       e.target.parentElement.innerHTML = `

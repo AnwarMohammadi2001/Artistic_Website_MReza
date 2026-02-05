@@ -62,11 +62,11 @@ const GeraphicModal = ({ selectedItem, closeModal }) => {
         <div className=" p-6 gap-0 h-full">
           {/* Main Image */}
           <div className="lg:col-span-1 relative min-h-[400px] lg:min-h-[350px]">
-            <div className="w-full h-[80vh] relative">
+            <div className="w-full max-h-[80vh] relative">
               <img
                 src={imageUrl}
                 alt={selectedItem.title || "تصویر پروژه"}
-                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
+                className="w-full h-[500px] object-contain group-hover:scale-110 transition-transform duration-700"
                 onError={(e) => {
                   console.error("Image failed to load:", imageUrl);
                   e.target.style.display = "none";

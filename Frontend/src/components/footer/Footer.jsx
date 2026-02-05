@@ -32,11 +32,11 @@ const Footer = () => {
   const artist = {
     name: "Hamidreza Khajehmohammadi",
     title: "Pioneer Contemporary Iranian Artist",
-    bio: "Multimedia artist with over four decades of experience in painting, graphic design, theater, and visual arts. Masterfully blending traditional Persian art with contemporary innovation.",
+    bio: "An Iranian artist and asylum seeker with over 30 years of professional experience in art, education, and human rights advocacy.",
     contact: {
-      whatsapp: "+989123456789",
-      phone: "+982188888888",
-      email: "contact@hamidrezakh.com",
+      whatsapp: "+93 70 582 9776",
+      phone: "+93 70 582 9776",
+      email: "hamid.painter.ir@gmail.com",
       studio: "Tehran, Iran",
     },
     socialLinks: [
@@ -59,8 +59,6 @@ const Footer = () => {
         icon: <FaYoutube />,
         color: "hover:bg-gradient-to-br from-red-600 to-red-800",
       },
-   
-    
     ],
     quickLinks: [
       {

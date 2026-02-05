@@ -76,19 +76,19 @@ const Contact = () => {
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Phone",
-      details: ["+98 21 1234 5678", "+98 912 345 6789"],
+      details: ["+98 21 1234 5678", ],
       color: "from-blue-500 to-cyan-500",
     },
     {
       icon: <Mail className="w-6 h-6" />,
       title: "Email",
-      details: ["contact@hamidrezakh.com", "info@artstudio.com"],
+      details: ["hamid.painter.ir@gmail.com"],
       color: "from-purple-500 to-pink-500",
     },
     {
       icon: <MapPin className="w-6 h-6" />,
       title: "Studio Address",
-      details: ["No. 123, Art Street", "Tehran, Iran - 1234567890"],
+      details: ["No. 123, Art Street", ],
       color: "from-amber-500 to-orange-500",
     },
     {

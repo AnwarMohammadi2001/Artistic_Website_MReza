@@ -113,7 +113,7 @@ export const getProjects = async (req, res) => {
         { model: Category, attributes: ["title"] },
         { model: SubCategory, attributes: ["title"] },
       ],
-      order: [["createdAt", "ASC"]],
+      order: [["createdAt", "ASC"]], // مرتب‌سازی بر اساس تاریخ ایجاد به صورت صعودی
     });
 
     res.json(projects);

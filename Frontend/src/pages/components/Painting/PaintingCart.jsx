@@ -68,7 +68,7 @@ const PaintingCart = ({ painting, openModal, itemVariants }) => {
     <motion.div
      
       layout
-      className="group relative bg-white rounded-md shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 cursor-pointer"
+      className="group relative bg-white rounded-md shadow-lg  hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 cursor-pointer"
       onClick={() => openModal(painting)}
     >
       {/* Painting Image */}

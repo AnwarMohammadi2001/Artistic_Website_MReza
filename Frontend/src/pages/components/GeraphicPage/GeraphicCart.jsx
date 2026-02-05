@@ -70,7 +70,7 @@ const GeraphicCart = ({ item, itemVariants, viewMode, openModal }) => {
     >
       <>
         {/* Image Container */}
-        <div className="relative h-64 overflow-hidden">
+        <div className="relative h-[300px] rounded-lg overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10"></div>
 
           {/* Image */}

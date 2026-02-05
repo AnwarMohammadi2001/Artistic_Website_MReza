@@ -435,80 +435,75 @@ const ExhibitionPage = () => {
       </div>
 
       {/* ================= EXHIBITIONS GRID ================= */}
+      {/* ================= EXHIBITIONS GRID ================= */}
       <div className="container max-w-7xl mx-auto px-4 pb-12 md:pb-20">
         {filteredProjects.length > 0 ? (
           <>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSub}
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-              >
-                {filteredProjects.slice(0, visibleCount).map((item) => (
-                  <motion.div
-                    key={item.id}
-                    variants={itemVariants}
-                    className="group relative cursor-pointer"
-                    onClick={() => openModal(item)}
-                  >
-                    {/* Card Container */}
-                    <div className="relative overflow-hidden rounded-md shadow-lg hover:shadow-2xl transition-all duration-500 bg-gradient-to-br from-gray-900 to-gray-800">
-                      {/* Loading skeleton */}
-                      {imageLoading[item.id] && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-2xl z-10 flex items-center justify-center">
-                          <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                      )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {filteredProjects.slice(0, visibleCount).map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index >= 9 ? (index - 9) * 0.05 : index * 0.05,
+                  }}
+                  className="group relative cursor-pointer"
+                  onClick={() => openModal(item)}
+                >
+                  {/* Card Container */}
+                  <div className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500  h-[300px]">
+                    {/* Loading skeleton */}
+                    {imageLoading[item.id] && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 animate-pulse rounded-xl z-10 flex items-center justify-center">
+                        <div className="w-10 h-10 border-4 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
+                    )}
 
-                      {/* Media Container */}
-                      <div className="relative w-full">
-                        {item.type === "video" ? (
-                          <div className="relative w-full h-full">
-                            <LazyLoadImage
-                              src={item.thumbnail}
-                              alt={item.displayTitle}
-                              effect="blur"
-                              className="w-full h-[300px] object-cover"
-                              afterLoad={() => handleImageLoad(item.id)}
-                              beforeLoad={() => handleImageStartLoad(item.id)}
-                            />
+                    {/* Media Container */}
+                    <div className="relative w-full">
+                      {item.type === "video" ? (
+                        <div className="relative w-full h-full">
+                          <LazyLoadImage
+                            src={item.thumbnail}
+                            alt={item.displayTitle}
+                            effect="blur"
+                            className="w-full h-[300px] object-cover"
+                            afterLoad={() => handleImageLoad(item.id)}
+                            beforeLoad={() => handleImageStartLoad(item.id)}
+                          />
 
-                            {/* Play Button */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
-                                <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
-                                  <Youtube className="w-6 h-6 text-white" />
-                                </div>
+                          {/* Play Button */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+                              <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
+                                <Youtube className="w-6 h-6 text-white" />
                               </div>
                             </div>
                           </div>
-                        ) : (
-                          <>
-                            {/* Image Thumbnail */}
-                            <LazyLoadImage
-                              src={item.src || "/placeholder.jpg"}
-                              alt={item.displayTitle}
-                              effect="blur"
-                              className="max-w-full
-                               h-[300px] object-cover group-hover:scale-105 transition-transform duration-500"
-                              afterLoad={() => handleImageLoad(item.id)}
-                              beforeLoad={() => handleImageStartLoad(item.id)}
-                            />
+                        </div>
+                      ) : (
+                        <>
+                          {/* Image Thumbnail */}
+                          <LazyLoadImage
+                            src={item.src || "/placeholder.jpg"}
+                            alt={item.displayTitle}
+                            effect="blur"
+                            className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-500"
+                            afterLoad={() => handleImageLoad(item.id)}
+                            beforeLoad={() => handleImageStartLoad(item.id)}
+                          />
 
-                            {/* Image Overlay Gradient */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-
-                            {/* Image Badge */}
-                          </>
-                        )}
-                      </div>
+                          {/* Image Overlay Gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                        </>
+                      )}
                     </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
 
             {/* Load More Button */}
             {filteredProjects.length > 6 &&
