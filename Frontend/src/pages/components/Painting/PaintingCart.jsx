@@ -1,7 +1,7 @@
 import { Calendar, Palette, Ruler, ZoomIn } from "lucide-react";
 import { motion } from "framer-motion";
 import React from "react";
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const PaintingCart = ({ painting, openModal, itemVariants }) => {
   // Get image URL
   const getImageUrl = () => {
@@ -14,16 +14,16 @@ const PaintingCart = ({ painting, openModal, itemVariants }) => {
 
     // Check if it starts with /uploads/
     if (painting.mainImage.startsWith("/uploads/")) {
-      return `http://localhost:5000${painting.mainImage}`;
+      return `${BASE_URL}${painting.mainImage}`;
     }
 
     // If it's just a filename
     if (painting.mainImage.includes("uploads")) {
-      return `http://localhost:5000/${painting.mainImage}`;
+      return `${BASE_URL}/${painting.mainImage}`;
     }
 
     // Default case
-    return `http://localhost:5000/uploads/projects/${painting.mainImage}`;
+    return `${BASE_URL}/uploads/projects/${painting.mainImage}`;
   };
 
   const imageUrl = getImageUrl();
