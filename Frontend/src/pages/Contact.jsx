@@ -28,55 +28,61 @@ const Contact = () => {
     subject: "",
     message: "",
   });
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeField, setActiveField] = useState(null);
 
- const handleChange = (e) => {
-   setFormData({
-     ...formData,
-     [e.target.name]: e.target.value,
-   });
- };
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
-   setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-   try {
-     const res = await axios.post(`${BASE_URL}/api/contact`, formData, {
-       headers: { "Content-Type": "application/json" },
-       timeout: 10000, // 10 second timeout
-     });
+    try {
+      const res = await axios.post(`${BASE_URL}/api/contact`, formData, {
+        headers: { "Content-Type": "application/json" },
+        timeout: 10000, // 10 second timeout
+      });
 
-     if (res.data.success) {
-       toast.success(res.data.message);
-       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-     } else {
-       toast.error(res.data.message || "Failed to send message");
-     }
-   } catch (err) {
-     console.error("Contact form error:", err);
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        toast.error(res.data.message || "Failed to send message");
+      }
+    } catch (err) {
+      console.error("Contact form error:", err);
 
-     if (err.response?.data?.message) {
-       toast.error(err.response.data.message);
-     } else if (err.code === "ECONNABORTED") {
-       toast.error("Request timeout. Please try again.");
-     } else {
-       toast.error("Failed to send message. Please try again later.");
-     }
-   } finally {
-     setLoading(false);
-   }
- };
+      if (err.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else if (err.code === "ECONNABORTED") {
+        toast.error("Request timeout. Please try again.");
+      } else {
+        toast.error("Failed to send message. Please try again later.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const contactInfo = [
     {
       icon: <Phone className="w-6 h-6" />,
       title: "Phone",
-      details: ["+98 21 1234 5678", ],
+      details: ["+93 705 829 776"],
       color: "from-blue-500 to-cyan-500",
     },
     {
@@ -88,7 +94,7 @@ const Contact = () => {
     {
       icon: <MapPin className="w-6 h-6" />,
       title: "Studio Address",
-      details: ["No. 123, Art Street", ],
+      details: ["No. 123, Art Street"],
       color: "from-amber-500 to-orange-500",
     },
     {
@@ -102,21 +108,15 @@ const Contact = () => {
   const socialMedia = [
     {
       icon: <Instagram className="w-5 h-5" />,
-      url: "#",
+      url: "https://www.instagram.com/khajehmohammadihamidreza?igsh=N3BiNDhib2p5MTRx",
       name: "Instagram",
       color: "hover:bg-gradient-to-br from-purple-600 to-pink-600",
     },
     {
       icon: <Facebook className="w-5 h-5" />,
-      url: "#",
+      url: "https://www.facebook.com/hamidreza.khajehmohammadi/",
       name: "Facebook",
       color: "hover:bg-gradient-to-br from-blue-600 to-blue-800",
-    },
-    {
-      icon: <Twitter className="w-5 h-5" />,
-      url: "#",
-      name: "Twitter",
-      color: "hover:bg-gradient-to-br from-cyan-500 to-blue-500",
     },
     {
       icon: <Youtube className="w-5 h-5" />,
@@ -124,7 +124,6 @@ const Contact = () => {
       name: "YouTube",
       color: "hover:bg-gradient-to-br from-red-600 to-red-800",
     },
-   
   ];
 
   const inputFields = [
@@ -176,8 +175,16 @@ const Contact = () => {
             </span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Connect with the artist for commissions, exhibitions,
-            collaborations, or simply to discuss art
+            As a peace artist and children’s rights advocate, working in the
+            fields of painting, graphic design, illustration, and writing, I
+            consider art a universal language for dialogue, empathy, and the
+            preservation of human dignity. With utmost respect and enthusiasm, I
+            express my readiness for professional, artistic, and cultural
+            collaborations with galleries, international institutions, human
+            rights organizations, and cultural bodies worldwide. All interested
+            organizations and individuals are warmly invited to contact me
+            through the channels listed below. I will be honored to engage in
+            creative and humanitarian collaborations.
           </p>
         </motion.div>
 
@@ -191,13 +198,13 @@ const Contact = () => {
             className="relative"
           >
             {/* Portrait Container */}
-            <div className="relative rounded-lg h-[600px] overflow-hidden  shadow-2xl">
+            <div className="relative rounded-lg overflow-hidden  shadow-2xl">
               {/* Artist Portrait */}
               <div className=" relative">
                 <img
-                  src="bio.jpg"
+                  src="hero.jpeg"
                   alt="Hamidreza Khajehmohammadi"
-                  className="w-full object-contain"
+                  className="w-full h-full object-contain"
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -219,7 +226,7 @@ const Contact = () => {
             </div>
 
             {/* Contact Info Cards */}
-            <div className="grid grid-cols-2 gap-4 mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
               {contactInfo.slice(0, 2).map((item, index) => (
                 <motion.div
                   key={index}

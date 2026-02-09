@@ -10,6 +10,7 @@ import {
   FaTwitter,
   FaLinkedin,
   FaPinterest,
+  FaFacebookF,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -27,6 +28,7 @@ import {
   Sparkles,
   Award,
 } from "lucide-react";
+import { Facebook } from "@mui/icons-material";
 
 const Footer = () => {
   const artist = {
@@ -41,17 +43,18 @@ const Footer = () => {
     },
     socialLinks: [
       {
-        name: "Instagram",
-        url: "https://instagram.com/hamidreza.art",
-        icon: <FaInstagram />,
-        color:
-          "hover:bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500",
+        name: "Facebook",
+        url: "https://www.facebook.com/hamidreza.khajehmohammadi/",
+        icon: <FaFacebookF />,
+        color: "hover:bg-gradient-to-br from-blue-500 to-blue-700",
       },
       {
-        name: "Telegram",
-        url: "https://t.me/hamidreza_channel",
-        icon: <FaTelegram />,
-        color: "hover:bg-gradient-to-br from-blue-500 to-blue-700",
+        name: "Instagram",
+        url: "https://www.instagram.com/khajehmohammadihamidreza?igsh=N3BiNDhib2p5MTRx",
+        icon: <FaInstagram />,
+
+        color:
+          "hover:bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500",
       },
       {
         name: "YouTube",
