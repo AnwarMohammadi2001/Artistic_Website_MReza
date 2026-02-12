@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Play } from "lucide-react";
+
 import {
   Music,
   BookOpen,
@@ -39,6 +41,44 @@ const MiscellaneousPage = () => {
   const [imageLoading, setImageLoading] = useState({});
   const [zoomLevel, setZoomLevel] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
+  /* ================= VIDEO HELPERS ================= */
+
+  // Extract YouTube ID
+  const getYouTubeVideoId = (url) => {
+    if (!url) return null;
+
+    const match = url.match(
+      /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/,
+    );
+
+    return match ? match[1].substring(0, 11) : null;
+  };
+
+  // Extract Vimeo ID
+  const getVimeoVideoId = (url) => {
+    if (!url) return null;
+
+    const regExp = /(?:vimeo\.com\/|video\/)(\d+)/;
+    const match = url.match(regExp);
+    return match ? match[1] : null;
+  };
+
+  // Get video thumbnail
+  const getVideoThumbnail = (project) => {
+    if (!project.link) return null;
+
+    const youtubeId = getYouTubeVideoId(project.link);
+    if (youtubeId) {
+      return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+    }
+
+    const vimeoId = getVimeoVideoId(project.link);
+    if (vimeoId) {
+      return `https://vumbnail.com/${vimeoId}.jpg`;
+    }
+
+    return null;
+  };
 
   /* ================= CATEGORIES WITH DETAILS ================= */
   const categories = [
@@ -176,10 +216,33 @@ const MiscellaneousPage = () => {
 
       const mappedProjects = misc.map((project) => {
         const categoryInfo = getCategoryInfo(project);
+
+        let type = "image";
+        let videoId = null;
+        let vimeoId = null;
+
+        if (project.link) {
+          videoId = getYouTubeVideoId(project.link);
+          vimeoId = getVimeoVideoId(project.link);
+
+          if (videoId || vimeoId || project.mediaType === "video") {
+            type = "video";
+          }
+        }
+
+        const imageUrl = getImageUrl(project);
+        const thumbnail =
+          type === "video" ? getVideoThumbnail(project) || imageUrl : imageUrl;
+
         return {
           ...project,
           id: project.id,
-          src: getImageUrl(project),
+          type,
+          videoId,
+          vimeoId,
+          videoUrl: project.link,
+          src: imageUrl,
+          thumbnail,
           icon: categoryInfo.icon,
           categoryColor: categoryInfo.color,
           gradient: categoryInfo.gradient,
@@ -514,14 +577,43 @@ const MiscellaneousPage = () => {
 
                     {/* Image Container */}
                     <div className="relative w-full h-[300px]">
-                      <LazyLoadImage
-                        src={item.src || "/placeholder.jpg"}
-                        alt={item.displayTitle}
-                        effect="blur"
-                        className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-700"
-                        afterLoad={() => handleImageLoad(item.id)}
-                        beforeLoad={() => handleImageStartLoad(item.id)}
-                      />
+                      <div className="relative w-full h-[300px]">
+                        {item.type === "video" ? (
+                          <>
+                            <LazyLoadImage
+                              src={item.thumbnail || "/video-placeholder.jpg"}
+                              alt={item.displayTitle}
+                              effect="blur"
+                              className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-700"
+                              afterLoad={() => handleImageLoad(item.id)}
+                              beforeLoad={() => handleImageStartLoad(item.id)}
+                            />
+
+                            {/* Play Button */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-16 h-16 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-all duration-300">
+                                <div className="w-12 h-12 bg-black/70 rounded-full flex items-center justify-center">
+                                  <Play className="w-6 h-6 text-white" />
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <LazyLoadImage
+                              src={item.src || "/placeholder.jpg"}
+                              alt={item.displayTitle}
+                              effect="blur"
+                              className="w-full h-[300px] object-cover group-hover:scale-105 transition-transform duration-700"
+                              afterLoad={() => handleImageLoad(item.id)}
+                              beforeLoad={() => handleImageStartLoad(item.id)}
+                            />
+                          </>
+                        )}
+
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                      </div>
 
                       {/* Overlay Gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
@@ -638,15 +730,51 @@ const MiscellaneousPage = () => {
                         else handleZoomReset();
                       }}
                     >
-                      <img
-                        src={selectedItem.src || "/placeholder.jpg"}
-                        alt={selectedItem.displayTitle}
-                        className="w-full h-auto"
-                        style={{
-                          minWidth: "100%",
-                          minHeight: "100%",
-                        }}
-                      />
+                      {selectedItem.type === "video" ? (
+                        <div className="w-full h-[80vh]">
+                          {selectedItem.videoId ? (
+                            <iframe
+                              className="w-full h-full rounded-xl"
+                              src={`https://www.youtube.com/embed/${selectedItem.videoId}?autoplay=1`}
+                              title="YouTube video"
+                              allow="autoplay; encrypted-media"
+                              allowFullScreen
+                            />
+                          ) : selectedItem.vimeoId ? (
+                            <iframe
+                              className="w-full h-full rounded-xl"
+                              src={`https://player.vimeo.com/video/${selectedItem.vimeoId}?autoplay=1`}
+                              title="Vimeo video"
+                              allow="autoplay; fullscreen"
+                              allowFullScreen
+                            />
+                          ) : null}
+                        </div>
+                      ) : (
+                        <div
+                          className="overflow-auto cursor-zoom-in"
+                          style={{
+                            maxHeight: "80vh",
+                            transform: `scale(${zoomLevel})`,
+                            transformOrigin: "center",
+                            transition: "transform 0.3s ease",
+                          }}
+                          onClick={() => {
+                            if (zoomLevel === 1) handleZoomIn();
+                            else handleZoomReset();
+                          }}
+                        >
+                          <img
+                            src={selectedItem.src || "/placeholder.jpg"}
+                            alt={selectedItem.displayTitle}
+                            className="w-full h-auto"
+                            style={{
+                              minWidth: "100%",
+                              minHeight: "100%",
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
 
                     {/* Zoom hint */}
