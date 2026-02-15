@@ -168,10 +168,10 @@ const Contact = () => {
               Get In Touch
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
+          <h1 className="text-lg md:text-2xl lg:text-2xl font-bold text-gray-800 mb-6">
             Contact{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-cyan-600">
-              Hamidreza
+               Hamidreza Khajehmohammadi
             </span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">

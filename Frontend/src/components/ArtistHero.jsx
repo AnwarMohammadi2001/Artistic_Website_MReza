@@ -10,14 +10,11 @@ const ArtistHero = () => {
 
   return (
     <div className="relative md:h-[90vh] min-h-[600px] p-4 md:p-10 overflow-hidden bg-gradient-to-br from-amber-50 via-white to-cyan-50">
-      {/* Background Decorations */}
       <div className="absolute inset-0 z-0 opacity-30">
         <div className="absolute top-10 left-10 w-72 h-72 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
         <div className="absolute bottom-10 right-10 w-72 h-72 bg-amber-200 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse delay-1000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-500"></div>
       </div>
-
-      {/* Decorative Lines */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 via-cyan-400 to-transparent"></div>
       <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-400 to-cyan-400"></div>
 
@@ -40,7 +37,6 @@ const ArtistHero = () => {
                   />
                   {/* Image Overlay Effect */}
                   <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-transparent"></div>
-               
                 </div>
               </div>
 
@@ -54,7 +50,6 @@ const ArtistHero = () => {
             <div className="absolute -top-6 -left-6 w-16 h-16 bg-cyan-400/20 rounded-full blur-sm"></div>
           </div>
 
-          {/* Text and Biography Section */}
           <div
             className={`order-1 lg:order-2 transition-all duration-1000 pr-5 ${isLoaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}
           >
@@ -83,66 +78,7 @@ const ArtistHero = () => {
                   professional experience in art, education, and human rights
                   advocacy.
                 </p>
-                <button className="px-4 py-2 w-fit cursor-pointer mt-5 hover:scale-102 transition-all duration-300 bg-cyan-600 flex items-center gap-x-2 rounded-full text-gray-50">
-                  Read More About Me{" "}
-                  <span>
-                    <IoIosArrowRoundDown size={24} />
-                  </span>
-                </button>
               </div>
-
-              {/* Statistics */}
-              <div className="pt-4 lg:pt-4">
-                <div className="flex items-center justify-center gap-4 md:gap-6">
-                  {[
-                    {
-                      value: "40+",
-                      label: "Years Experience",
-                      color: "from-amber-500 to-amber-400",
-                    },
-                    {
-                      value: "50+",
-                      label: "Exhibitions",
-                      color: "from-cyan-500 to-cyan-400",
-                    },
-                    {
-                      value: "100+",
-                      label: "Artworks",
-                      color: "from-amber-500 to-amber-400",
-                    },
-                  ].map((stat, index) => (
-                    <div
-                      key={index}
-                      className={`group relative transition-all duration-500 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-                      style={{ transitionDelay: `${index * 150}ms` }}
-                    >
-                      <div className="relative p-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200/70 shadow-lg overflow-hidden group-hover:shadow-2xl group-hover:-translate-y-1 transition-all duration-300">
-                        {/* Background Effect */}
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                        ></div>
-
-                        <div className="relative z-10">
-                          <div
-                            className={`text-xl md:text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent`}
-                          >
-                            {stat.value}
-                          </div>
-                          <div className="text-gray-700 font-medium text-xs md:text-base mt-2">
-                            {stat.label}
-                          </div>
-                        </div>
-
-                        {/* Corner Decorations */}
-                        <div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-amber-400/30"></div>
-                        <div className="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-cyan-400/30"></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
             </div>
           </div>
         </div>
